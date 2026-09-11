@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pflanzenkatalog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F2EA;
+    --paper-2:#EFE9DC;
+    --ink:#2A3527;
+    --ink-soft:#5B6653;
+    --moss:#3F5D45;
+    --moss-light:#7C9A7F;
+    --moss-pale:#E1E9DC;
+    --clay:#B5714A;
+    --clay-pale:#F1E1D3;
+    --gold:#B8925A;
+    --line:#DDD5C3;
+    --white:#FFFDF9;
+    --danger:#B4453F;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{font-family:'Fraunces',serif;}
+  .app{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+
+  .top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:0.25rem;flex-wrap:wrap;}
+  .top h1{font-size:32px;font-weight:500;margin:0;color:var(--moss);letter-spacing:-0.01em;}
+  .top .count{font-size:13px;color:var(--ink-soft);}
+  .sub{color:var(--ink-soft);font-size:14px;margin:0 0 1.75rem;max-width:520px;line-height:1.5;}
+
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:1.5rem;}
+  .tab{
+    padding:10px 4px;margin-right:22px;background:none;border:none;cursor:pointer;
+    font-family:'Inter',sans-serif;font-size:14.5px;font-weight:500;color:var(--ink-soft);
+    border-bottom:2px solid transparent;position:relative;top:1px;
+  }
+  .tab.active{color:var(--moss);border-bottom-color:var(--moss);}
+  .tab .n{color:var(--ink-soft);font-weight:400;margin-left:4px;}
+
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:1.25rem;flex-wrap:wrap;}
+  .search{
+    flex:1;min-width:180px;background:var(--white);border:1px solid var(--line);border-radius:8px;
+    padding:9px 12px;font-size:14px;color:var(--ink);font-family:'Inter',sans-serif;
+  }
+  .search:focus{outline:none;border-color:var(--moss-light);}
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;background:var(--moss);color:var(--white);
+    border:none;border-radius:8px;padding:9px 16px;font-size:14px;font-weight:500;cursor:pointer;
+    font-family:'Inter',sans-serif;white-space:nowrap;
+  }
+  .btn:hover{background:#345038;}
+  .btn.ghost{background:transparent;color:var(--moss);border:1px solid var(--moss-light);}
+  .btn.ghost:hover{background:var(--moss-pale);}
+  .btn.danger{background:transparent;color:var(--danger);border:1px solid #E3C6C3;}
+  .btn.danger:hover{background:#FBECEA;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+
+  .card{
+    background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+    cursor:pointer;transition:border-color .15s ease;position:relative;
+  }
+  .card:hover{border-color:var(--moss-light);}
+  .card .name{font-size:17px;font-weight:500;margin:0 0 2px;color:var(--ink);}
+  .card .latin{font-style:italic;color:var(--ink-soft);font-size:13px;margin:0 0 12px;}
+  .badge{
+    display:inline-block;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;
+    background:var(--moss-pale);color:var(--moss);margin-right:6px;
+  }
+  .badge.clay{background:var(--clay-pale);color:var(--clay);}
+  .meta-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-soft);margin-top:12px;padding-top:10px;border-top:1px solid var(--line);}
+  .status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;position:relative;top:-1px;}
+
+  .empty{
+    text-align:center;padding:4rem 1rem;color:var(--ink-soft);
+  }
+  .empty .serif{font-size:20px;color:var(--moss);margin-bottom:6px;}
+
+  /* Modal */
+  .overlay{
+    position:fixed;inset:0;background:rgba(42,53,39,0.35);display:none;
+    align-items:flex-start;justify-content:center;padding:4vh 16px;overflow-y:auto;z-index:50;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:var(--paper);border-radius:16px;max-width:520px;width:100%;
+    padding:1.75rem 1.75rem 1.5rem;box-shadow:0 20px 60px rgba(0,0,0,0.18);margin-top:2vh;
+  }
+  .modal h2{margin:0 0 4px;font-size:22px;font-weight:500;color:var(--moss);}
+  .modal .modal-sub{font-size:13px;color:var(--ink-soft);margin:0 0 20px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;font-weight:500;color:var(--ink-soft);margin-bottom:5px;}
+  .field input, .field select, .field textarea{
+    width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;
+    font-family:'Inter',sans-serif;font-size:14px;background:var(--white);color:var(--ink);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:none;border-color:var(--moss-light);}
+  .field textarea{resize:vertical;min-height:60px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .toggle-group{display:flex;gap:8px;}
+  .toggle-opt{
+    flex:1;text-align:center;padding:9px;border:1px solid var(--line);border-radius:8px;
+    cursor:pointer;font-size:13.5px;color:var(--ink-soft);font-weight:500;background:var(--white);
+  }
+  .toggle-opt.active{background:var(--moss);color:var(--white);border-color:var(--moss);}
+  .toggle-opt.active.clay{background:var(--clay);border-color:var(--clay);}
+  .modal-actions{display:flex;justify-content:space-between;align-items:center;margin-top:22px;}
+  .err{color:var(--danger);font-size:12.5px;margin-top:4px;display:none;}
+  .err.show{display:block;}
+  .hint{font-size:12px;color:var(--ink-soft);margin-top:14px;padding:10px 12px;background:var(--moss-pale);border-radius:8px;}
+
+  @media (max-width:520px){
+    .row2{grid-template-columns:1fr;}
+    .top h1{font-size:26px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;">Pflanzenkatalog: verwalte deine Pflanzen und deren Ableger und Stecklinge, mit Herkunftsverfolgung.</h2>
+
+  <div class="top">
+    <h1>Pflanzenkatalog</h1>
+    <span class="count" id="headerCount"></span>
+  </div>
+  <p class="sub">Deine Pflanzensammlung und alle Ableger, Stecklinge und Sämlinge an einem Ort. <span id="syncStatus" style="font-size:12px;font-weight:500;"></span></p>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="plants" onclick="setTab('plants')">Pflanzen <span class="n" id="tabCountPlants"></span></button>
+    <button class="tab" data-tab="cuttings" onclick="setTab('cuttings')">Ableger &amp; Stecklinge <span class="n" id="tabCountCuttings"></span></button>
+  </div>
+
+  <div class="toolbar">
+    <input class="search" id="searchInput" placeholder="Suchen…" oninput="render()">
+    <button class="btn" id="addBtn" onclick="openModal()">+ Neu</button>
+  </div>
+
+  <div id="content"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCBd3P1hIWbVq1dZAf7pkdJsjIeCDOyOYM",
+  authDomain: "pflanzenkatalog.firebaseapp.com",
+  projectId: "pflanzenkatalog",
+  storageBucket: "pflanzenkatalog.firebasestorage.app",
+  messagingSenderId: "28333160433",
+  appId: "1:28333160433:web:d19585d008ce91f603f650"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const db = getFirestore(fbApp);
+
+let currentUid = null;
+let docRef = null;
+let unsubscribeSnapshot = null;
+let isRemoteUpdate = false;
+let saveTimer = null;
+let state = { plants: [], cuttings: [] };
+let currentTab = 'plants';
+let editingId = null;
+
+// Artbezogene Referenzdatenbank gängiger und seltener Zimmerpflanzen.
+// Wird für Autovervollständigung genutzt — manuelle Eingabe bleibt jederzeit möglich.
+const PLANT_DB = [
+  {name:'Monstera Deliciosa', latin:'Monstera deliciosa', category:'Aroid'},
+  {name:'Monstera Adansonii', latin:'Monstera adansonii', category:'Aroid'},
+  {name:'Monstera Thai Constellation', latin:'Monstera deliciosa var. borsigiana', category:'Aroid'},
+  {name:'Efeutute', latin:'Epipremnum aureum', category:'Aroid'},
+  {name:'Philodendron Scandens', latin:'Philodendron hederaceum', category:'Aroid'},
+  {name:'Philodendron Birkin', latin:'Philodendron Birkin', category:'Aroid'},
+  {name:'Philodendron Pink Princess', latin:'Philodendron erubescens', category:'Aroid'},
+  {name:'Philodendron Micans', latin:'Philodendron hederaceum var. micans', category:'Aroid'},
+  {name:'Fensterblatt', latin:'Monstera deliciosa', category:'Aroid'},
+  {name:'Anthurium', latin:'Anthurium andraeanum', category:'Aroid'},
+  {name:'Anthurium Crystallinum', latin:'Anthurium crystallinum', category:'Aroid (selten)'},
+  {name:'Anthurium Warocqueanum', latin:'Anthurium warocqueanum', category:'Aroid (selten)'},
+  {name:'Alocasia Amazonica', latin:'Alocasia x amazonica', category:'Aroid'},
+  {name:'Alocasia Zebrina', latin:'Alocasia zebrina', category:'Aroid'},
+  {name:'Alocasia Frydek', latin:'Alocasia micholitziana', category:'Aroid (selten)'},
+  {name:'Caladium', latin:'Caladium bicolor', category:'Aroid'},
+  {name:'Zimmercalla', latin:'Zantedeschia aethiopica', category:'Aroid'},
+  {name:'Einblatt', latin:'Spathiphyllum wallisii', category:'Aroid'},
+  {name:'Flamingoblume', latin:'Anthurium scherzerianum', category:'Aroid'},
+  {name:'Fensterblatt Adansonii', latin:'Monstera adansonii', category:'Aroid'},
+  {name:'Syngonium', latin:'Syngonium podophyllum', category:'Aroid'},
+  {name:'Bogenhanf', latin:'Dracaena trifasciata', category:'Sukkulente'},
+  {name:'Elefantenfuß', latin:'Beaucarnea recurvata', category:'Sukkulente'},
+  {name:'Geldbaum', latin:'Crassula ovata', category:'Sukkulente'},
+  {name:'Aloe Vera', latin:'Aloe vera', category:'Sukkulente'},
+  {name:'Echeveria', latin:'Echeveria elegans', category:'Sukkulente'},
+  {name:'Haworthia', latin:'Haworthia fasciata', category:'Sukkulente'},
+  {name:'Schlangenpflanze', latin:'Dracaena trifasciata', category:'Sukkulente'},
+  {name:'Wüstenrose', latin:'Adenium obesum', category:'Sukkulente'},
+  {name:'Fensterblatt Kaktus', latin:'Epiphyllum', category:'Kaktus'},
+  {name:'Weihnachtskaktus', latin:'Schlumbergera', category:'Kaktus'},
+  {name:'Opuntie', latin:'Opuntia microdasys', category:'Kaktus'},
+  {name:'Säulenkaktus', latin:'Cereus peruvianus', category:'Kaktus'},
+  {name:'Gummibaum', latin:'Ficus elastica', category:'Ficus'},
+  {name:'Birkenfeige', latin:'Ficus benjamina', category:'Ficus'},
+  {name:'Geigenfeige', latin:'Ficus lyrata', category:'Ficus'},
+  {name:'Zwergfeige', latin:'Ficus pumila', category:'Ficus'},
+  {name:'Ficus Audrey', latin:'Ficus benghalensis', category:'Ficus'},
+  {name:'Drachenbaum', latin:'Dracaena marginata', category:'Grünpflanze'},
+  {name:'Glücksfeder', latin:'Zamioculcas zamiifolia', category:'Grünpflanze'},
+  {name:'Yuccapalme', latin:'Yucca elephantipes', category:'Palme'},
+  {name:'Zimmerpalme', latin:'Howea forsteriana', category:'Palme'},
+  {name:'Areca-Palme', latin:'Dypsis lutescens', category:'Palme'},
+  {name:'Bananenpflanze', latin:'Musa acuminata', category:'Grünpflanze'},
+  {name:'Baumfreund', latin:'Philodendron hederaceum', category:'Aroid'},
+  {name:'Grünlilie', latin:'Chlorophytum comosum', category:'Grünpflanze'},
+  {name:'Efeu', latin:'Hedera helix', category:'Rankpflanze'},
+  {name:'Herzblatt-Philodendron', latin:'Philodendron cordatum', category:'Aroid'},
+  {name:'Zebrapflanze', latin:'Calathea zebrina', category:'Calathea'},
+  {name:'Korbmarante', latin:'Calathea ornata', category:'Calathea'},
+  {name:'Calathea Orbifolia', latin:'Calathea orbifolia', category:'Calathea'},
+  {name:'Calathea Medaillon', latin:'Calathea roseopicta', category:'Calathea'},
+  {name:'Ctenanthe', latin:'Ctenanthe burle-marxii', category:'Calathea'},
+  {name:'Stromanthe', latin:'Stromanthe sanguinea', category:'Calathea'},
+  {name:'Pfeilwurz', latin:'Maranta leuconeura', category:'Calathea'},
+  {name:'Pilea Peperomioides', latin:'Pilea peperomioides', category:'Grünpflanze'},
+  {name:'Peperomia', latin:'Peperomia obtusifolia', category:'Grünpflanze'},
+  {name:'Fittonia', latin:'Fittonia albivenis', category:'Grünpflanze'},
+  {name:'Kaffeepflanze', latin:'Coffea arabica', category:'Grünpflanze'},
+  {name:'Baumfreundschaft', latin:'Aglaonema commutatum', category:'Aroid'},
+  {name:'Aglaonema', latin:'Aglaonema commutatum', category:'Aroid'},
+  {name:'Dieffenbachia', latin:'Dieffenbachia seguine', category:'Aroid'},
+  {name:'Schusterpalme', latin:'Aspidistra elatior', category:'Grünpflanze'},
+  {name:'Zimmerlinde', latin:'Sparrmannia africana', category:'Grünpflanze'},
+  {name:'Sternfarn', latin:'Asplenium nidus', category:'Farn'},
+  {name:'Nestfarn', latin:'Asplenium nidus', category:'Farn'},
+  {name:'Boston-Farn', latin:'Nephrolepis exaltata', category:'Farn'},
+  {name:'Frauenhaarfarn', latin:'Adiantum raddianum', category:'Farn'},
+  {name:'Geweihfarn', latin:'Platycerium bifurcatum', category:'Farn (selten)'},
+  {name:'Orchidee (Phalaenopsis)', latin:'Phalaenopsis', category:'Orchidee'},
+  {name:'Vanda-Orchidee', latin:'Vanda', category:'Orchidee'},
+  {name:'Bromelie', latin:'Guzmania', category:'Bromelie'},
+  {name:'Tillandsie', latin:'Tillandsia', category:'Bromelie'},
+  {name:'Ananas-Pflanze', latin:'Ananas comosus', category:'Bromelie'},
+  {name:'Hoya Carnosa', latin:'Hoya carnosa', category:'Rankpflanze'},
+  {name:'Hoya Kerrii', latin:'Hoya kerrii', category:'Rankpflanze'},
+  {name:'String of Pearls', latin:'Curio rowleyanus', category:'Sukkulente'},
+  {name:'String of Hearts', latin:'Ceropegia woodii', category:'Sukkulente'},
+  {name:'Kolibripflanze', latin:'Columnea', category:'Rankpflanze'},
+  {name:'Passionsblume', latin:'Passiflora caerulea', category:'Rankpflanze'},
+  {name:'Kap-Efeu', latin:'Senecio macroglossus', category:'Rankpflanze'},
+  {name:'Fensterblatt Rhaphidophora', latin:'Rhaphidophora tetrasperma', category:'Aroid'},
+  {name:'Mini Monstera', latin:'Rhaphidophora tetrasperma', category:'Aroid'},
+  {name:'Scindapsus Pictus', latin:'Scindapsus pictus', category:'Aroid (selten)'},
+  {name:'Anthurium Clarinervium', latin:'Anthurium clarinervium', category:'Aroid (selten)'},
+  {name:'Philodendron Melanochrysum', latin:'Philodendron melanochrysum', category:'Aroid (selten)'},
+  {name:'Philodendron Verrucosum', latin:'Philodendron verrucosum', category:'Aroid (selten)'},
+  {name:'Variegata Ficus', latin:'Ficus elastica Tineke', category:'Ficus (selten)'},
+  {name:'Alocasia Reginula (Black Velvet)', latin:'Alocasia reginula', category:'Aroid (selten)'},
+  {name:'Begonia Maculata', latin:'Begonia maculata', category:'Begonie'},
+  {name:'Begonia Rex', latin:'Begonia rex', category:'Begonie'},
+  {name:'Kroton', latin:'Codiaeum variegatum', category:'Grünpflanze'},
+  {name:'Fensterblatt Cissus', latin:'Cissus rhombifolia', category:'Rankpflanze'},
+  {name:'Kentia-Palme', latin:'Howea forsteriana', category:'Palme'},
+];
+
+function findPlantInDB(name){
+  const n = (name||'').trim().toLowerCase();
+  if(!n) return null;
+  return PLANT_DB.find(p => p.name.toLowerCase() === n) || null;
+}
+
+const STATUS_COLORS = {
+  'sehr gut':'#3F5D45','gut':'#7C9A7F','mittel':'#B8925A','schlecht':'#B5714A','krank':'#B4453F','wurzelt':'#7C9A7F'
+};
+
+function defaultState(){
+  return {
+    plants: [
+      {id:1, name:'Monstera Deliciosa', latin:'Monstera deliciosa', category:'Aroid', acquired:'2023-04-12', location:'Wohnzimmer', substrate:'Aroid-Mix', watering:'wöchentlich', repotted:'2024-03', status:'gut', notes:'Wächst schnell, braucht bald Rankhilfe'},
+      {id:2, name:'Efeutute', latin:'Epipremnum aureum', category:'Aroid', acquired:'2022-09-01', location:'Büro', substrate:'Standarderde', watering:'alle 10 Tage', repotted:'2023-11', status:'sehr gut', notes:''}
+    ],
+    cuttings: [
+      {id:1, name:'Monstera Ableger #1', type:'Ableger', origin:'eigene', ownPlantId:1, foreignSource:'', dateTaken:'2024-06-01', location:'Küche', substrate:'Wasser -> Erde', watering:'alle 4 Tage', status:'wurzelt', notes:'In Wasser bewurzelt seit 06/2024'},
+      {id:2, name:'Pilea Steckling', type:'Steckling', origin:'fremd', ownPlantId:null, foreignSource:'Von Lisa geschenkt', dateTaken:'2024-07-15', location:'Fensterbank', substrate:'Standarderde', watering:'alle 5 Tage', status:'gut', notes:''}
+    ]
+  };
+}
+
+function setSyncStatus(text, ok){
+  const el = document.getElementById('syncStatus');
+  if(el){
+    el.textContent = text;
+    el.style.color = ok ? 'var(--moss-light)' : 'var(--danger)';
+  }
+}
+
+async function initFirebase(){
+  return new Promise((resolve)=>{
+    onAuthStateChanged(auth, async (user)=>{
+      if(user){
+        currentUid = user.uid;
+        docRef = doc(db, 'users', currentUid, 'catalog', 'data');
+        await attachRealtimeSync();
+        resolve();
+      }
+    });
+    signInAnonymously(auth).catch((err)=>{
+      console.error('Anmeldung fehlgeschlagen', err);
+      setSyncStatus('Offline (Anmeldung fehlgeschlagen)', false);
+      state = defaultState();
+      resolve();
+    });
+  });
+}
+
+async function attachRealtimeSync(){
+  try{
+    const snap = await getDoc(docRef);
+    if(snap.exists()){
+      state = snap.data();
+    } else {
+      state = defaultState();
+      await setDoc(docRef, state);
+    }
+  }catch(e){
+    console.error('Erstladen fehlgeschlagen', e);
+    state = defaultState();
+    setSyncStatus('Offline — lokale Daten', false);
+  }
+
+  if(unsubscribeSnapshot) unsubscribeSnapshot();
+  unsubscribeSnapshot = onSnapshot(docRef, (snap)=>{
+    if(snap.exists()){
+      isRemoteUpdate = true;
+      state = snap.data();
+      render();
+      isRemoteUpdate = false;
+    }
+    setSyncStatus('Synchronisiert', true);
+  }, (err)=>{
+    console.error('Sync-Fehler', err);
+    setSyncStatus('Offline — lokale Daten', false);
+  });
+}
+
+async function saveState(){
+  if(isRemoteUpdate) return;
+  if(!docRef){ return; }
+  clearTimeout(saveTimer);
+  return new Promise((resolve)=>{
+    saveTimer = setTimeout(async ()=>{
+      try{
+        await setDoc(docRef, state);
+        setSyncStatus('Synchronisiert', true);
+      }catch(e){
+        console.error('Speichern fehlgeschlagen', e);
+        setSyncStatus('Offline — Änderung nicht gespeichert', false);
+      }
+      resolve();
+    }, 300);
+  });
+}
+
+async function loadState(){
+  setSyncStatus('Verbinde…', true);
+  await initFirebase();
+}
+
+function nextId(list){ return list.length ? Math.max(...list.map(x=>x.id))+1 : 1; }
+
+function setTab(tab){
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  document.getElementById('searchInput').placeholder = tab==='plants' ? 'Pflanzen suchen…' : 'Ableger & Stecklinge suchen…';
+  document.getElementById('searchInput').value='';
+  render();
+}
+
+function statusDot(status){
+  const color = STATUS_COLORS[status] || '#9a9a90';
+  return `<span class="status-dot" style="background:${color}"></span>`;
+}
+
+function render(){
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  document.getElementById('tabCountPlants').textContent = state.plants.length ? `(${state.plants.length})` : '';
+  document.getElementById('tabCountCuttings').textContent = state.cuttings.length ? `(${state.cuttings.length})` : '';
+  document.getElementById('headerCount').textContent = `${state.plants.length} Pflanzen · ${state.cuttings.length} Ableger/Stecklinge`;
+
+  const content = document.getElementById('content');
+  if(currentTab==='plants'){
+    const items = state.plants.filter(p => !q || (p.name+p.latin+p.category+p.location).toLowerCase().includes(q));
+    if(items.length===0){
+      content.innerHTML = emptyState('Noch keine Pflanzen', 'Füge deine erste Pflanze hinzu, um loszulegen.');
+      return;
+    }
+    content.innerHTML = `<div class="grid">${items.map(plantCard).join('')}</div>`;
+  } else {
+    const items = state.cuttings.filter(c => !q || (c.name+c.type+(c.foreignSource||'')+c.location).toLowerCase().includes(q));
+    if(items.length===0){
+      content.innerHTML = emptyState('Noch keine Ableger', 'Erfasse Ableger, Stecklinge oder Sämlinge und verlinke sie mit deinen Pflanzen.');
+      return;
+    }
+    content.innerHTML = `<div class="grid">${items.map(cuttingCard).join('')}</div>`;
+  }
+}
+
+function emptyState(title, sub){
+  return `<div class="empty"><div class="serif">${title}</div><div>${sub}</div></div>`;
+}
+
+function plantCard(p){
+  return `<div class="card" onclick="openModal('plants', ${p.id})">
+    <div class="name">${escapeHtml(p.name)}</div>
+    <div class="latin">${escapeHtml(p.latin||'')}</div>
+    <span class="badge">${escapeHtml(p.category||'—')}</span>
+    <div class="meta-row">
+      <span>${statusDot(p.status)}${escapeHtml(p.status||'—')}</span>
+      <span>${escapeHtml(p.location||'')}</span>
+    </div>
+  </div>`;
+}
+
+function cuttingCard(c){
+  const originLabel = c.origin==='eigene'
+    ? `von: ${escapeHtml(getPlantName(c.ownPlantId) || '—')}`
+    : `von: ${escapeHtml(c.foreignSource || 'fremd')}`;
+  return `<div class="card" onclick="openModal('cuttings', ${c.id})">
+    <div class="name">${escapeHtml(c.name)}</div>
+    <div class="latin">${escapeHtml(c.type||'')}</div>
+    <span class="badge ${c.origin==='fremd'?'clay':''}">${c.origin==='eigene'?'Eigene Pflanze':'Fremde Pflanze'}</span>
+    <div class="meta-row">
+      <span>${statusDot(c.status)}${escapeHtml(c.status||'—')}</span>
+      <span>${originLabel}</span>
+    </div>
+  </div>`;
+}
+
+function getPlantName(id){
+  const p = state.plants.find(x=>x.id===id);
+  return p ? p.name : null;
+}
+
+function escapeHtml(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ---------- Modal ---------- */
+
+function openModal(type, id){
+  const tab = type || currentTab;
+  editingId = id || null;
+  const overlay = document.getElementById('overlay');
+  const box = document.getElementById('modalBox');
+  overlay.classList.add('show');
+
+  if(tab==='plants'){
+    const p = editingId ? state.plants.find(x=>x.id===editingId) : {};
+    box.innerHTML = plantForm(p||{});
+  } else {
+    const c = editingId ? state.cuttings.find(x=>x.id===editingId) : {};
+    box.innerHTML = cuttingForm(c||{});
+    updateOwnPlantVisibility((c&&c.origin) || 'eigene');
+  }
+  document.getElementById('overlay').onclick = (e)=>{ if(e.target.id==='overlay') closeModal(); };
+}
+
+function closeModal(){
+  document.getElementById('overlay').classList.remove('show');
+  editingId = null;
+}
+
+function plantForm(p){
+  return `
+    <h2>${editingId ? 'Pflanze bearbeiten' : 'Neue Pflanze'}</h2>
+    <p class="modal-sub">Deine Hauptpflanze im Bestand.</p>
+    <div class="field">
+      <label>Pflanzenname</label>
+      <input id="f_name" list="plantSpeciesList" value="${escapeHtml(p.name)}" placeholder="Tippen für Vorschläge oder frei eingeben" oninput="onPlantNameInput()" autocomplete="off">
+      <datalist id="plantSpeciesList">
+        ${PLANT_DB.map(sp=>`<option value="${escapeHtml(sp.name)}">`).join('')}
+      </datalist>
+      <div class="err" id="err_name">Bitte einen Namen eingeben.</div>
+      <div class="hint" id="dbHint" style="display:none;">Aus der Datenbank übernommen — botanischer Name und Kategorie kannst du unten jederzeit anpassen.</div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Botanischer Name</label><input id="f_latin" value="${escapeHtml(p.latin)}" placeholder="z. B. Monstera deliciosa"></div>
+      <div class="field"><label>Kategorie</label><input id="f_category" value="${escapeHtml(p.category)}" placeholder="z. B. Zimmerpflanze"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Erwerbsdatum</label><input type="date" id="f_acquired" value="${p.acquired||''}"></div>
+      <div class="field"><label>Standort</label><input id="f_location" value="${escapeHtml(p.location)}" placeholder="z. B. Wohnzimmer"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Substrat</label><input id="f_substrate" value="${escapeHtml(p.substrate)}" placeholder="z. B. Aroid-Mix"></div>
+      <div class="field"><label>Gießrhythmus</label><input id="f_watering" value="${escapeHtml(p.watering)}" placeholder="z. B. wöchentlich"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Letzte Umtopfung</label><input id="f_repotted" value="${escapeHtml(p.repotted)}" placeholder="z. B. 2024-03"></div>
+      <div class="field"><label>Zustand</label>
+        <select id="f_status">
+          ${['sehr gut','gut','mittel','schlecht','krank'].map(s=>`<option value="${s}" ${p.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Notizen</label><textarea id="f_notes" placeholder="Besonderheiten, Pflegehinweise…">${escapeHtml(p.notes)}</textarea></div>
+    <div class="modal-actions">
+      <div>${editingId ? `<button class="btn danger" onclick="deleteItem('plants', ${editingId})">Löschen</button>` : ''}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn ghost" onclick="closeModal()">Abbrechen</button>
+        <button class="btn" onclick="savePlant()">Speichern</button>
+      </div>
+    </div>
+  `;
+}
+
+function cuttingForm(c){
+  const origin = c.origin || 'eigene';
+  const plantOptions = state.plants.map(p=>`<option value="${p.id}" ${c.ownPlantId===p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('');
+  return `
+    <h2>${editingId ? 'Ableger bearbeiten' : 'Neuer Ableger / Steckling'}</h2>
+    <p class="modal-sub">Verknüpfe ihn mit einer eigenen Pflanze oder gib eine externe Quelle an.</p>
+    <div class="field">
+      <label>Name</label>
+      <input id="c_name" list="plantSpeciesList" value="${escapeHtml(c.name)}" placeholder="z. B. Monstera Ableger #1" autocomplete="off">
+      <datalist id="plantSpeciesList">
+        ${PLANT_DB.map(sp=>`<option value="${escapeHtml(sp.name)}">`).join('')}
+      </datalist>
+      <div class="err" id="err_c_name">Bitte einen Namen eingeben.</div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Typ</label>
+        <select id="c_type">
+          ${['Ableger','Steckling','Samen'].map(t=>`<option value="${t}" ${c.type===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Datum genommen</label><input type="date" id="c_date" value="${c.dateTaken||''}"></div>
+    </div>
+    <div class="field">
+      <label>Herkunft</label>
+      <div class="toggle-group">
+        <div class="toggle-opt ${origin==='eigene'?'active':''}" id="opt_eigene" onclick="updateOwnPlantVisibility('eigene')">Eigene Pflanze</div>
+        <div class="toggle-opt ${origin==='fremd'?'active clay':''}" id="opt_fremd" onclick="updateOwnPlantVisibility('fremd')">Fremde Pflanze</div>
+      </div>
+    </div>
+    <div class="field" id="field_own">
+      <label>Von welcher eigenen Pflanze?</label>
+      ${state.plants.length ? `<select id="c_ownPlant">${plantOptions}</select>` : `<div class="hint">Du hast noch keine Pflanzen im Bestand. Lege zuerst eine Pflanze im Tab "Pflanzen" an.</div>`}
+    </div>
+    <div class="field" id="field_foreign" style="display:none;">
+      <label>Quelle (Person, Shop, Tausch…)</label>
+      <input id="c_foreign" value="${escapeHtml(c.foreignSource)}" placeholder="z. B. Von Lisa geschenkt">
+    </div>
+    <div class="row2">
+      <div class="field"><label>Standort</label><input id="c_location" value="${escapeHtml(c.location)}" placeholder="z. B. Fensterbank"></div>
+      <div class="field"><label>Substrat</label><input id="c_substrate" value="${escapeHtml(c.substrate)}" placeholder="z. B. Wasser -> Erde"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Gießrhythmus</label><input id="c_watering" value="${escapeHtml(c.watering)}" placeholder="z. B. alle 4 Tage"></div>
+      <div class="field"><label>Zustand</label>
+        <select id="c_status">
+          ${['wurzelt','sehr gut','gut','mittel','schlecht','krank'].map(s=>`<option value="${s}" ${c.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Notizen</label><textarea id="c_notes" placeholder="z. B. Bewurzelungsfortschritt…">${escapeHtml(c.notes)}</textarea></div>
+    <div class="modal-actions">
+      <div>${editingId ? `<button class="btn danger" onclick="deleteItem('cuttings', ${editingId})">Löschen</button>` : ''}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn ghost" onclick="closeModal()">Abbrechen</button>
+        <button class="btn" onclick="saveCutting()">Speichern</button>
+      </div>
+    </div>
+  `;
+}
+
+function updateOwnPlantVisibility(origin){
+  const optEigene = document.getElementById('opt_eigene');
+  const optFremd = document.getElementById('opt_fremd');
+  if(optEigene && optFremd){
+    optEigene.classList.toggle('active', origin==='eigene');
+    optFremd.classList.toggle('active', origin==='fremd');
+    optFremd.classList.toggle('clay', origin==='fremd');
+    optEigene.dataset.origin = origin;
+  }
+  const fieldOwn = document.getElementById('field_own');
+  const fieldForeign = document.getElementById('field_foreign');
+  if(fieldOwn && fieldForeign){
+    fieldOwn.style.display = origin==='eigene' ? 'block' : 'none';
+    fieldForeign.style.display = origin==='fremd' ? 'block' : 'none';
+  }
+  window._currentOrigin = origin;
+}
+
+function onPlantNameInput(){
+  const nameField = document.getElementById('f_name');
+  const match = findPlantInDB(nameField.value);
+  const hint = document.getElementById('dbHint');
+  if(match){
+    const latinField = document.getElementById('f_latin');
+    const catField = document.getElementById('f_category');
+    latinField.value = match.latin;
+    catField.value = match.category;
+    hint.style.display = 'block';
+  } else {
+    hint.style.display = 'none';
+  }
+}
+
+async function savePlant(){
+  const name = document.getElementById('f_name').value.trim();
+  if(!name){ document.getElementById('err_name').classList.add('show'); return; }
+  document.getElementById('err_name').classList.remove('show');
+
+  const data = {
+    name,
+    latin: document.getElementById('f_latin').value.trim(),
+    category: document.getElementById('f_category').value.trim(),
+    acquired: document.getElementById('f_acquired').value,
+    location: document.getElementById('f_location').value.trim(),
+    substrate: document.getElementById('f_substrate').value.trim(),
+    watering: document.getElementById('f_watering').value.trim(),
+    repotted: document.getElementById('f_repotted').value.trim(),
+    status: document.getElementById('f_status').value,
+    notes: document.getElementById('f_notes').value.trim(),
+  };
+
+  if(editingId){
+    const idx = state.plants.findIndex(x=>x.id===editingId);
+    state.plants[idx] = {...state.plants[idx], ...data};
+  } else {
+    data.id = nextId(state.plants);
+    state.plants.push(data);
+  }
+  await saveState();
+  closeModal();
+  render();
+}
+
+async function saveCutting(){
+  const name = document.getElementById('c_name').value.trim();
+  if(!name){ document.getElementById('err_c_name').classList.add('show'); return; }
+  document.getElementById('err_c_name').classList.remove('show');
+
+  const origin = window._currentOrigin || 'eigene';
+  const ownSelect = document.getElementById('c_ownPlant');
+
+  const data = {
+    name,
+    type: document.getElementById('c_type').value,
+    dateTaken: document.getElementById('c_date').value,
+    origin,
+    ownPlantId: origin==='eigene' && ownSelect ? parseInt(ownSelect.value) : null,
+    foreignSource: origin==='fremd' ? document.getElementById('c_foreign').value.trim() : '',
+    location: document.getElementById('c_location').value.trim(),
+    substrate: document.getElementById('c_substrate').value.trim(),
+    watering: document.getElementById('c_watering').value.trim(),
+    status: document.getElementById('c_status').value,
+    notes: document.getElementById('c_notes').value.trim(),
+  };
+
+  if(editingId){
+    const idx = state.cuttings.findIndex(x=>x.id===editingId);
+    state.cuttings[idx] = {...state.cuttings[idx], ...data};
+  } else {
+    data.id = nextId(state.cuttings);
+    state.cuttings.push(data);
+  }
+  await saveState();
+  closeModal();
+  render();
+}
+
+async function deleteItem(type, id){
+  state[type] = state[type].filter(x=>x.id!==id);
+  await saveState();
+  closeModal();
+  render();
+}
+
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+
+// Module-Scope ist standardmäßig nicht global — die im HTML per onclick="..."
+// aufgerufenen Funktionen müssen explizit an window gehängt werden.
+window.setTab = setTab;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.savePlant = savePlant;
+window.saveCutting = saveCutting;
+window.deleteItem = deleteItem;
+window.updateOwnPlantVisibility = updateOwnPlantVisibility;
+window.onPlantNameInput = onPlantNameInput;
+window.render = render;
+
+loadState().then(render);
+</script>
+</body>
+</html>
