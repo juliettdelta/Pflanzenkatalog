@@ -5,112 +5,152 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pflanzenkatalog</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#F6F2EA;
-    --paper-2:#EFE9DC;
-    --ink:#2A3527;
-    --ink-soft:#5B6653;
-    --moss:#3F5D45;
-    --moss-light:#7C9A7F;
-    --moss-pale:#E1E9DC;
-    --clay:#B5714A;
-    --clay-pale:#F1E1D3;
-    --gold:#B8925A;
-    --line:#DDD5C3;
-    --white:#FFFDF9;
-    --danger:#B4453F;
+    /* Mid-Century-Palette in gedeckten Tönen: warmes Oatmeal, gebranntes Terrakotta,
+       gedämpftes Petrol/Teal, Senfgelb — statt der vorherigen frischen Moos/Ton-Töne. */
+    --paper:#E9E0CB;
+    --paper-2:#DDD0AC;
+    --ink:#33291F;
+    --ink-soft:#7A6952;
+    --moss:#3E6B69;
+    --moss-light:#74A39D;
+    --moss-pale:#D9E6E1;
+    --clay:#BC5B3B;
+    --clay-pale:#EFD7C3;
+    --gold:#C6963A;
+    --line:#CBB88F;
+    --white:#FBF5E8;
+    --danger:#A8452F;
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
     background:var(--paper);
     color:var(--ink);
-    font-family:'Inter',sans-serif;
+    font-family:'Poppins',sans-serif;
     -webkit-font-smoothing:antialiased;
   }
   h1,h2,h3,.serif{font-family:'Fraunces',serif;}
   .app{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
 
   .top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:0.25rem;flex-wrap:wrap;}
-  .top h1{font-size:32px;font-weight:500;margin:0;color:var(--moss);letter-spacing:-0.01em;}
+  .top h1{font-size:32px;font-weight:600;margin:0;color:var(--ink);letter-spacing:-0.01em;}
   .top .count{font-size:13px;color:var(--ink-soft);}
   .sub{color:var(--ink-soft);font-size:14px;margin:0 0 1.75rem;max-width:520px;line-height:1.5;}
 
-  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:1.5rem;}
+  .tabs{display:flex;gap:8px;border-bottom:2px solid var(--line);margin-bottom:1.5rem;padding-bottom:10px;flex-wrap:wrap;}
   .tab{
-    padding:10px 4px;margin-right:22px;background:none;border:none;cursor:pointer;
-    font-family:'Inter',sans-serif;font-size:14.5px;font-weight:500;color:var(--ink-soft);
-    border-bottom:2px solid transparent;position:relative;top:1px;
+    padding:9px 16px;margin-right:0;background:var(--white);border:1.5px solid var(--line);border-radius:8px;cursor:pointer;
+    font-family:'Poppins',sans-serif;font-size:14px;font-weight:500;color:var(--ink-soft);
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
   }
-  .tab.active{color:var(--moss);border-bottom-color:var(--moss);}
-  .tab .n{color:var(--ink-soft);font-weight:400;margin-left:4px;}
+  .tab:hover{border-color:var(--moss-light);color:var(--moss);}
+  .tab.active{background:var(--moss);color:var(--white);border-color:var(--moss);}
+  .tab .n{color:inherit;font-weight:400;margin-left:4px;opacity:0.8;}
 
   .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:1.25rem;flex-wrap:wrap;}
   .search{
-    flex:1;min-width:180px;background:var(--white);border:1px solid var(--line);border-radius:8px;
-    padding:9px 12px;font-size:14px;color:var(--ink);font-family:'Inter',sans-serif;
+    flex:1;min-width:180px;background:var(--white);border:1.5px solid var(--line);border-radius:7px;
+    padding:9px 12px;font-size:14px;color:var(--ink);font-family:'Poppins',sans-serif;
   }
-  .search:focus{outline:none;border-color:var(--moss-light);}
+  .search:focus{outline:none;border-color:var(--moss);}
   .btn{
     display:inline-flex;align-items:center;gap:6px;background:var(--moss);color:var(--white);
-    border:none;border-radius:8px;padding:9px 16px;font-size:14px;font-weight:500;cursor:pointer;
-    font-family:'Inter',sans-serif;white-space:nowrap;
+    border:1.5px solid var(--ink);border-radius:7px;padding:9px 16px;font-size:14px;font-weight:500;cursor:pointer;
+    font-family:'Poppins',sans-serif;white-space:nowrap;
+    box-shadow:3px 3px 0 var(--ink);transition:transform .1s ease, box-shadow .1s ease, background .15s ease;
   }
-  .btn:hover{background:#345038;}
-  .btn.ghost{background:transparent;color:var(--moss);border:1px solid var(--moss-light);}
-  .btn.ghost:hover{background:var(--moss-pale);}
-  .btn.danger{background:transparent;color:var(--danger);border:1px solid #E3C6C3;}
-  .btn.danger:hover{background:#FBECEA;}
+  .btn:hover{background:#2E5654;transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink);}
+  .btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink);}
+  .btn.ghost{background:var(--white);color:var(--moss);border:1.5px solid var(--moss-light);box-shadow:2px 2px 0 var(--line);}
+  .btn.ghost:hover{background:var(--moss-pale);transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--line);}
+  .btn.ghost:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--line);}
+  .btn.danger{background:var(--white);color:var(--danger);border:1.5px solid #DCB6A8;box-shadow:2px 2px 0 #DCB6A8;}
+  .btn.danger:hover{background:#F6E6DD;transform:translate(-1px,-1px);box-shadow:3px 3px 0 #DCB6A8;}
+  .btn.danger:active{transform:translate(1px,1px);box-shadow:1px 1px 0 #DCB6A8;}
+
+  .toolbar-controls{margin-top:-6px;}
+  .control-group{display:flex;gap:8px;flex-wrap:wrap;flex:1;}
+  .control-select{
+    background:var(--white);border:1.5px solid var(--line);border-radius:7px;
+    padding:7px 10px;font-size:13px;color:var(--ink);font-family:'Poppins',sans-serif;cursor:pointer;
+  }
+  .control-select:focus{outline:none;border-color:var(--moss);}
+  .view-toggle{display:flex;border:1.5px solid var(--ink);border-radius:7px;overflow:hidden;flex-shrink:0;}
+  .view-btn{
+    background:var(--white);border:none;padding:7px 12px;font-size:15px;cursor:pointer;color:var(--ink-soft);
+    border-left:1.5px solid var(--ink);
+  }
+  .view-btn:first-child{border-left:none;}
+  .view-btn.active{background:var(--moss-pale);color:var(--moss);}
+
+  .list-row{
+    display:flex;align-items:center;gap:14px;background:var(--white);border:1.5px solid var(--ink);
+    border-radius:8px;padding:11px 16px;cursor:pointer;
+    transition:transform .1s ease, box-shadow .1s ease;box-shadow:3px 3px 0 var(--line);
+  }
+  .list-row:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--moss-light);}
+  .list-row + .list-row{margin-top:8px;}
+  .list-row .name{font-size:15px;font-weight:500;margin:0;flex:1;min-width:120px;}
+  .list-row .latin{font-style:italic;color:var(--ink-soft);font-size:12.5px;flex:1;min-width:100px;}
+  .list-row .list-meta{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink-soft);flex-wrap:wrap;justify-content:flex-end;}
 
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
 
   .card{
-    background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px 18px;
-    cursor:pointer;transition:border-color .15s ease;position:relative;
+    background:var(--white);border:1.5px solid var(--ink);border-radius:10px;padding:16px 18px;
+    cursor:pointer;transition:transform .1s ease, box-shadow .1s ease;
+    position:relative;box-shadow:4px 4px 0 var(--line);
   }
-  .card:hover{border-color:var(--moss-light);}
+  .card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--moss-light);}
   .card .name{font-size:17px;font-weight:500;margin:0 0 2px;color:var(--ink);}
   .card .latin{font-style:italic;color:var(--ink-soft);font-size:13px;margin:0 0 12px;}
   .badge{
-    display:inline-block;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;
-    background:var(--moss-pale);color:var(--moss);margin-right:6px;
+    display:inline-block;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:4px;
+    background:var(--moss-pale);color:var(--moss);margin-right:6px;border:1px solid transparent;
+    text-transform:uppercase;letter-spacing:0.03em;
   }
   .badge.clay{background:var(--clay-pale);color:var(--clay);}
-  .meta-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-soft);margin-top:12px;padding-top:10px;border-top:1px solid var(--line);}
-  .status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;position:relative;top:-1px;}
+  .badge.gold{background:#F3E9D8;color:var(--gold);}
+  .badge.muted{background:var(--paper-2);color:var(--ink-soft);}
+  .badge.success{background:var(--moss);color:var(--white);}
+  .meta-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-soft);margin-top:12px;padding-top:10px;border-top:1.5px solid var(--line);}
+  .status-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;position:relative;top:-1px;}
 
   .empty{
     text-align:center;padding:4rem 1rem;color:var(--ink-soft);
   }
+  .empty .empty-icon{font-size:38px;line-height:1;margin-bottom:12px;opacity:0.55;}
   .empty .serif{font-size:20px;color:var(--moss);margin-bottom:6px;}
 
   /* Modal */
   .overlay{
-    position:fixed;inset:0;background:rgba(42,53,39,0.35);display:none;
+    position:fixed;inset:0;background:rgba(51,41,31,0.4);display:none;
     align-items:flex-start;justify-content:center;padding:4vh 16px;overflow-y:auto;z-index:50;
   }
   .overlay.show{display:flex;}
   .modal{
-    background:var(--paper);border-radius:16px;max-width:520px;width:100%;
-    padding:1.75rem 1.75rem 1.5rem;box-shadow:0 20px 60px rgba(0,0,0,0.18);margin-top:2vh;
+    background:var(--paper);border-radius:12px;max-width:520px;width:100%;border:2px solid var(--ink);
+    padding:1.75rem 1.75rem 1.5rem;box-shadow:8px 8px 0 var(--clay);margin-top:2vh;
   }
-  .modal h2{margin:0 0 4px;font-size:22px;font-weight:500;color:var(--moss);}
+  .modal h2{margin:0 0 4px;font-size:22px;font-weight:600;color:var(--ink);}
   .modal .modal-sub{font-size:13px;color:var(--ink-soft);margin:0 0 20px;}
   .field{margin-bottom:14px;}
   .field label{display:block;font-size:12.5px;font-weight:500;color:var(--ink-soft);margin-bottom:5px;}
   .field input, .field select, .field textarea{
-    width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;
-    font-family:'Inter',sans-serif;font-size:14px;background:var(--white);color:var(--ink);
+    width:100%;padding:9px 11px;border:1.5px solid var(--line);border-radius:6px;
+    font-family:'Poppins',sans-serif;font-size:14px;background:var(--white);color:var(--ink);
   }
-  .field input:focus, .field select:focus, .field textarea:focus{outline:none;border-color:var(--moss-light);}
+  .field input:focus, .field select:focus, .field textarea:focus{outline:none;border-color:var(--moss);}
   .field textarea{resize:vertical;min-height:60px;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .toggle-group{display:flex;gap:8px;}
   .toggle-opt{
-    flex:1;text-align:center;padding:9px;border:1px solid var(--line);border-radius:8px;
+    flex:1;text-align:center;padding:9px;border:1.5px solid var(--line);border-radius:6px;
     cursor:pointer;font-size:13.5px;color:var(--ink-soft);font-weight:500;background:var(--white);
+    transition:transform .1s ease;
   }
   .toggle-opt.active{background:var(--moss);color:var(--white);border-color:var(--moss);}
   .toggle-opt.active.clay{background:var(--clay);border-color:var(--clay);}
@@ -118,6 +158,70 @@
   .err{color:var(--danger);font-size:12.5px;margin-top:4px;display:none;}
   .err.show{display:block;}
   .hint{font-size:12px;color:var(--ink-soft);margin-top:14px;padding:10px 12px;background:var(--moss-pale);border-radius:8px;}
+
+  .daily-banner{
+    display:flex;align-items:flex-start;gap:12px;background:var(--clay-pale);border:1.5px solid #D9B48F;
+    border-radius:10px;padding:14px 16px;margin-bottom:1.5rem;
+  }
+  .daily-banner .icon{color:var(--clay);font-size:20px;line-height:1;margin-top:1px;}
+  .daily-banner .title{font-weight:500;color:var(--clay);font-size:14px;margin:0 0 4px;}
+  .daily-banner .items{display:flex;flex-wrap:wrap;gap:6px;}
+  .daily-chip{
+    background:var(--white);border:1px solid #D9B48F;color:var(--clay);font-size:12.5px;
+    padding:4px 10px;border-radius:20px;cursor:pointer;font-weight:500;
+  }
+  .daily-chip:hover{background:var(--clay-pale);}
+
+  .storage-warning{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    background:#F6E6DD;border:1.5px solid #DCB6A8;border-radius:10px;padding:12px 16px;margin-bottom:1.5rem;
+  }
+  .storage-warning p{margin:0;font-size:13px;color:var(--danger);}
+  .storage-warning p strong{font-weight:600;}
+
+  .fert-section{border-top:1px solid var(--line);margin-top:18px;padding-top:16px;}
+  .fert-heading{display:block;font-size:14px;font-weight:600;color:var(--moss);margin-bottom:8px;}
+  .fert-log{margin:10px 0;display:flex;flex-direction:column;gap:6px;max-height:140px;overflow-y:auto;}
+  .fert-log-entry{
+    display:flex;gap:10px;align-items:baseline;font-size:12.5px;color:var(--ink-soft);
+    background:var(--white);border:1.5px solid var(--line);border-radius:6px;padding:6px 10px;
+  }
+  .fert-log-date{font-weight:600;color:var(--ink);white-space:nowrap;}
+  .fert-log-product{color:var(--clay);white-space:nowrap;}
+  .fert-log-note{flex:1;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .log-delete-btn{
+    flex-shrink:0;margin-left:auto;background:none;border:none;color:var(--ink-soft);
+    font-size:15px;line-height:1;cursor:pointer;padding:2px 4px;border-radius:4px;
+  }
+  .log-delete-btn:hover{background:var(--clay-pale);color:var(--danger);}
+  .fert-add-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;}
+  @media (max-width:520px){
+    .fert-add-row{grid-template-columns:1fr;}
+  }
+
+  .link-badge{background:var(--paper-2);color:var(--ink-soft);cursor:pointer;text-transform:none;letter-spacing:normal;font-weight:500;}
+  .link-badge:hover{background:var(--moss-pale);color:var(--moss);}
+
+  /* Mehrfachauswahl */
+  .select-check{
+    position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:4px;
+    border:2px solid var(--ink);background:var(--white);cursor:pointer;z-index:2;
+    padding:0;display:flex;align-items:center;justify-content:center;font-family:inherit;
+  }
+  .select-check:focus-visible{outline:2px solid var(--moss);outline-offset:2px;}
+  .select-check.checked{background:var(--moss);border-color:var(--moss);}
+  .select-check.checked::after{content:'✓';color:var(--white);font-size:13px;line-height:1;}
+  .list-row.selectable{position:relative;padding-left:44px;}
+  .list-row .select-check{left:12px;right:auto;top:50%;transform:translateY(-50%);}
+  .card.selectable{padding-top:34px;}
+  .bulk-bar{
+    display:none;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    background:var(--moss-pale);border:1.5px solid var(--moss);border-radius:8px;
+    padding:10px 14px;margin-bottom:1.25rem;
+  }
+  .bulk-bar.show{display:flex;}
+  .bulk-bar .bulk-count{font-size:13.5px;font-weight:500;color:var(--moss);}
+  .bulk-bar .bulk-actions{display:flex;gap:8px;flex-wrap:wrap;}
 
   @media (max-width:520px){
     .row2{grid-template-columns:1fr;}
@@ -130,19 +234,78 @@
   <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;">Pflanzenkatalog: verwalte deine Pflanzen und deren Ableger und Stecklinge, mit Herkunftsverfolgung.</h2>
 
   <div class="top">
-    <h1>Pflanzenkatalog</h1>
+    <h1>🪴 Pflanzenkatalog</h1>
     <span class="count" id="headerCount"></span>
   </div>
   <p class="sub">Deine Pflanzensammlung und alle Ableger, Stecklinge und Sämlinge an einem Ort. <span id="syncStatus" style="font-size:12px;font-weight:500;"></span></p>
 
+  <div id="storageWarning"></div>
+  <div id="dailyOverview"></div>
+
   <div class="tabs">
-    <button class="tab active" data-tab="plants" onclick="setTab('plants')">Pflanzen <span class="n" id="tabCountPlants"></span></button>
-    <button class="tab" data-tab="cuttings" onclick="setTab('cuttings')">Ableger &amp; Stecklinge <span class="n" id="tabCountCuttings"></span></button>
+    <button class="tab active" data-tab="plants" onclick="setTab('plants')">🌱 Pflanzen <span class="n" id="tabCountPlants"></span></button>
+    <button class="tab" data-tab="cuttings" onclick="setTab('cuttings')">🌿 Ableger &amp; Stecklinge <span class="n" id="tabCountCuttings"></span></button>
+    <button class="tab" data-tab="wishlist" onclick="setTab('wishlist')">⭐ Wunschliste <span class="n" id="tabCountWishlist"></span></button>
   </div>
 
   <div class="toolbar">
     <input class="search" id="searchInput" placeholder="Suchen…" oninput="render()">
+    <button class="btn ghost" id="selectModeBtn" onclick="toggleSelectionMode()">Auswählen</button>
+    <button class="btn ghost" id="exportBtn" onclick="exportData()">Exportieren</button>
+    <button class="btn ghost" id="importBtn" onclick="document.getElementById('importFileInput').click()">Importieren</button>
+    <input type="file" id="importFileInput" accept="application/json" style="display:none;" onchange="importDataFromFile(this)">
     <button class="btn" id="addBtn" onclick="openModal()">+ Neu</button>
+  </div>
+
+  <div class="bulk-bar" id="bulkBar">
+    <span class="bulk-count" id="bulkCount">0 ausgewählt</span>
+    <div class="bulk-actions">
+      <button class="btn ghost" id="bulkFertBtn" onclick="bulkMarkFertilized()">Als gedüngt markieren</button>
+      <button class="btn ghost" id="bulkWaterBtn" onclick="bulkMarkWatered()">Als gegossen markieren</button>
+      <button class="btn ghost" id="bulkFlushBtn" onclick="bulkMarkFlushed()">Als durchgespült markieren</button>
+      <button class="btn ghost" id="bulkPurchasedBtn" style="display:none;" onclick="bulkMarkPurchased()">Als gekauft markieren</button>
+      <button class="btn ghost" onclick="clearSelection()">Auswahl aufheben</button>
+    </div>
+  </div>
+
+  <div class="toolbar toolbar-controls">
+    <div class="control-group">
+      <select class="control-select" id="filterStatus" onchange="render()">
+        <option value="">Alle Zustände</option>
+        <option value="sehr gut">sehr gut</option>
+        <option value="gut">gut</option>
+        <option value="mittel">mittel</option>
+        <option value="schlecht">schlecht</option>
+        <option value="krank">krank</option>
+        <option value="wurzelt">wurzelt</option>
+      </select>
+      <select class="control-select" id="filterCategory" onchange="render()">
+        <option value="">Alle Kategorien</option>
+      </select>
+      <select class="control-select" id="filterOrigin" onchange="render()" style="display:none;">
+        <option value="">Eigene &amp; Fremde</option>
+        <option value="eigene">Nur eigene</option>
+        <option value="fremd">Nur fremde</option>
+      </select>
+      <select class="control-select" id="filterPriority" onchange="render()" style="display:none;">
+        <option value="">Alle Prioritäten</option>
+        <option value="Muss ich haben">Muss ich haben</option>
+        <option value="Sehr interessant">Sehr interessant</option>
+        <option value="Klingt interessant">Klingt interessant</option>
+        <option value="Irgendwann mal">Irgendwann mal</option>
+        <option value="Gekauft">Gekauft</option>
+      </select>
+      <select class="control-select" id="sortBy" onchange="render()">
+        <option value="name-asc">Name A–Z</option>
+        <option value="name-desc">Name Z–A</option>
+        <option value="status">Zustand</option>
+        <option value="location">Standort</option>
+      </select>
+    </div>
+    <div class="view-toggle">
+      <button class="view-btn active" id="viewGridBtn" onclick="setView('grid')" title="Kachelansicht">▦</button>
+      <button class="view-btn" id="viewListBtn" onclick="setView('list')" title="Listenansicht">☰</button>
+    </div>
   </div>
 
   <div id="content"></div>
@@ -150,6 +313,19 @@
 
 <div class="overlay" id="overlay">
   <div class="modal" id="modalBox"></div>
+</div>
+
+<div class="overlay" id="confirmOverlay">
+  <div class="modal" id="confirmBox" style="max-width:380px;">
+    <h2 id="confirmTitle" style="color:var(--danger);">Wirklich löschen?</h2>
+    <p class="modal-sub" id="confirmMessage"></p>
+    <div class="modal-actions" style="justify-content:flex-end;">
+      <div style="display:flex;gap:8px;">
+        <button class="btn ghost" onclick="closeConfirm()">Abbrechen</button>
+        <button class="btn danger" style="background:var(--danger);color:var(--white);border:none;" id="confirmDeleteBtn" onclick="runPendingDelete()">Löschen</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
@@ -175,9 +351,17 @@ let docRef = null;
 let unsubscribeSnapshot = null;
 let isRemoteUpdate = false;
 let saveTimer = null;
-let state = { plants: [], cuttings: [] };
+let state = { plants: [], cuttings: [], wishlist: [] };
 let currentTab = 'plants';
+let currentView = 'grid';
 let editingId = null;
+let selectionMode = false;
+let selectedIds = new Set();
+let filterParentType = null; // 'plant' | 'cutting' — gesetzt, wenn von "X Ableger" geklickt wird
+let filterParentId = null;
+let convertingWishlistId = null; // gesetzt während der Übernahme eines Wunsches in den Pflanzenkatalog
+
+const WISHLIST_PRIORITIES = ['Muss ich haben', 'Sehr interessant', 'Klingt interessant', 'Irgendwann mal', 'Gekauft'];
 
 // Artbezogene Referenzdatenbank gängiger und seltener Zimmerpflanzen.
 // Wird für Autovervollständigung genutzt — manuelle Eingabe bleibt jederzeit möglich.
@@ -284,8 +468,221 @@ function findPlantInDB(name){
   return PLANT_DB.find(p => p.name.toLowerCase() === n) || null;
 }
 
+const SUBSTRATE_OPTIONS = [
+  'Semi Hydro',
+  'Semi Hydro & Kokoschips 50/50',
+  'Perlit',
+  'Erdmix (Kokoserde/Pinienrinde/Perlit)',
+  'Sonstiges'
+];
+
+function isSemiHydro(substrate){
+  return (substrate||'').startsWith('Semi Hydro');
+}
+
+const SUBSTRATE_TIPS = {
+  'Semi Hydro': 'Reines Blähton-Substrat: Reservoir nie ganz voll lassen, Wurzeln sollen nicht dauerhaft im Wasser stehen. Regelmäßig auf Algenbildung im Wasserstand prüfen.',
+  'Semi Hydro & Kokoschips 50/50': 'Kokoschips puffern Feuchtigkeit etwas länger als reiner Blähton — Reservoir kann etwas länger leer bleiben, bevor wieder aufgefüllt wird.',
+  'Perlit': 'Sehr durchlässig, trocknet schnell. Kürzere Gießintervalle als bei Erde, dafür sehr wurzelfreundlich gegen Staunässe.',
+  'Erdmix (Kokoserde/Pinienrinde/Perlit)': 'Luftige Erdmischung — hält Feuchtigkeit etwas länger als reine Semi-Hydro-Systeme, gut für Arten die keine Staunässe aber auch keine komplette Austrocknung mögen.',
+};
+
+const CATEGORY_TIPS = {
+  'Aroid': 'Mag hohe Luftfeuchtigkeit und helles, indirektes Licht. Zwischen den Gießgängen leicht antrocknen lassen.',
+  'Aroid (selten)': 'Empfindlicher gegen Staunässe und trockene Luft als gängige Aroids — stabile Luftfeuchtigkeit (idealerweise >60%) und gleichmäßige Bedingungen sind wichtig.',
+  'Sukkulente': 'Braucht viel Licht und deutlich weniger Wasser — komplett durchtrocknen lassen zwischen den Gießgängen.',
+  'Kaktus': 'Sehr sonnig und sparsam gießen, vor allem im Winter fast trocken halten.',
+  'Ficus': 'Reagiert empfindlich auf Standortwechsel mit Blattfall. Gleichmäßig feucht halten, keine Staunässe.',
+  'Grünpflanze': 'Robust und anpassungsfähig — normale Zimmerbedingungen und mäßig feuchtes Substrat reichen meist aus.',
+  'Palme': 'Mag es hell und gleichmäßig feucht, verträgt keine kalte Zugluft.',
+  'Calathea': 'Sehr empfindlich gegenüber Kalk und trockener Luft — am besten mit destilliertem Wasser gießen und Luftfeuchtigkeit hochhalten.',
+  'Farn': 'Braucht durchgehend feuchtes Substrat und hohe Luftfeuchtigkeit, verträgt kein komplettes Austrocknen.',
+  'Farn (selten)': 'Epiphytisch wachsende Farne mögen es luftig und feucht, aber nicht nass — gut für montierte oder Semi-Hydro-Kultur geeignet.',
+  'Orchidee': 'Wurzeln brauchen Luft — nie dauerhaft im Wasser stehen, zwischen den Gießgängen abtrocknen lassen.',
+  'Bromelie': 'Wird oft über die Blattrosette (Trichter) statt über die Wurzeln gegossen.',
+  'Rankpflanze': 'Verträgt meist ein leichtes Antrocknen zwischen den Gießgängen, mag helle bis halbschattige Standorte.',
+  'Begonie': 'Mag gleichmäßige Feuchtigkeit, aber empfindlich gegen nasse Blätter — von unten oder am Rand gießen.',
+};
+
+const FERTILIZER_TIPS = {
+  'Aroid': 'Alle 2 Wochen in der Wachstumsphase (Frühling–Sommer), ca. 1–2 ml Canna Vega pro Liter. Im Winter aussetzen oder stark reduzieren.',
+  'Aroid (selten)': 'Empfindlicher als gängige Aroids — eher schwach dosieren (ca. 1 ml/L), dafür etwas häufiger (alle 10–14 Tage) in der Wachstumsphase.',
+  'Sukkulente': 'Sehr sparsam düngen: alle 4–6 Wochen mit stark verdünnter Lösung (ca. 0,5 ml Canna Vega pro Liter), nur in der Wachstumsphase.',
+  'Kaktus': 'Kaum Nährstoffbedarf — alle 6–8 Wochen mit sehr schwacher Lösung (ca. 0,5 ml/L), im Winter gar nicht düngen.',
+  'Ficus': 'Alle 2–3 Wochen mit ca. 1–2 ml Canna Vega pro Liter in der Wachstumsphase, im Winter pausieren.',
+  'Grünpflanze': 'Alle 2–3 Wochen mit ca. 1–2 ml Canna Vega pro Liter, robuste Standardpflanzen verzeihen auch mal eine Auslassung.',
+  'Palme': 'Alle 3 Wochen mit ca. 1–2 ml Canna Vega pro Liter, gleichmäßig übers Jahr mit reduzierter Menge im Winter.',
+  'Calathea': 'Empfindlich auf Überdüngung — alle 3–4 Wochen mit schwacher Lösung (ca. 1 ml/L), am besten mit kalkarmem Wasser.',
+  'Farn': 'Nährstoffbedarf gering — alle 4 Wochen mit schwacher Lösung (ca. 0,5–1 ml/L).',
+  'Farn (selten)': 'Wie epiphytische Farne generell: sehr schwach dosieren (ca. 0,5 ml/L), alle 4 Wochen in der Wachstumsphase.',
+  'Orchidee': 'Spezialdünger meist sinnvoller, alternativ Canna Vega stark verdünnt (ca. 0,5 ml/L) bei jeder zweiten Bewässerung.',
+  'Bromelie': 'Sehr sparsam über den Trichter düngen, alle 4–6 Wochen mit stark verdünnter Lösung (ca. 0,5 ml/L).',
+  'Rankpflanze': 'Alle 2–3 Wochen mit ca. 1–2 ml Canna Vega pro Liter in der Wachstumsphase.',
+  'Begonie': 'Alle 3 Wochen mit ca. 1 ml Canna Vega pro Liter, empfindlich auf Überdüngung.',
+};
+
+const FERTILIZER_FALLBACK_TIP = 'Canna Vega ist ein Wachstumsdünger für die vegetative Phase — als grober Richtwert für Zimmerpflanzen ca. 1–2 ml pro Liter alle 2–3 Wochen, in Semi-Hydro/Kokos meist etwas höher dosierbar als in Erde.';
+
+function getFertilizerTip(speciesName){
+  const match = findPlantInDB(speciesName);
+  if(match && FERTILIZER_TIPS[match.category]) return FERTILIZER_TIPS[match.category];
+  return FERTILIZER_FALLBACK_TIP;
+}
+
+function getFertilizerInfo(item){
+  const log = item.fertilizerLog || [];
+  const interval = Number(item.fertilizerIntervalDays) || 0;
+  if(log.length===0 || !interval) return null;
+  const sorted = [...log].sort((a,b)=> a.date < b.date ? 1 : -1);
+  const last = sorted[0];
+  const lastDate = new Date(last.date + 'T00:00:00');
+  const nextDue = new Date(lastDate.getTime() + interval*24*60*60*1000);
+  const today = new Date(new Date().toDateString());
+  const daysLeft = Math.round((nextDue.getTime() - today.getTime()) / (24*60*60*1000));
+  return { lastDate, nextDue, daysLeft, overdue: daysLeft <= 0, lastEntry: last };
+}
+
+function fertilizerBadge(item){
+  const info = getFertilizerInfo(item);
+  if(!info) return '';
+  if(info.overdue){
+    return `<span class="badge" style="background:var(--clay-pale);color:var(--clay);">Düngen fällig</span>`;
+  }
+  return `<span class="badge" style="background:var(--moss-pale);color:var(--moss);">Düngen in ${info.daysLeft} Tag${info.daysLeft===1?'':'en'}</span>`;
+}
+
+// Empfohlenes Durchspül-Intervall (in Tagen) je Pflanzenkategorie — empfindlichere/
+// stark gedüngte Pflanzen sammeln schneller Düngesalze im Substrat an und brauchen
+// häufigeres Durchspülen als sparsam gedüngte Sukkulenten/Kakteen.
+const FLUSH_DAYS_BY_CATEGORY = {
+  'Aroid': 28,
+  'Aroid (selten)': 21,
+  'Sukkulente': 56,
+  'Kaktus': 70,
+  'Ficus': 35,
+  'Grünpflanze': 35,
+  'Palme': 35,
+  'Calathea': 21,
+  'Farn': 28,
+  'Farn (selten)': 28,
+  'Orchidee': 21,
+  'Bromelie': 28,
+  'Rankpflanze': 28,
+  'Begonie': 28,
+};
+const FLUSH_DAYS_FALLBACK = 28;
+
+// Zusätzlicher Hinweistext je Substrat — in inertem Substrat (Semi-Hydro/Perlit) sammeln
+// sich Düngesalze ungepuffert an, in Erdmischungen etwas gemächlicher.
+const FLUSH_SUBSTRATE_NOTES = {
+  'Semi Hydro': 'Reiner Blähton puffert nichts ab — Salze aus dem Dünger reichern sich direkt im Reservoir und an den Wurzeln an.',
+  'Semi Hydro & Kokoschips 50/50': 'Kokoschips binden etwas Dünger zwischen, trotzdem regelmäßig komplett durchspülen.',
+  'Perlit': 'Sehr durchlässig, aber ohne Pufferung — Salzrückstände sammeln sich am Topfboden.',
+  'Erdmix (Kokoserde/Pinienrinde/Perlit)': 'Erde puffert Nährsalze etwas länger, trotzdem regelmäßig auswaschen, um Verkrustungen zu vermeiden.',
+};
+
+function getFlushRecommendation(speciesName, substrate){
+  const match = findPlantInDB(speciesName);
+  const days = (match && FLUSH_DAYS_BY_CATEGORY[match.category]) || FLUSH_DAYS_FALLBACK;
+  let tip = match && CATEGORY_TIPS[match.category]
+    ? `Empfehlung für diese Pflanzenart: alle ${days} Tage gründlich mit klarem Wasser durchspülen, um Düngesalze auszuwaschen.`
+    : `Kein Kategorie-Treffer — als Richtwert alle ${FLUSH_DAYS_FALLBACK} Tage durchspülen.`;
+  if(substrate && FLUSH_SUBSTRATE_NOTES[substrate]){
+    tip += ' ' + FLUSH_SUBSTRATE_NOTES[substrate];
+  }
+  return { days, tip };
+}
+
+function getFlushInfo(item){
+  const log = item.flushLog || [];
+  const interval = Number(item.flushIntervalDays) || 0;
+  if(log.length===0 || !interval) return null;
+  const sorted = [...log].sort((a,b)=> a.date < b.date ? 1 : -1);
+  const last = sorted[0];
+  const lastDate = new Date(last.date + 'T00:00:00');
+  const nextDue = new Date(lastDate.getTime() + interval*24*60*60*1000);
+  const today = new Date(new Date().toDateString());
+  const daysLeft = Math.round((nextDue.getTime() - today.getTime()) / (24*60*60*1000));
+  return { lastDate, nextDue, daysLeft, overdue: daysLeft <= 0, lastEntry: last };
+}
+
+function flushBadge(item){
+  const info = getFlushInfo(item);
+  if(!info) return '';
+  if(info.overdue){
+    return `<span class="badge" style="background:var(--clay-pale);color:var(--clay);">Durchspülen fällig</span>`;
+  }
+  return `<span class="badge" style="background:var(--moss-pale);color:var(--moss);">Durchspülen in ${info.daysLeft} Tag${info.daysLeft===1?'':'en'}</span>`;
+}
+
+// Protokoll-Verlauf für Düngen/Gießen/Durchspülen — die drei Log-Arten unterscheiden
+// sich nur darin, ob es ein Sekundär-Label (Produkt bzw. Gieß-Art) gibt und in der
+// Leer-Meldung. Fertilizer/Watering rendern das Sekundär-Label-Feld immer (auch wenn
+// leer), Flush hat gar keins — das entspricht exakt dem bisherigen Verhalten.
+const LOG_EMPTY_MESSAGE = {
+  fertilizerLog: 'Noch keine Düngung erfasst.',
+  wateringLog: 'Noch keine Gießung erfasst.',
+  flushLog: 'Noch kein Durchspülen erfasst.',
+};
+const LOG_HAS_SECONDARY_LABEL = { fertilizerLog: true, wateringLog: true, flushLog: false };
+
+function logSecondaryLabel(fieldName, entry){
+  if(fieldName==='fertilizerLog') return entry.product||'';
+  if(fieldName==='wateringLog') return entry.type||'';
+  return '';
+}
+
+function logHistoryHtml(log, type, itemId, prefix, fieldName){
+  if(!log || log.length===0){
+    return `<div class="hint" style="background:transparent;border:1px dashed var(--line);color:var(--ink-soft);">${LOG_EMPTY_MESSAGE[fieldName]}</div>`;
+  }
+  const withIndex = log.map((e, idx)=>({...e, __idx: idx}));
+  const sorted = withIndex.sort((a,b)=> a.date < b.date ? 1 : -1);
+  return `<div class="fert-log">${sorted.map(e=>`
+    <div class="fert-log-entry">
+      <span class="fert-log-date">${escapeHtml(e.date)}</span>
+      ${LOG_HAS_SECONDARY_LABEL[fieldName] ? `<span class="fert-log-product">${escapeHtml(logSecondaryLabel(fieldName, e))}</span>` : ''}
+      ${e.note ? `<span class="fert-log-note">${escapeHtml(e.note)}</span>` : ''}
+      <button type="button" class="log-delete-btn" title="Eintrag löschen" onclick="deleteLogEntry('${type}', ${itemId}, '${fieldName}', ${e.__idx}, '${prefix}')">✕</button>
+    </div>`).join('')}</div>`;
+}
+
+function getCareTips(speciesName, substrate){
+  const tips = [];
+  const match = findPlantInDB(speciesName);
+  if(match && CATEGORY_TIPS[match.category]){
+    tips.push(CATEGORY_TIPS[match.category]);
+  }
+  if(substrate && SUBSTRATE_TIPS[substrate]){
+    tips.push(SUBSTRATE_TIPS[substrate]);
+  }
+  return tips;
+}
+
+function getRefillInfo(item){
+  if(!isSemiHydro(item.substrate) || !item.reservoirEmpty || !item.reservoirEmptySince){
+    return null;
+  }
+  const emptySince = new Date(item.reservoirEmptySince + 'T00:00:00');
+  const dryDays = Number(item.dryDays) || 0;
+  const refillDate = new Date(emptySince.getTime() + dryDays*24*60*60*1000);
+  const today = new Date(new Date().toDateString());
+  const msLeft = refillDate.getTime() - today.getTime();
+  const daysLeft = Math.round(msLeft / (24*60*60*1000));
+  return { refillDate, daysLeft, overdue: daysLeft <= 0 };
+}
+
+function refillBadge(item){
+  const info = getRefillInfo(item);
+  if(!info) return '';
+  if(info.overdue){
+    return `<span class="badge" style="background:var(--clay-pale);color:var(--clay);">Reservoir auffüllen</span>`;
+  }
+  return `<span class="badge" style="background:var(--moss-pale);color:var(--moss);">Auffüllen in ${info.daysLeft} Tag${info.daysLeft===1?'':'en'}</span>`;
+}
+
 const STATUS_COLORS = {
-  'sehr gut':'#3F5D45','gut':'#7C9A7F','mittel':'#B8925A','schlecht':'#B5714A','krank':'#B4453F','wurzelt':'#7C9A7F'
+  'sehr gut':'#3E6B69','gut':'#74A39D','mittel':'#C6963A','schlecht':'#BC5B3B','krank':'#A8452F','wurzelt':'#74A39D'
 };
 
 function defaultState(){
@@ -297,8 +694,16 @@ function defaultState(){
     cuttings: [
       {id:1, name:'Monstera Ableger #1', type:'Ableger', origin:'eigene', ownPlantId:1, foreignSource:'', dateTaken:'2024-06-01', location:'Küche', substrate:'Wasser -> Erde', watering:'alle 4 Tage', status:'wurzelt', notes:'In Wasser bewurzelt seit 06/2024'},
       {id:2, name:'Pilea Steckling', type:'Steckling', origin:'fremd', ownPlantId:null, foreignSource:'Von Lisa geschenkt', dateTaken:'2024-07-15', location:'Fensterbank', substrate:'Standarderde', watering:'alle 5 Tage', status:'gut', notes:''}
-    ]
+    ],
+    wishlist: []
   };
+}
+
+// Stellt sicher, dass ältere, vor Einführung der Wunschliste gespeicherte
+// Firestore-Dokumente auch ohne das Feld "wishlist" funktionieren.
+function normalizeState(s){
+  if(!s.wishlist) s.wishlist = [];
+  return s;
 }
 
 function setSyncStatus(text, ok){
@@ -332,7 +737,7 @@ async function attachRealtimeSync(){
   try{
     const snap = await getDoc(docRef);
     if(snap.exists()){
-      state = snap.data();
+      state = normalizeState(snap.data());
     } else {
       state = defaultState();
       await setDoc(docRef, state);
@@ -347,7 +752,7 @@ async function attachRealtimeSync(){
   unsubscribeSnapshot = onSnapshot(docRef, (snap)=>{
     if(snap.exists()){
       isRemoteUpdate = true;
-      state = snap.data();
+      state = normalizeState(snap.data());
       render();
       isRemoteUpdate = false;
     }
@@ -383,52 +788,529 @@ async function loadState(){
 
 function nextId(list){ return list.length ? Math.max(...list.map(x=>x.id))+1 : 1; }
 
+/* ---------- Mehrfachauswahl / Bulk-Aktionen ---------- */
+
+function toggleSelectionMode(){
+  selectionMode = !selectionMode;
+  selectedIds = new Set();
+  document.getElementById('selectModeBtn').textContent = selectionMode ? 'Fertig' : 'Auswählen';
+  document.getElementById('selectModeBtn').classList.toggle('active', selectionMode);
+  render();
+}
+
+function clearSelection(){
+  selectionMode = false;
+  selectedIds = new Set();
+  const btn = document.getElementById('selectModeBtn');
+  if(btn){ btn.textContent = 'Auswählen'; }
+}
+
+function toggleSelectItem(id, event){
+  if(event) event.stopPropagation();
+  if(selectedIds.has(id)) selectedIds.delete(id);
+  else selectedIds.add(id);
+  render();
+}
+
+function updateBulkBar(){
+  const bar = document.getElementById('bulkBar');
+  if(!bar) return;
+  const isWishlist = currentTab==='wishlist';
+  document.getElementById('bulkFertBtn').style.display = isWishlist ? 'none' : '';
+  document.getElementById('bulkWaterBtn').style.display = isWishlist ? 'none' : '';
+  document.getElementById('bulkFlushBtn').style.display = isWishlist ? 'none' : '';
+  document.getElementById('bulkPurchasedBtn').style.display = isWishlist ? '' : 'none';
+  if(selectionMode && selectedIds.size>0){
+    bar.classList.add('show');
+    document.getElementById('bulkCount').textContent = `${selectedIds.size} ausgewählt`;
+  } else {
+    bar.classList.remove('show');
+  }
+}
+
+async function bulkMarkFertilized(){
+  if(selectedIds.size===0 || currentTab==='wishlist') return;
+  const today = new Date().toISOString().slice(0,10);
+  const list = state[currentTab];
+  list.forEach(item=>{
+    if(selectedIds.has(item.id)){
+      const log = item.fertilizerLog || [];
+      item.fertilizerLog = [...log, { date: today, product: 'Canna Vega', note: 'Sammel-Aktion' }];
+    }
+  });
+  await saveState();
+  clearSelection();
+  render();
+}
+
+async function bulkMarkWatered(){
+  if(selectedIds.size===0 || currentTab==='wishlist') return;
+  const today = new Date().toISOString().slice(0,10);
+  const list = state[currentTab];
+  list.forEach(item=>{
+    if(selectedIds.has(item.id)){
+      const log = item.wateringLog || [];
+      item.wateringLog = [...log, { date: today, type: 'Gegossen', note: 'Sammel-Aktion' }];
+      if(item.reservoirEmpty){
+        item.reservoirEmpty = false;
+        item.reservoirEmptySince = '';
+      }
+    }
+  });
+  await saveState();
+  clearSelection();
+  render();
+}
+
+async function bulkMarkFlushed(){
+  if(selectedIds.size===0 || currentTab==='wishlist') return;
+  const today = new Date().toISOString().slice(0,10);
+  const list = state[currentTab];
+  list.forEach(item=>{
+    if(selectedIds.has(item.id)){
+      const log = item.flushLog || [];
+      item.flushLog = [...log, { date: today, note: 'Sammel-Aktion' }];
+      if(!item.flushIntervalDays){
+        item.flushIntervalDays = getFlushRecommendation(item.name, item.substrate).days;
+      }
+    }
+  });
+  await saveState();
+  clearSelection();
+  render();
+}
+
+/* ---------- Import ---------- */
+
+function importDataFromFile(inputEl){
+  const file = inputEl.files && inputEl.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    let parsed;
+    try{
+      parsed = JSON.parse(e.target.result);
+    }catch(err){
+      alert('Diese Datei ist kein gültiges JSON. Import abgebrochen.');
+      inputEl.value = '';
+      return;
+    }
+    if(!parsed || !Array.isArray(parsed.plants) || !Array.isArray(parsed.cuttings)){
+      alert('Diese Datei hat nicht das erwartete Format (Felder "plants" und "cuttings" fehlen). Import abgebrochen.');
+      inputEl.value = '';
+      return;
+    }
+    // "wishlist" gibt es erst seit dieser Funktion — ältere Backups haben das Feld
+    // noch nicht, deshalb hier optional statt Pflicht-Validierung.
+    const importedWishlist = Array.isArray(parsed.wishlist) ? parsed.wishlist : [];
+    showConfirm(
+      `Vor dem Import wird automatisch eine Sicherheitskopie deines aktuellen Bestands heruntergeladen. Danach wird er ersetzt: ${state.plants.length} Pflanzen, ${state.cuttings.length} Ableger/Stecklinge, ${state.wishlist.length} Wunschlisten-Einträge → ${parsed.plants.length} Pflanzen, ${parsed.cuttings.length} Ableger/Stecklinge, ${importedWishlist.length} Wunschlisten-Einträge aus der Datei. Falls etwas nicht passt, kannst du die heruntergeladene Sicherheitskopie jederzeit wieder importieren.`,
+      async ()=>{
+        exportData('vor-import');
+        state = { plants: parsed.plants, cuttings: parsed.cuttings, wishlist: importedWishlist };
+        await saveState();
+        clearSelection();
+        render();
+      },
+      { title: 'Backup importieren?', confirmLabel: 'Sichern & Importieren' }
+    );
+    inputEl.value = '';
+  };
+  reader.readAsText(file);
+}
+
+/* ---------- Export ---------- */
+
+function exportData(filenameSuffix){
+  const dataStr = JSON.stringify(state, null, 2);
+  const blob = new Blob([dataStr], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0,10);
+  const suffix = filenameSuffix ? `-${filenameSuffix}` : '';
+  a.href = url;
+  a.download = `pflanzenkatalog-backup-${dateStr}${suffix}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 function setTab(tab){
   currentTab = tab;
+  filterParentType = null;
+  filterParentId = null;
+  clearSelection();
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
-  document.getElementById('searchInput').placeholder = tab==='plants' ? 'Pflanzen suchen…' : 'Ableger & Stecklinge suchen…';
+  const placeholders = { plants: 'Pflanzen suchen…', cuttings: 'Ableger & Stecklinge suchen…', wishlist: 'Wunschliste suchen…' };
+  document.getElementById('searchInput').placeholder = placeholders[tab] || '';
   document.getElementById('searchInput').value='';
+  document.getElementById('filterCategory').style.display = tab==='plants' ? 'inline-block' : 'none';
+  document.getElementById('filterOrigin').style.display = tab==='cuttings' ? 'inline-block' : 'none';
+  document.getElementById('filterStatus').style.display = tab==='wishlist' ? 'none' : 'inline-block';
+  document.getElementById('filterPriority').style.display = tab==='wishlist' ? 'inline-block' : 'none';
+  document.getElementById('filterCategory').value = '';
+  document.getElementById('filterOrigin').value = '';
+  document.getElementById('filterStatus').value = '';
+  document.getElementById('filterPriority').value = '';
+  const statusSortOption = document.querySelector('#sortBy option[value="status"]');
+  if(statusSortOption) statusSortOption.textContent = tab==='wishlist' ? 'Priorität' : 'Zustand';
+  render();
+}
+
+function resetParentFilter(){
+  filterParentType = null;
+  filterParentId = null;
+  render();
+}
+
+function showChildCuttings(parentType, parentId){
+  currentTab = 'cuttings';
+  filterParentType = parentType;
+  filterParentId = parentId;
+  clearSelection();
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab==='cuttings'));
+  document.getElementById('searchInput').placeholder = 'Ableger & Stecklinge suchen…';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterCategory').style.display = 'none';
+  document.getElementById('filterOrigin').style.display = 'inline-block';
+  document.getElementById('filterStatus').style.display = 'inline-block';
+  document.getElementById('filterPriority').style.display = 'none';
+  document.getElementById('filterCategory').value = '';
+  document.getElementById('filterOrigin').value = '';
+  document.getElementById('filterStatus').value = '';
+  document.getElementById('filterPriority').value = '';
+  const statusSortOption = document.querySelector('#sortBy option[value="status"]');
+  if(statusSortOption) statusSortOption.textContent = 'Zustand';
+  render();
+}
+
+function setView(view){
+  currentView = view;
+  document.getElementById('viewGridBtn').classList.toggle('active', view==='grid');
+  document.getElementById('viewListBtn').classList.toggle('active', view==='list');
   render();
 }
 
 function statusDot(status){
-  const color = STATUS_COLORS[status] || '#9a9a90';
+  const color = STATUS_COLORS[status] || '#9C8D77';
   return `<span class="status-dot" style="background:${color}"></span>`;
 }
 
+function buildHeaderStats(){
+  const all = [...state.plants, ...state.cuttings];
+  const reservoirsDue = all.filter(x=>{ const i = getRefillInfo(x); return i && i.overdue; }).length;
+  const fertDue = all.filter(x=>{ const i = getFertilizerInfo(x); return i && i.overdue; }).length;
+  const flushDue = all.filter(x=>{ const i = getFlushInfo(x); return i && i.overdue; }).length;
+  const parts = [`${state.plants.length} Pflanze${state.plants.length===1?'':'n'}`, `${state.cuttings.length} Ableger/Stecklinge`];
+  if(reservoirsDue>0) parts.push(`${reservoirsDue} Reservoir${reservoirsDue===1?'':'s'} fällig`);
+  if(fertDue>0) parts.push(`${fertDue} zum Düngen`);
+  if(flushDue>0) parts.push(`${flushDue} zum Durchspülen`);
+  return parts.join(' · ');
+}
+
+// Firestore begrenzt ein einzelnes Dokument auf 1 MiB (1.048.576 Byte). Da dieser
+// Katalog seinen kompletten Bestand als EIN Dokument speichert (siehe docRef weiter
+// oben), warnen wir rechtzeitig, bevor Speichern fehlschlägt — mit konkretem
+// Hinweis, dass alte Protokoll-Einträge sich jetzt einzeln löschen lassen.
+const FIRESTORE_DOC_LIMIT_BYTES = 1048576;
+const STORAGE_WARN_RATIO = 0.7;
+const STORAGE_DANGER_RATIO = 0.9;
+
+function getStateSizeBytes(){
+  return new TextEncoder().encode(JSON.stringify(state)).length;
+}
+
+function renderStorageWarning(){
+  const container = document.getElementById('storageWarning');
+  if(!container) return;
+  const bytes = getStateSizeBytes();
+  const ratio = bytes / FIRESTORE_DOC_LIMIT_BYTES;
+  if(ratio < STORAGE_WARN_RATIO){
+    container.innerHTML = '';
+    return;
+  }
+  const kb = Math.round(bytes/1024);
+  const limitKb = Math.round(FIRESTORE_DOC_LIMIT_BYTES/1024);
+  const level = ratio >= STORAGE_DANGER_RATIO ? 'kritisch nah an' : 'nähert sich';
+  container.innerHTML = `
+    <div class="storage-warning">
+      <p><strong>Speicherplatz ${level} dem Limit:</strong> dein Bestand ist ${kb} KB von ${limitKb} KB groß — Firestore erlaubt maximal 1 Dokument pro Nutzer:in mit dieser Größe. Lösche alte Protokoll-Einträge (✕-Button bei Düngen/Gießen/Durchspülen) oder exportiere und räume deinen Bestand auf, sonst schlägt das Speichern bald fehl.</p>
+    </div>`;
+}
+
+function renderDailyOverview(){
+  const container = document.getElementById('dailyOverview');
+  const water = [];
+  const fert = [];
+  const flush = [];
+  state.plants.forEach(p=>{
+    const info = getRefillInfo(p);
+    if(info && info.overdue) water.push({type:'plants', id:p.id, name:p.name});
+    const finfo = getFertilizerInfo(p);
+    if(finfo && finfo.overdue) fert.push({type:'plants', id:p.id, name:p.name});
+    const flinfo = getFlushInfo(p);
+    if(flinfo && flinfo.overdue) flush.push({type:'plants', id:p.id, name:p.name});
+  });
+  state.cuttings.forEach(c=>{
+    const info = getRefillInfo(c);
+    if(info && info.overdue) water.push({type:'cuttings', id:c.id, name:c.name});
+    const finfo = getFertilizerInfo(c);
+    if(finfo && finfo.overdue) fert.push({type:'cuttings', id:c.id, name:c.name});
+    const flinfo = getFlushInfo(c);
+    if(flinfo && flinfo.overdue) flush.push({type:'cuttings', id:c.id, name:c.name});
+  });
+
+  if(water.length===0 && fert.length===0 && flush.length===0){
+    container.innerHTML = '';
+    return;
+  }
+
+  let html = '';
+  if(water.length){
+    html += `
+      <div class="daily-banner">
+        <span class="icon">💧</span>
+        <div>
+          <p class="title">${water.length} Reservoir${water.length===1?'':'s'} heute auffüllen</p>
+          <div class="items">
+            ${water.map(d=>`<span class="daily-chip" onclick="jumpTo('${d.type}', ${d.id})">${escapeHtml(d.name)}</span>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  }
+  if(fert.length){
+    html += `
+      <div class="daily-banner">
+        <span class="icon">🌿</span>
+        <div>
+          <p class="title">${fert.length} Pflanze${fert.length===1?'':'n'} heute düngen</p>
+          <div class="items">
+            ${fert.map(d=>`<span class="daily-chip" onclick="jumpTo('${d.type}', ${d.id})">${escapeHtml(d.name)}</span>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  }
+  if(flush.length){
+    html += `
+      <div class="daily-banner">
+        <span class="icon">🚿</span>
+        <div>
+          <p class="title">${flush.length} Substrat${flush.length===1?'':'e'} heute durchspülen</p>
+          <div class="items">
+            ${flush.map(d=>`<span class="daily-chip" onclick="jumpTo('${d.type}', ${d.id})">${escapeHtml(d.name)}</span>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  }
+  container.innerHTML = html;
+}
+
+function jumpTo(type, id){
+  currentTab = type;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===type));
+  document.getElementById('searchInput').value = '';
+  render();
+  openModal(type, id);
+}
+
+function populateCategoryFilter(){
+  const select = document.getElementById('filterCategory');
+  const current = select.value;
+  const categories = [...new Set(state.plants.map(p=>p.category).filter(Boolean))].sort();
+  select.innerHTML = `<option value="">Alle Kategorien</option>` + categories.map(c=>`<option value="${escapeHtml(c)}" ${c===current?'selected':''}>${escapeHtml(c)}</option>`).join('');
+}
+
+function sortItems(items, sortBy){
+  const sorted = [...items];
+  if(sortBy==='name-asc') sorted.sort((a,b)=>(a.name||'').localeCompare(b.name||'','de'));
+  else if(sortBy==='name-desc') sorted.sort((a,b)=>(b.name||'').localeCompare(a.name||'','de'));
+  else if(sortBy==='status') sorted.sort((a,b)=>(a.status||'').localeCompare(b.status||'','de'));
+  else if(sortBy==='location') sorted.sort((a,b)=>(a.location||'').localeCompare(b.location||'','de'));
+  return sorted;
+}
+
 function render(){
+  renderStorageWarning();
+  renderDailyOverview();
+  populateCategoryFilter();
   const q = document.getElementById('searchInput').value.toLowerCase();
+  const statusFilter = document.getElementById('filterStatus').value;
+  const categoryFilter = document.getElementById('filterCategory').value;
+  const originFilter = document.getElementById('filterOrigin').value;
+  const priorityFilter = document.getElementById('filterPriority').value;
+  const sortBy = document.getElementById('sortBy').value;
   document.getElementById('tabCountPlants').textContent = state.plants.length ? `(${state.plants.length})` : '';
   document.getElementById('tabCountCuttings').textContent = state.cuttings.length ? `(${state.cuttings.length})` : '';
-  document.getElementById('headerCount').textContent = `${state.plants.length} Pflanzen · ${state.cuttings.length} Ableger/Stecklinge`;
+  document.getElementById('tabCountWishlist').textContent = state.wishlist.length ? `(${state.wishlist.length})` : '';
+  document.getElementById('headerCount').textContent = buildHeaderStats();
+  updateBulkBar();
 
   const content = document.getElementById('content');
   if(currentTab==='plants'){
-    const items = state.plants.filter(p => !q || (p.name+p.latin+p.category+p.location).toLowerCase().includes(q));
+    let items = state.plants.filter(p => !q || (p.name+p.latin+p.category+p.location).toLowerCase().includes(q));
+    if(statusFilter) items = items.filter(p => p.status === statusFilter);
+    if(categoryFilter) items = items.filter(p => p.category === categoryFilter);
+    items = sortItems(items, sortBy);
     if(items.length===0){
-      content.innerHTML = emptyState('Noch keine Pflanzen', 'Füge deine erste Pflanze hinzu, um loszulegen.');
+      content.innerHTML = emptyState(state.plants.length===0 ? 'Noch keine Pflanzen' : 'Keine Treffer', state.plants.length===0 ? 'Füge deine erste Pflanze hinzu, um loszulegen.' : 'Versuch andere Filter oder Suchbegriffe.', state.plants.length===0 ? '🌱' : '🔍');
       return;
     }
-    content.innerHTML = `<div class="grid">${items.map(plantCard).join('')}</div>`;
+    content.innerHTML = currentView==='grid'
+      ? `<div class="grid">${items.map(plantCard).join('')}</div>`
+      : items.map(plantListRow).join('');
+  } else if(currentTab==='cuttings'){
+    let items = state.cuttings.filter(c => !q || (c.name+c.type+(c.foreignSource||'')+c.location).toLowerCase().includes(q));
+    if(statusFilter) items = items.filter(c => c.status === statusFilter);
+    if(originFilter) items = items.filter(c => c.origin === originFilter);
+    if(filterParentType!=null && filterParentId!=null){
+      const descendantIds = getAllDescendantIds(filterParentType, filterParentId);
+      items = items.filter(c => descendantIds.has(c.id));
+    }
+    items = sortItems(items, sortBy);
+    content.innerHTML = '';
+    if(filterParentType!=null && filterParentId!=null){
+      const parentName = filterParentType==='cutting' ? (getCuttingById(filterParentId)||{}).name : getPlantName(filterParentId);
+      content.innerHTML += `<div class="hint" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>Zeigt alle Ableger (inkl. Nachkommen) von <strong>${escapeHtml(parentName||'')}</strong></span>
+          <button class="btn ghost" style="padding:5px 10px;font-size:12.5px;" onclick="resetParentFilter()">Filter aufheben</button>
+        </div>`;
+    }
+    if(items.length===0){
+      content.innerHTML += emptyState(state.cuttings.length===0 ? 'Noch keine Ableger' : 'Keine Treffer', state.cuttings.length===0 ? 'Erfasse Ableger, Stecklinge oder Sämlinge und verlinke sie mit deinen Pflanzen.' : 'Versuch andere Filter oder Suchbegriffe.', state.cuttings.length===0 ? '🌿' : '🔍');
+      return;
+    }
+    content.innerHTML += currentView==='grid'
+      ? `<div class="grid">${items.map(cuttingCard).join('')}</div>`
+      : items.map(cuttingListRow).join('');
   } else {
-    const items = state.cuttings.filter(c => !q || (c.name+c.type+(c.foreignSource||'')+c.location).toLowerCase().includes(q));
+    let items = state.wishlist.filter(w => !q || (w.name+(w.latin||'')+(w.category||'')+(w.source||'')+(w.notes||'')).toLowerCase().includes(q));
+    if(priorityFilter) items = items.filter(w => w.status === priorityFilter);
+    items = sortItems(items, sortBy);
     if(items.length===0){
-      content.innerHTML = emptyState('Noch keine Ableger', 'Erfasse Ableger, Stecklinge oder Sämlinge und verlinke sie mit deinen Pflanzen.');
+      content.innerHTML = emptyState(state.wishlist.length===0 ? 'Noch nichts auf der Wunschliste' : 'Keine Treffer', state.wishlist.length===0 ? 'Trag Pflanzen ein, die du dir für später vormerkst.' : 'Versuch andere Filter oder Suchbegriffe.', state.wishlist.length===0 ? '⭐' : '🔍');
       return;
     }
-    content.innerHTML = `<div class="grid">${items.map(cuttingCard).join('')}</div>`;
+    content.innerHTML = currentView==='grid'
+      ? `<div class="grid">${items.map(wishlistCard).join('')}</div>`
+      : items.map(wishlistListRow).join('');
   }
 }
 
-function emptyState(title, sub){
-  return `<div class="empty"><div class="serif">${title}</div><div>${sub}</div></div>`;
+function checkboxHtml(id){
+  const checked = selectedIds.has(id);
+  return `<button type="button" class="select-check ${checked?'checked':''}" aria-pressed="${checked}" aria-label="Auswählen" onclick="toggleSelectItem(${id}, event)"></button>`;
+}
+
+function plantListRow(p){
+  const cuttingCount = getDescendantCount('plant', p.id);
+  return `<div class="list-row ${selectionMode?'selectable':''}" onclick="${selectionMode?`toggleSelectItem(${p.id}, event)`:`openModal('plants', ${p.id})`}">
+    ${selectionMode?checkboxHtml(p.id):''}
+    <span class="name">${escapeHtml(p.name)}</span>
+    <span class="latin">${escapeHtml(p.latin||'')}</span>
+    <div class="list-meta">
+      <span class="badge">${escapeHtml(p.category||'—')}</span>
+      ${cuttingCount>0?`<span class="badge link-badge" onclick="event.stopPropagation();showChildCuttings('plant', ${p.id})">${cuttingCount} Ableger</span>`:''}
+      ${refillBadge(p)}
+      ${fertilizerBadge(p)}
+      ${flushBadge(p)}
+      <span>${statusDot(p.status)}${escapeHtml(p.status||'—')}</span>
+      <span>${escapeHtml(p.location||'')}</span>
+    </div>
+  </div>`;
+}
+
+function cuttingListRow(c){
+  const originLabel = `von: ${escapeHtml(getParentLabel(c))}`;
+  const childCount = getDescendantCount('cutting', c.id);
+  return `<div class="list-row ${selectionMode?'selectable':''}" onclick="${selectionMode?`toggleSelectItem(${c.id}, event)`:`openModal('cuttings', ${c.id})`}">
+    ${selectionMode?checkboxHtml(c.id):''}
+    <span class="name">${escapeHtml(c.name)}</span>
+    <span class="latin">${escapeHtml(c.type||'')}</span>
+    <div class="list-meta">
+      <span class="badge ${c.origin==='fremd'?'clay':''}">${c.origin==='eigene'?'Eigene Pflanze':'Fremde Pflanze'}</span>
+      ${childCount>0?`<span class="badge link-badge" onclick="event.stopPropagation();showChildCuttings('cutting', ${c.id})">${childCount} Ableger</span>`:''}
+      ${refillBadge(c)}
+      ${fertilizerBadge(c)}
+      ${flushBadge(c)}
+      <span>${statusDot(c.status)}${escapeHtml(c.status||'—')}</span>
+      <span>${originLabel}</span>
+    </div>
+  </div>`;
+}
+
+// Verlinkung aus der Wunschliste — ergänzt "https://", falls der Nutzer nur die
+// nackte Domain eingetragen hat, damit der Link nicht relativ zur eigenen Seite aufgelöst wird.
+function safeExternalLink(url){
+  if(!url) return '';
+  return /^https?:\/\//i.test(url) ? url : 'https://' + url;
+}
+
+// Farbskala für die Wunschlisten-Priorität — von dringend (warm/clay) über neutral
+// bis erledigt (kräftig gefüllt), nutzt die bestehenden Design-Tokens der App.
+const PRIORITY_BADGE_CLASS = {
+  'Muss ich haben': 'clay',
+  'Sehr interessant': 'gold',
+  'Klingt interessant': '',
+  'Irgendwann mal': 'muted',
+  'Gekauft': 'success',
+};
+
+function priorityBadgeClass(status){
+  return PRIORITY_BADGE_CLASS[status] ?? '';
+}
+
+function wishlistExtrasHtml(w){
+  return `
+      ${w.link?`<a href="${escapeHtml(safeExternalLink(w.link))}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="badge link-badge">🔗 Link</a>`:''}
+      ${w.status==='Gekauft'?`<button type="button" class="badge link-badge" style="border:none;cursor:pointer;" onclick="event.stopPropagation();convertWishlistItemToPlant(${w.id})">→ In Katalog übernehmen</button>`:''}`;
+}
+
+function wishlistCard(w){
+  return `<div class="card ${selectionMode?'selectable':''}" onclick="${selectionMode?`toggleSelectItem(${w.id}, event)`:`openModal('wishlist', ${w.id})`}">
+    ${selectionMode?checkboxHtml(w.id):''}
+    <div class="name">${escapeHtml(w.name)}</div>
+    <div class="latin">${escapeHtml(w.latin||'')}</div>
+    <span class="badge">${escapeHtml(w.category||'—')}</span>
+    <span class="badge ${priorityBadgeClass(w.status)}">${escapeHtml(w.status||'—')}</span>
+    ${wishlistExtrasHtml(w)}
+    <div class="meta-row">
+      <span>${escapeHtml(w.source||'')}</span>
+      <span>${escapeHtml(w.price||'')}</span>
+    </div>
+  </div>`;
+}
+
+function wishlistListRow(w){
+  return `<div class="list-row ${selectionMode?'selectable':''}" onclick="${selectionMode?`toggleSelectItem(${w.id}, event)`:`openModal('wishlist', ${w.id})`}">
+    ${selectionMode?checkboxHtml(w.id):''}
+    <span class="name">${escapeHtml(w.name)}</span>
+    <span class="latin">${escapeHtml(w.latin||'')}</span>
+    <div class="list-meta">
+      <span class="badge">${escapeHtml(w.category||'—')}</span>
+      <span class="badge ${priorityBadgeClass(w.status)}">${escapeHtml(w.status||'—')}</span>
+      ${wishlistExtrasHtml(w)}
+      <span>${escapeHtml(w.source||'')}</span>
+      <span>${escapeHtml(w.price||'')}</span>
+    </div>
+  </div>`;
+}
+
+function emptyState(title, sub, icon){
+  return `<div class="empty">${icon?`<div class="empty-icon">${icon}</div>`:''}<div class="serif">${title}</div><div>${sub}</div></div>`;
 }
 
 function plantCard(p){
-  return `<div class="card" onclick="openModal('plants', ${p.id})">
+  const cuttingCount = getDescendantCount('plant', p.id);
+  return `<div class="card ${selectionMode?'selectable':''}" onclick="${selectionMode?`toggleSelectItem(${p.id}, event)`:`openModal('plants', ${p.id})`}">
+    ${selectionMode?checkboxHtml(p.id):''}
     <div class="name">${escapeHtml(p.name)}</div>
     <div class="latin">${escapeHtml(p.latin||'')}</div>
     <span class="badge">${escapeHtml(p.category||'—')}</span>
+    ${cuttingCount>0?`<span class="badge link-badge" onclick="event.stopPropagation();showChildCuttings('plant', ${p.id})">${cuttingCount} Ableger von dieser Pflanze</span>`:''}
+    ${refillBadge(p)}
+    ${fertilizerBadge(p)}
+    ${flushBadge(p)}
     <div class="meta-row">
       <span>${statusDot(p.status)}${escapeHtml(p.status||'—')}</span>
       <span>${escapeHtml(p.location||'')}</span>
@@ -437,13 +1319,17 @@ function plantCard(p){
 }
 
 function cuttingCard(c){
-  const originLabel = c.origin==='eigene'
-    ? `von: ${escapeHtml(getPlantName(c.ownPlantId) || '—')}`
-    : `von: ${escapeHtml(c.foreignSource || 'fremd')}`;
-  return `<div class="card" onclick="openModal('cuttings', ${c.id})">
+  const originLabel = `von: ${escapeHtml(getParentLabel(c))}`;
+  const childCount = getDescendantCount('cutting', c.id);
+  return `<div class="card ${selectionMode?'selectable':''}" onclick="${selectionMode?`toggleSelectItem(${c.id}, event)`:`openModal('cuttings', ${c.id})`}">
+    ${selectionMode?checkboxHtml(c.id):''}
     <div class="name">${escapeHtml(c.name)}</div>
     <div class="latin">${escapeHtml(c.type||'')}</div>
     <span class="badge ${c.origin==='fremd'?'clay':''}">${c.origin==='eigene'?'Eigene Pflanze':'Fremde Pflanze'}</span>
+    ${childCount>0?`<span class="badge link-badge" onclick="event.stopPropagation();showChildCuttings('cutting', ${c.id})">${childCount} Ableger von diesem Ableger</span>`:''}
+    ${refillBadge(c)}
+    ${fertilizerBadge(c)}
+    ${flushBadge(c)}
     <div class="meta-row">
       <span>${statusDot(c.status)}${escapeHtml(c.status||'—')}</span>
       <span>${originLabel}</span>
@@ -456,13 +1342,72 @@ function getPlantName(id){
   return p ? p.name : null;
 }
 
+function getCuttingById(id){
+  return state.cuttings.find(x=>x.id===id) || null;
+}
+
+// Direkte Kinder eines Elternteils. parentType: 'plant' | 'cutting'
+function getDirectChildren(parentType, parentId){
+  return state.cuttings.filter(c => c.origin==='eigene'
+    && (c.parentType || 'plant') === parentType
+    && (parentType==='plant' ? c.ownPlantId===parentId : c.parentCuttingId===parentId));
+}
+
+// Zählt Ableger + Ableger von Ablegern usw. (rekursiv).
+// visited schützt vor Endlosschleifen bei zyklischen Referenzen in den Daten
+// (z. B. durch eine von Hand bearbeitete oder beschädigte Import-Datei).
+function getDescendantCount(parentType, parentId, visited){
+  visited = visited || new Set();
+  const key = parentType+':'+parentId;
+  if(visited.has(key)) return 0;
+  visited.add(key);
+  const direct = getDirectChildren(parentType, parentId);
+  let count = direct.length;
+  direct.forEach(child => { count += getDescendantCount('cutting', child.id, visited); });
+  return count;
+}
+
+// Verhindert, dass ein Ableger sich selbst oder einen eigenen Nachkommen als Elternteil bekommt
+function isSelfOrDescendant(cuttingId, candidateCuttingId, visited){
+  visited = visited || new Set();
+  if(cuttingId===candidateCuttingId) return true;
+  if(visited.has(cuttingId)) return false;
+  visited.add(cuttingId);
+  const children = getDirectChildren('cutting', cuttingId);
+  return children.some(child => isSelfOrDescendant(child.id, candidateCuttingId, visited));
+}
+
+// Alle Nachkommen (direkt + verschachtelt) eines Elternteils als Id-Set
+function getAllDescendantIds(parentType, parentId, visited){
+  visited = visited || new Set();
+  const key = parentType+':'+parentId;
+  const ids = new Set();
+  if(visited.has(key)) return ids;
+  visited.add(key);
+  const direct = getDirectChildren(parentType, parentId);
+  direct.forEach(child=>{
+    ids.add(child.id);
+    getAllDescendantIds('cutting', child.id, visited).forEach(id=>ids.add(id));
+  });
+  return ids;
+}
+
+function getParentLabel(item){
+  if(item.origin!=='eigene') return item.foreignSource || 'fremd';
+  if((item.parentType||'plant')==='cutting'){
+    const parent = getCuttingById(item.parentCuttingId);
+    return parent ? parent.name : '—';
+  }
+  return getPlantName(item.ownPlantId) || '—';
+}
+
 function escapeHtml(s){
   return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
 /* ---------- Modal ---------- */
 
-function openModal(type, id){
+function openModal(type, id, prefill){
   const tab = type || currentTab;
   editingId = id || null;
   const overlay = document.getElementById('overlay');
@@ -470,12 +1415,17 @@ function openModal(type, id){
   overlay.classList.add('show');
 
   if(tab==='plants'){
-    const p = editingId ? state.plants.find(x=>x.id===editingId) : {};
+    const p = editingId ? state.plants.find(x=>x.id===editingId) : (prefill || {});
     box.innerHTML = plantForm(p||{});
-  } else {
-    const c = editingId ? state.cuttings.find(x=>x.id===editingId) : {};
+    initFormDynamicState('f', p||{});
+  } else if(tab==='cuttings'){
+    const c = editingId ? state.cuttings.find(x=>x.id===editingId) : (prefill || {});
     box.innerHTML = cuttingForm(c||{});
     updateOwnPlantVisibility((c&&c.origin) || 'eigene');
+    initFormDynamicState('c', c||{});
+  } else {
+    const w = editingId ? state.wishlist.find(x=>x.id===editingId) : (prefill || {});
+    box.innerHTML = wishlistForm(w||{});
   }
   document.getElementById('overlay').onclick = (e)=>{ if(e.target.id==='overlay') closeModal(); };
 }
@@ -483,6 +1433,114 @@ function openModal(type, id){
 function closeModal(){
   document.getElementById('overlay').classList.remove('show');
   editingId = null;
+  convertingWishlistId = null;
+}
+
+// ---------- Gemeinsame Formular-Bausteine für Pflanze & Ableger ----------
+// Pflanzen- und Ableger-Formular sind bis auf Feld-Präfix (f_/c_), das Datenobjekt
+// und die Art-Erkennung für die Pflege-Empfehlungen strukturell identisch. Diese
+// Generatoren erzeugen exakt das gleiche Markup wie zuvor direkt inline — nur einmal
+// definiert statt zweimal dupliziert.
+
+function plantAutocompleteDatalistHtml(){
+  return `<datalist id="plantSpeciesList">
+        ${PLANT_DB.map(sp=>`<option value="${escapeHtml(sp.name)}">`).join('')}
+      </datalist>`;
+}
+
+function substrateSelectHtml(item, prefix){
+  const substrate = item.substrate || '';
+  return `
+      <div class="field">
+        <label>Substrat</label>
+        <select id="${prefix}_substrate_select" onchange="onSubstrateSelectChanged('${prefix}')" data-prev="${escapeHtml(substrate)}">
+          ${SUBSTRATE_OPTIONS.map(s=>`<option value="${s}" ${substrate===s || (s==='Sonstiges' && substrate && !SUBSTRATE_OPTIONS.includes(substrate))?'selected':''}>${s}</option>`).join('')}
+        </select>
+        <input id="${prefix}_substrate_custom" style="margin-top:6px;display:none;" placeholder="Substrat frei eingeben" value="${(substrate && !SUBSTRATE_OPTIONS.includes(substrate)) ? escapeHtml(substrate) : ''}">
+      </div>`;
+}
+
+function substrateHistoryFieldsHtml(item, prefix){
+  return `
+    <div class="row2">
+      <div class="field"><label>Substrat vorher</label><input id="${prefix}_substrateBefore" value="${escapeHtml(item.substrateBefore||'')}" placeholder="z. B. Standarderde"></div>
+      <div class="field"><label>Umstellungsdatum</label><input type="date" id="${prefix}_substrateChangedDate" value="${item.substrateChangedDate||''}" oninput="updateSubstrateSinceHint('${prefix}')"></div>
+    </div>
+    <div class="hint" id="${prefix}_substrateSinceHint" style="display:none;"></div>`;
+}
+
+function reservoirBlockHtml(item, prefix){
+  return `
+    <div id="${prefix}_reservoir_block" style="display:none;">
+      <div class="row2">
+        <div class="field">
+          <label>Reservoir gerade leer?</label>
+          <div class="toggle-group">
+            <div class="toggle-opt ${item.reservoirEmpty?'active clay':''}" id="${prefix}_res_yes" onclick="setReservoirEmpty('${prefix}', true)">Ja</div>
+            <div class="toggle-opt ${!item.reservoirEmpty?'active':''}" id="${prefix}_res_no" onclick="setReservoirEmpty('${prefix}', false)">Nein</div>
+          </div>
+        </div>
+        <div class="field"><label>Trockenphase (Tage)</label><input type="number" min="0" id="${prefix}_dryDays" value="${item.dryDays!=null?item.dryDays:3}"></div>
+      </div>
+      <div class="field" id="${prefix}_emptySince_field" style="${item.reservoirEmpty?'':'display:none;'}">
+        <label>Leer seit</label>
+        <input type="date" id="${prefix}_emptySince" value="${item.reservoirEmptySince||''}">
+      </div>
+    </div>`;
+}
+
+function fertilizerSectionHtml(item, type, itemId, prefix, speciesNameForTip){
+  return `
+    <div class="fert-section">
+      <label class="fert-heading">Düngeprotokoll</label>
+      <div class="hint">${escapeHtml(getFertilizerTip(speciesNameForTip))}</div>
+      <div class="row2" style="margin-top:10px;">
+        <div class="field"><label>Düngerhythmus (Tage)</label><input type="number" min="0" id="${prefix}_fertInterval" value="${item.fertilizerIntervalDays!=null?item.fertilizerIntervalDays:14}"></div>
+        <div class="field"></div>
+      </div>
+      <div id="${prefix}_fertLogContainer">${logHistoryHtml(item.fertilizerLog, type, itemId, prefix, 'fertilizerLog')}</div>
+      <div class="fert-add-row">
+        <div class="field"><label>Neue Düngung — Datum</label><input type="date" id="${prefix}_fertDate"></div>
+        <div class="field"><label>Produkt</label><input id="${prefix}_fertProduct" value="Canna Vega"></div>
+      </div>
+      <div class="field"><label>Notiz (optional)</label><input id="${prefix}_fertNote" placeholder="z. B. leicht unterdosiert wegen Trockenstress"></div>
+    </div>`;
+}
+
+function wateringSectionHtml(item, type, itemId, prefix){
+  return `
+    <div class="fert-section">
+      <label class="fert-heading">Gießprotokoll</label>
+      <div id="${prefix}_waterLogContainer">${logHistoryHtml(item.wateringLog, type, itemId, prefix, 'wateringLog')}</div>
+      <div class="fert-add-row">
+        <div class="field"><label>Neuer Eintrag — Datum</label><input type="date" id="${prefix}_waterDate"></div>
+        <div class="field"><label>Art</label>
+          <select id="${prefix}_waterType">
+            <option value="Nachgefüllt">Reservoir nachgefüllt</option>
+            <option value="Gegossen">Komplett gegossen</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Notiz (optional)</label><input id="${prefix}_waterNote" placeholder="z. B. Menge, Beobachtung"></div>
+    </div>`;
+}
+
+function flushSectionHtml(item, type, itemId, prefix, speciesNameForTip){
+  const rec = getFlushRecommendation(speciesNameForTip, item.substrate);
+  return `
+    <div class="fert-section">
+      <label class="fert-heading">Durchspül-Protokoll</label>
+      <div class="hint" id="${prefix}_flushTip">${escapeHtml(rec.tip)}</div>
+      <div class="row2" style="margin-top:10px;">
+        <div class="field"><label>Durchspülintervall (Tage)</label><input type="number" min="0" id="${prefix}_flushInterval" value="${item.flushIntervalDays!=null?item.flushIntervalDays:rec.days}"></div>
+        <div class="field"></div>
+      </div>
+      <div id="${prefix}_flushLogContainer">${logHistoryHtml(item.flushLog, type, itemId, prefix, 'flushLog')}</div>
+      <div class="fert-add-row">
+        <div class="field"><label>Neues Durchspülen — Datum</label><input type="date" id="${prefix}_flushDate"></div>
+        <div class="field"><label>Notiz (optional)</label><input id="${prefix}_flushNote" placeholder="z. B. mit destilliertem Wasser"></div>
+      </div>
+    </div>`;
 }
 
 function plantForm(p){
@@ -492,9 +1550,7 @@ function plantForm(p){
     <div class="field">
       <label>Pflanzenname</label>
       <input id="f_name" list="plantSpeciesList" value="${escapeHtml(p.name)}" placeholder="Tippen für Vorschläge oder frei eingeben" oninput="onPlantNameInput()" autocomplete="off">
-      <datalist id="plantSpeciesList">
-        ${PLANT_DB.map(sp=>`<option value="${escapeHtml(sp.name)}">`).join('')}
-      </datalist>
+      ${plantAutocompleteDatalistHtml()}
       <div class="err" id="err_name">Bitte einen Namen eingeben.</div>
       <div class="hint" id="dbHint" style="display:none;">Aus der Datenbank übernommen — botanischer Name und Kategorie kannst du unten jederzeit anpassen.</div>
     </div>
@@ -507,9 +1563,12 @@ function plantForm(p){
       <div class="field"><label>Standort</label><input id="f_location" value="${escapeHtml(p.location)}" placeholder="z. B. Wohnzimmer"></div>
     </div>
     <div class="row2">
-      <div class="field"><label>Substrat</label><input id="f_substrate" value="${escapeHtml(p.substrate)}" placeholder="z. B. Aroid-Mix"></div>
+      ${substrateSelectHtml(p, 'f')}
       <div class="field"><label>Gießrhythmus</label><input id="f_watering" value="${escapeHtml(p.watering)}" placeholder="z. B. wöchentlich"></div>
     </div>
+    ${substrateHistoryFieldsHtml(p, 'f')}
+    ${reservoirBlockHtml(p, 'f')}
+    <div class="hint" id="f_careTips" style="display:none;"></div>
     <div class="row2">
       <div class="field"><label>Letzte Umtopfung</label><input id="f_repotted" value="${escapeHtml(p.repotted)}" placeholder="z. B. 2024-03"></div>
       <div class="field"><label>Zustand</label>
@@ -519,6 +1578,13 @@ function plantForm(p){
       </div>
     </div>
     <div class="field"><label>Notizen</label><textarea id="f_notes" placeholder="Besonderheiten, Pflegehinweise…">${escapeHtml(p.notes)}</textarea></div>
+
+    ${fertilizerSectionHtml(p, 'plants', editingId, 'f', p.name)}
+
+    ${wateringSectionHtml(p, 'plants', editingId, 'f')}
+
+    ${flushSectionHtml(p, 'plants', editingId, 'f', p.name)}
+
     <div class="modal-actions">
       <div>${editingId ? `<button class="btn danger" onclick="deleteItem('plants', ${editingId})">Löschen</button>` : ''}</div>
       <div style="display:flex;gap:8px;">
@@ -531,16 +1597,55 @@ function plantForm(p){
 
 function cuttingForm(c){
   const origin = c.origin || 'eigene';
-  const plantOptions = state.plants.map(p=>`<option value="${p.id}" ${c.ownPlantId===p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join('');
+  const parentType = c.parentType || 'plant';
+  const currentParentValue = parentType==='cutting' ? `c:${c.parentCuttingId}` : (c.ownPlantId!=null ? `p:${c.ownPlantId}` : '');
+
+  const plantOptions = state.plants.map(p=>`<option value="p:${p.id}" ${currentParentValue===`p:${p.id}`?'selected':''}>${escapeHtml(p.name)}</option>`).join('');
+  // Ableger dürfen nicht sich selbst oder einen eigenen Nachkommen als Elternteil bekommen
+  const selectableCuttings = state.cuttings.filter(other => !(editingId && isSelfOrDescendant(editingId, other.id)));
+  const cuttingOptions = selectableCuttings.map(other=>`<option value="c:${other.id}" ${currentParentValue===`c:${other.id}`?'selected':''}>${escapeHtml(other.name)}</option>`).join('');
+  const hasAnyOwnSource = state.plants.length>0 || selectableCuttings.length>0;
+  const parentSelectHtml = hasAnyOwnSource
+    ? `<select id="c_ownPlant" onchange="updateCareTips('c')">
+        ${plantOptions ? `<optgroup label="Pflanzen">${plantOptions}</optgroup>` : ''}
+        ${cuttingOptions ? `<optgroup label="Ableger &amp; Stecklinge">${cuttingOptions}</optgroup>` : ''}
+      </select>`
+    : `<div class="hint">Du hast noch keine Pflanzen oder Ableger im Bestand. Lege zuerst eine Pflanze im Tab "Pflanzen" an.</div>`;
+
+  let labelValue = c.name || '';
+  if(origin==='eigene'){
+    const parentName = parentType==='cutting' ? (getCuttingById(c.parentCuttingId)||{}).name : (state.plants.find(p=>p.id===c.ownPlantId)||{}).name;
+    if(parentName){
+      if(labelValue === parentName) labelValue = '';
+      else if(labelValue.startsWith(parentName + ' – ')) labelValue = labelValue.slice((parentName + ' – ').length);
+    }
+  }
+  // Für Pflege-Tipps/Empfehlungen gilt bei eigenen Ablegern der Name der Elternpflanze
+  // (bzw. des Eltern-Ablegers) als Artname, sonst der eigene Bezeichnungstext.
+  // Bewusst c.origin (nicht die mit 'eigene' vorbelegte origin-Variable), um exakt
+  // die bisherige Verzweigung nachzubilden.
+  const speciesNameForTip = c.origin==='eigene' ? getParentLabel(c) : c.name;
   return `
     <h2>${editingId ? 'Ableger bearbeiten' : 'Neuer Ableger / Steckling'}</h2>
-    <p class="modal-sub">Verknüpfe ihn mit einer eigenen Pflanze oder gib eine externe Quelle an.</p>
+    <p class="modal-sub">Verknüpfe ihn mit einer eigenen Pflanze (oder einem eigenen Ableger) oder gib eine externe Quelle an.</p>
     <div class="field">
-      <label>Name</label>
-      <input id="c_name" list="plantSpeciesList" value="${escapeHtml(c.name)}" placeholder="z. B. Monstera Ableger #1" autocomplete="off">
-      <datalist id="plantSpeciesList">
-        ${PLANT_DB.map(sp=>`<option value="${escapeHtml(sp.name)}">`).join('')}
-      </datalist>
+      <label>Herkunft</label>
+      <div class="toggle-group">
+        <div class="toggle-opt ${origin==='eigene'?'active':''}" id="opt_eigene" onclick="updateOwnPlantVisibility('eigene')">Eigene Pflanze</div>
+        <div class="toggle-opt ${origin==='fremd'?'active clay':''}" id="opt_fremd" onclick="updateOwnPlantVisibility('fremd')">Fremde Pflanze</div>
+      </div>
+    </div>
+    <div class="field" id="field_own">
+      <label>Von welcher eigenen Pflanze / welchem Ableger?</label>
+      ${parentSelectHtml}
+    </div>
+    <div class="field" id="field_foreign" style="display:none;">
+      <label>Quelle (Person, Shop, Tausch…)</label>
+      <input id="c_foreign" value="${escapeHtml(c.foreignSource)}" placeholder="z. B. Von Lisa geschenkt" oninput="updateCareTips('c')">
+    </div>
+    <div class="field">
+      <label id="c_name_label">Bezeichnung (optional)</label>
+      <input id="c_name" value="${escapeHtml(labelValue)}" placeholder="z. B. Ableger #1, Fensterbank-Ableger" autocomplete="off">
       <div class="err" id="err_c_name">Bitte einen Namen eingeben.</div>
     </div>
     <div class="row2">
@@ -551,25 +1656,13 @@ function cuttingForm(c){
       </div>
       <div class="field"><label>Datum genommen</label><input type="date" id="c_date" value="${c.dateTaken||''}"></div>
     </div>
-    <div class="field">
-      <label>Herkunft</label>
-      <div class="toggle-group">
-        <div class="toggle-opt ${origin==='eigene'?'active':''}" id="opt_eigene" onclick="updateOwnPlantVisibility('eigene')">Eigene Pflanze</div>
-        <div class="toggle-opt ${origin==='fremd'?'active clay':''}" id="opt_fremd" onclick="updateOwnPlantVisibility('fremd')">Fremde Pflanze</div>
-      </div>
-    </div>
-    <div class="field" id="field_own">
-      <label>Von welcher eigenen Pflanze?</label>
-      ${state.plants.length ? `<select id="c_ownPlant">${plantOptions}</select>` : `<div class="hint">Du hast noch keine Pflanzen im Bestand. Lege zuerst eine Pflanze im Tab "Pflanzen" an.</div>`}
-    </div>
-    <div class="field" id="field_foreign" style="display:none;">
-      <label>Quelle (Person, Shop, Tausch…)</label>
-      <input id="c_foreign" value="${escapeHtml(c.foreignSource)}" placeholder="z. B. Von Lisa geschenkt">
-    </div>
     <div class="row2">
       <div class="field"><label>Standort</label><input id="c_location" value="${escapeHtml(c.location)}" placeholder="z. B. Fensterbank"></div>
-      <div class="field"><label>Substrat</label><input id="c_substrate" value="${escapeHtml(c.substrate)}" placeholder="z. B. Wasser -> Erde"></div>
+      ${substrateSelectHtml(c, 'c')}
     </div>
+    ${substrateHistoryFieldsHtml(c, 'c')}
+    ${reservoirBlockHtml(c, 'c')}
+    <div class="hint" id="c_careTips" style="display:none;"></div>
     <div class="row2">
       <div class="field"><label>Gießrhythmus</label><input id="c_watering" value="${escapeHtml(c.watering)}" placeholder="z. B. alle 4 Tage"></div>
       <div class="field"><label>Zustand</label>
@@ -579,6 +1672,13 @@ function cuttingForm(c){
       </div>
     </div>
     <div class="field"><label>Notizen</label><textarea id="c_notes" placeholder="z. B. Bewurzelungsfortschritt…">${escapeHtml(c.notes)}</textarea></div>
+
+    ${fertilizerSectionHtml(c, 'cuttings', editingId, 'c', speciesNameForTip)}
+
+    ${wateringSectionHtml(c, 'cuttings', editingId, 'c')}
+
+    ${flushSectionHtml(c, 'cuttings', editingId, 'c', speciesNameForTip)}
+
     <div class="modal-actions">
       <div>${editingId ? `<button class="btn danger" onclick="deleteItem('cuttings', ${editingId})">Löschen</button>` : ''}</div>
       <div style="display:flex;gap:8px;">
@@ -587,6 +1687,140 @@ function cuttingForm(c){
       </div>
     </div>
   `;
+}
+
+function wishlistForm(w){
+  const currentPriority = w.status || WISHLIST_PRIORITIES[2];
+  return `
+    <h2>${editingId ? 'Wunsch bearbeiten' : 'Neuer Wunsch'}</h2>
+    <p class="modal-sub">Pflanzen, die du dir für später vormerkst.</p>
+    <div class="field">
+      <label>Pflanzenname</label>
+      <input id="w_name" list="plantSpeciesList" value="${escapeHtml(w.name)}" placeholder="Tippen für Vorschläge oder frei eingeben" oninput="onWishlistNameInput()" autocomplete="off">
+      ${plantAutocompleteDatalistHtml()}
+      <div class="err" id="err_w_name">Bitte einen Namen eingeben.</div>
+      <div class="hint" id="wDbHint" style="display:none;">Aus der Datenbank übernommen — botanischer Name und Kategorie kannst du unten jederzeit anpassen.</div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Botanischer Name</label><input id="w_latin" value="${escapeHtml(w.latin)}" placeholder="z. B. Monstera deliciosa"></div>
+      <div class="field"><label>Kategorie</label><input id="w_category" value="${escapeHtml(w.category)}" placeholder="z. B. Zimmerpflanze"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Priorität</label>
+        <select id="w_status">
+          ${WISHLIST_PRIORITIES.map(s=>`<option value="${s}" ${currentPriority===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Preis (ca.)</label><input id="w_price" value="${escapeHtml(w.price)}" placeholder="z. B. 15€"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Quelle/Bezugsmöglichkeit</label><input id="w_source" value="${escapeHtml(w.source)}" placeholder="z. B. Ebay Kleinanzeigen, Gärtnerei X"></div>
+      <div class="field"><label>Link</label><input type="url" id="w_link" value="${escapeHtml(w.link)}" placeholder="https://…"></div>
+    </div>
+    <div class="field"><label>Notizen</label><textarea id="w_notes" placeholder="z. B. warum sie dir gefällt, worauf du achten willst…">${escapeHtml(w.notes)}</textarea></div>
+    ${w.addedDate ? `<div class="hint">Hinzugefügt am ${escapeHtml(w.addedDate)}</div>` : ''}
+    ${(editingId && currentPriority==='Gekauft') ? `<div class="hint" style="background:var(--moss-pale);display:flex;justify-content:space-between;align-items:center;">
+        <span>Als gekauft markiert.</span>
+        <button type="button" class="btn ghost" style="padding:5px 10px;font-size:12.5px;" onclick="convertWishlistItemToPlant(${editingId})">→ In den Pflanzenkatalog übernehmen</button>
+      </div>` : ''}
+
+    <div class="modal-actions">
+      <div>${editingId ? `<button class="btn danger" onclick="deleteItem('wishlist', ${editingId})">Löschen</button>` : ''}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn ghost" onclick="closeModal()">Abbrechen</button>
+        <button class="btn" onclick="saveWishlistItem()">Speichern</button>
+      </div>
+    </div>
+  `;
+}
+
+function onWishlistNameInput(){
+  const nameField = document.getElementById('w_name');
+  const match = findPlantInDB(nameField.value);
+  const hint = document.getElementById('wDbHint');
+  if(match){
+    document.getElementById('w_latin').value = match.latin;
+    document.getElementById('w_category').value = match.category;
+    hint.style.display = 'block';
+  } else {
+    hint.style.display = 'none';
+  }
+}
+
+async function saveWishlistItem(){
+  const name = document.getElementById('w_name').value.trim();
+  if(!name){
+    document.getElementById('err_w_name').classList.add('show');
+    return;
+  }
+  document.getElementById('err_w_name').classList.remove('show');
+
+  const existing = editingId ? (state.wishlist.find(x=>x.id===editingId)||{}) : {};
+  const data = {
+    name,
+    latin: document.getElementById('w_latin').value.trim(),
+    category: document.getElementById('w_category').value.trim(),
+    status: document.getElementById('w_status').value,
+    price: document.getElementById('w_price').value.trim(),
+    source: document.getElementById('w_source').value.trim(),
+    link: document.getElementById('w_link').value.trim(),
+    notes: document.getElementById('w_notes').value.trim(),
+    addedDate: existing.addedDate || new Date().toISOString().slice(0,10),
+  };
+
+  let savedId;
+  if(editingId){
+    const idx = state.wishlist.findIndex(x=>x.id===editingId);
+    state.wishlist[idx] = {...state.wishlist[idx], ...data};
+    savedId = editingId;
+  } else {
+    data.id = nextId(state.wishlist);
+    state.wishlist.push(data);
+    savedId = data.id;
+  }
+  await saveState();
+  closeModal();
+  render();
+
+  if(data.status === 'Gekauft'){
+    showConfirm(
+      `"${name}" ist als gekauft markiert. Jetzt direkt als neue Pflanze im Katalog anlegen? Der Wunschlisten-Eintrag bleibt bestehen, bis du die neue Pflanze speicherst.`,
+      ()=> convertWishlistItemToPlant(savedId),
+      { title: 'In den Katalog übernehmen?', confirmLabel: 'Ja, Pflanze anlegen' }
+    );
+  }
+}
+
+// Öffnet das "Neue Pflanze"-Formular, vorausgefüllt mit den Wunschlisten-Daten.
+// Der Wunschlisten-Eintrag wird erst gelöscht, wenn die neue Pflanze tatsächlich
+// gespeichert wird (siehe savePlant) — bricht der Nutzer ab, bleibt er erhalten.
+function convertWishlistItemToPlant(id){
+  const item = state.wishlist.find(x=>x.id===id);
+  if(!item) return;
+  const noteParts = [];
+  if(item.source) noteParts.push(`Quelle: ${item.source}`);
+  if(item.price) noteParts.push(`Preis: ${item.price}`);
+  if(item.link) noteParts.push(`Link: ${item.link}`);
+  if(item.notes) noteParts.push(item.notes);
+  convertingWishlistId = id;
+  openModal('plants', null, {
+    name: item.name,
+    latin: item.latin,
+    category: item.category,
+    notes: noteParts.join(' — '),
+  });
+}
+
+async function bulkMarkPurchased(){
+  if(selectedIds.size===0) return;
+  state.wishlist.forEach(item=>{
+    if(selectedIds.has(item.id)){
+      item.status = 'Gekauft';
+    }
+  });
+  await saveState();
+  clearSelection();
+  render();
 }
 
 function updateOwnPlantVisibility(origin){
@@ -604,9 +1838,130 @@ function updateOwnPlantVisibility(origin){
     fieldOwn.style.display = origin==='eigene' ? 'block' : 'none';
     fieldForeign.style.display = origin==='fremd' ? 'block' : 'none';
   }
+  const nameLabel = document.getElementById('c_name_label');
+  const nameInput = document.getElementById('c_name');
+  if(nameLabel && nameInput){
+    if(origin==='eigene'){
+      nameLabel.textContent = 'Bezeichnung (optional)';
+      nameInput.placeholder = 'z. B. Ableger #1, Fensterbank-Ableger';
+    } else {
+      nameLabel.textContent = 'Name';
+      nameInput.placeholder = 'z. B. Pilea Steckling';
+    }
+  }
   window._currentOrigin = origin;
+  updateCareTips('c');
 }
 
+function getSubstrateValue(prefix){
+  const select = document.getElementById(prefix+'_substrate_select');
+  const custom = document.getElementById(prefix+'_substrate_custom');
+  if(!select) return '';
+  if(select.value === 'Sonstiges') return (custom.value||'').trim();
+  return select.value;
+}
+
+function onSubstrateChange(prefix){
+  const select = document.getElementById(prefix+'_substrate_select');
+  const custom = document.getElementById(prefix+'_substrate_custom');
+  const reservoirBlock = document.getElementById(prefix+'_reservoir_block');
+  custom.style.display = select.value === 'Sonstiges' ? 'block' : 'none';
+  if(reservoirBlock){
+    reservoirBlock.style.display = isSemiHydro(select.value) ? 'block' : 'none';
+  }
+  updateCareTips(prefix);
+}
+
+// Wird nur ausgelöst, wenn der Nutzer das Substrat-Dropdown tatsächlich ändert
+// (nicht beim programmatischen Aufruf von onSubstrateChange() beim Öffnen des Formulars)
+// -> übernimmt das alte Substrat automatisch als "Substrat vorher" und setzt das
+// Umstellungsdatum bequem auf heute. Beides bleibt manuell überschreibbar.
+function onSubstrateSelectChanged(prefix){
+  const select = document.getElementById(prefix+'_substrate_select');
+  const prevValue = select.dataset.prev || '';
+  onSubstrateChange(prefix);
+  const beforeInput = document.getElementById(prefix+'_substrateBefore');
+  const dateInput = document.getElementById(prefix+'_substrateChangedDate');
+  if(prevValue && select.value !== prevValue){
+    if(beforeInput) beforeInput.value = prevValue;
+    if(dateInput) dateInput.value = new Date().toISOString().slice(0,10);
+  }
+  select.dataset.prev = select.value;
+  updateSubstrateSinceHint(prefix);
+}
+
+function setReservoirEmpty(prefix, isEmpty){
+  const yesBtn = document.getElementById(prefix+'_res_yes');
+  const noBtn = document.getElementById(prefix+'_res_no');
+  const emptySinceField = document.getElementById(prefix+'_emptySince_field');
+  yesBtn.classList.toggle('active', isEmpty);
+  yesBtn.classList.toggle('clay', isEmpty);
+  noBtn.classList.toggle('active', !isEmpty);
+  emptySinceField.style.display = isEmpty ? 'block' : 'none';
+  if(isEmpty){
+    const dateInput = document.getElementById(prefix+'_emptySince');
+    if(!dateInput.value){ dateInput.value = new Date().toISOString().slice(0,10); }
+  }
+  window['_'+prefix+'_reservoirEmpty'] = isEmpty;
+}
+
+function getCuttingSpeciesName(){
+  const origin = window._currentOrigin || 'eigene';
+  if(origin==='eigene'){
+    const ownSelect = document.getElementById('c_ownPlant');
+    if(ownSelect && ownSelect.value){
+      const [kind, idStr] = ownSelect.value.split(':');
+      const id = parseInt(idStr);
+      if(kind==='c'){
+        const cutting = getCuttingById(id);
+        return cutting ? cutting.name : '';
+      }
+      const plant = state.plants.find(p=>p.id===id);
+      return plant ? plant.name : '';
+    }
+    return '';
+  }
+  const nameField = document.getElementById('c_name');
+  return nameField ? nameField.value : '';
+}
+
+function updateCareTips(prefix){
+  const speciesName = prefix==='f'
+    ? (document.getElementById('f_name') ? document.getElementById('f_name').value : '')
+    : getCuttingSpeciesName();
+  const substrate = getSubstrateValue(prefix);
+  const tips = getCareTips(speciesName, substrate);
+  const box = document.getElementById(prefix+'_careTips');
+  if(!box) return;
+  if(tips.length===0){
+    box.style.display = 'none';
+    box.innerHTML = '';
+  } else {
+    box.style.display = 'block';
+    box.innerHTML = tips.map(t=>`<div style="margin-bottom:6px;">${escapeHtml(t)}</div>`).join('');
+  }
+}
+
+function updateSubstrateSinceHint(prefix){
+  const dateInput = document.getElementById(prefix+'_substrateChangedDate');
+  const hint = document.getElementById(prefix+'_substrateSinceHint');
+  if(!dateInput || !hint) return;
+  if(!dateInput.value){ hint.style.display='none'; hint.innerHTML=''; return; }
+  const changed = new Date(dateInput.value + 'T00:00:00');
+  const today = new Date(new Date().toDateString());
+  const days = Math.max(0, Math.round((today.getTime()-changed.getTime())/(24*60*60*1000)));
+  hint.style.display = 'block';
+  hint.innerHTML = `Seit <strong>${days} Tag${days===1?'':'en'}</strong> im aktuellen Substrat — relevant für die Beobachtung von Anpassungsproblemen oder Wurzelfäule.`;
+}
+
+function initFormDynamicState(prefix, item){
+  onSubstrateChange(prefix);
+  const reservoirBlock = document.getElementById(prefix+'_reservoir_block');
+  if(reservoirBlock){
+    window['_'+prefix+'_reservoirEmpty'] = !!item.reservoirEmpty;
+  }
+  updateSubstrateSinceHint(prefix);
+}
 function onPlantNameInput(){
   const nameField = document.getElementById('f_name');
   const match = findPlantInDB(nameField.value);
@@ -620,6 +1975,7 @@ function onPlantNameInput(){
   } else {
     hint.style.display = 'none';
   }
+  updateCareTips('f');
 }
 
 async function savePlant(){
@@ -627,17 +1983,48 @@ async function savePlant(){
   if(!name){ document.getElementById('err_name').classList.add('show'); return; }
   document.getElementById('err_name').classList.remove('show');
 
+  const substrate = getSubstrateValue('f');
+  const reservoirEmpty = !!window['_f_reservoirEmpty'];
+  const fertilizerIntervalDays = parseInt(document.getElementById('f_fertInterval').value) || 0;
+  const existingPlant = editingId ? (state.plants.find(x=>x.id===editingId)||{}) : {};
+  const existingLog = existingPlant.fertilizerLog || [];
+  const fertDate = document.getElementById('f_fertDate').value;
+  const fertilizerLog = fertDate
+    ? [...existingLog, { date: fertDate, product: document.getElementById('f_fertProduct').value.trim() || 'Canna Vega', note: document.getElementById('f_fertNote').value.trim() }]
+    : existingLog;
+  const existingWaterLog = existingPlant.wateringLog || [];
+  const waterDate = document.getElementById('f_waterDate').value;
+  const wateringLog = waterDate
+    ? [...existingWaterLog, { date: waterDate, type: document.getElementById('f_waterType').value, note: document.getElementById('f_waterNote').value.trim() }]
+    : existingWaterLog;
+  const flushIntervalDays = parseInt(document.getElementById('f_flushInterval').value) || 0;
+  const existingFlushLog = existingPlant.flushLog || [];
+  const flushDate = document.getElementById('f_flushDate').value;
+  const flushLog = flushDate
+    ? [...existingFlushLog, { date: flushDate, note: document.getElementById('f_flushNote').value.trim() }]
+    : existingFlushLog;
+
   const data = {
     name,
     latin: document.getElementById('f_latin').value.trim(),
     category: document.getElementById('f_category').value.trim(),
     acquired: document.getElementById('f_acquired').value,
     location: document.getElementById('f_location').value.trim(),
-    substrate: document.getElementById('f_substrate').value.trim(),
+    substrate,
+    substrateBefore: document.getElementById('f_substrateBefore').value.trim(),
+    substrateChangedDate: document.getElementById('f_substrateChangedDate').value,
     watering: document.getElementById('f_watering').value.trim(),
     repotted: document.getElementById('f_repotted').value.trim(),
     status: document.getElementById('f_status').value,
     notes: document.getElementById('f_notes').value.trim(),
+    reservoirEmpty: isSemiHydro(substrate) ? reservoirEmpty : false,
+    reservoirEmptySince: isSemiHydro(substrate) && reservoirEmpty ? document.getElementById('f_emptySince').value : '',
+    dryDays: isSemiHydro(substrate) ? (parseInt(document.getElementById('f_dryDays').value) || 0) : null,
+    fertilizerIntervalDays,
+    fertilizerLog,
+    wateringLog,
+    flushIntervalDays,
+    flushLog,
   };
 
   if(editingId){
@@ -646,6 +2033,13 @@ async function savePlant(){
   } else {
     data.id = nextId(state.plants);
     state.plants.push(data);
+    // Falls diese Pflanze aus der Wunschliste heraus angelegt wurde ("Gekauft" ->
+    // "In Katalog übernehmen"), verschwindet der Wunschlisten-Eintrag jetzt, wo die
+    // Pflanze tatsächlich gespeichert wurde (nicht schon beim bloßen Öffnen des Formulars).
+    if(convertingWishlistId != null){
+      state.wishlist = state.wishlist.filter(x=>x.id!==convertingWishlistId);
+      convertingWishlistId = null;
+    }
   }
   await saveState();
   closeModal();
@@ -653,25 +2047,81 @@ async function savePlant(){
 }
 
 async function saveCutting(){
-  const name = document.getElementById('c_name').value.trim();
-  if(!name){ document.getElementById('err_c_name').classList.add('show'); return; }
-  document.getElementById('err_c_name').classList.remove('show');
-
   const origin = window._currentOrigin || 'eigene';
   const ownSelect = document.getElementById('c_ownPlant');
+  const label = document.getElementById('c_name').value.trim();
+
+  let name;
+  let parentType = 'plant';
+  let ownPlantId = null;
+  let parentCuttingId = null;
+  if(origin==='eigene'){
+    const raw = ownSelect ? ownSelect.value : '';
+    const [kind, idStr] = raw.split(':');
+    const id = parseInt(idStr);
+    let parent = null;
+    if(kind==='c'){
+      parentType = 'cutting';
+      parentCuttingId = id;
+      parent = getCuttingById(id);
+    } else {
+      parentType = 'plant';
+      ownPlantId = id;
+      parent = state.plants.find(p=>p.id===id);
+    }
+    if(!parent){ document.getElementById('err_c_name').textContent = 'Bitte zuerst eine Pflanze oder einen Ableger im Bestand anlegen.'; document.getElementById('err_c_name').classList.add('show'); return; }
+    name = label ? `${parent.name} – ${label}` : parent.name;
+  } else {
+    if(!label){ document.getElementById('err_c_name').textContent = 'Bitte einen Namen eingeben.'; document.getElementById('err_c_name').classList.add('show'); return; }
+    name = label;
+  }
+  document.getElementById('err_c_name').classList.remove('show');
+
+  const substrate = getSubstrateValue('c');
+  const reservoirEmpty = !!window['_c_reservoirEmpty'];
+  const fertilizerIntervalDays = parseInt(document.getElementById('c_fertInterval').value) || 0;
+  const existingCutting = editingId ? (state.cuttings.find(x=>x.id===editingId)||{}) : {};
+  const existingLog = existingCutting.fertilizerLog || [];
+  const fertDate = document.getElementById('c_fertDate').value;
+  const fertilizerLog = fertDate
+    ? [...existingLog, { date: fertDate, product: document.getElementById('c_fertProduct').value.trim() || 'Canna Vega', note: document.getElementById('c_fertNote').value.trim() }]
+    : existingLog;
+  const existingWaterLog = existingCutting.wateringLog || [];
+  const waterDate = document.getElementById('c_waterDate').value;
+  const wateringLog = waterDate
+    ? [...existingWaterLog, { date: waterDate, type: document.getElementById('c_waterType').value, note: document.getElementById('c_waterNote').value.trim() }]
+    : existingWaterLog;
+  const flushIntervalDays = parseInt(document.getElementById('c_flushInterval').value) || 0;
+  const existingFlushLog = existingCutting.flushLog || [];
+  const flushDate = document.getElementById('c_flushDate').value;
+  const flushLog = flushDate
+    ? [...existingFlushLog, { date: flushDate, note: document.getElementById('c_flushNote').value.trim() }]
+    : existingFlushLog;
 
   const data = {
     name,
     type: document.getElementById('c_type').value,
     dateTaken: document.getElementById('c_date').value,
     origin,
-    ownPlantId: origin==='eigene' && ownSelect ? parseInt(ownSelect.value) : null,
+    parentType: origin==='eigene' ? parentType : null,
+    ownPlantId: origin==='eigene' ? ownPlantId : null,
+    parentCuttingId: origin==='eigene' ? parentCuttingId : null,
     foreignSource: origin==='fremd' ? document.getElementById('c_foreign').value.trim() : '',
     location: document.getElementById('c_location').value.trim(),
-    substrate: document.getElementById('c_substrate').value.trim(),
+    substrate,
+    substrateBefore: document.getElementById('c_substrateBefore').value.trim(),
+    substrateChangedDate: document.getElementById('c_substrateChangedDate').value,
     watering: document.getElementById('c_watering').value.trim(),
     status: document.getElementById('c_status').value,
     notes: document.getElementById('c_notes').value.trim(),
+    reservoirEmpty: isSemiHydro(substrate) ? reservoirEmpty : false,
+    reservoirEmptySince: isSemiHydro(substrate) && reservoirEmpty ? document.getElementById('c_emptySince').value : '',
+    dryDays: isSemiHydro(substrate) ? (parseInt(document.getElementById('c_dryDays').value) || 0) : null,
+    fertilizerIntervalDays,
+    fertilizerLog,
+    wateringLog,
+    flushIntervalDays,
+    flushLog,
   };
 
   if(editingId){
@@ -686,26 +2136,120 @@ async function saveCutting(){
   render();
 }
 
-async function deleteItem(type, id){
-  state[type] = state[type].filter(x=>x.id!==id);
-  await saveState();
-  closeModal();
-  render();
+let pendingDeleteAction = null;
+
+function showConfirm(message, onConfirm, opts){
+  const options = opts || {};
+  document.getElementById('confirmTitle').textContent = options.title || 'Wirklich löschen?';
+  document.getElementById('confirmDeleteBtn').textContent = options.confirmLabel || 'Löschen';
+  document.getElementById('confirmMessage').textContent = message;
+  pendingDeleteAction = onConfirm;
+  document.getElementById('confirmOverlay').classList.add('show');
+  document.getElementById('confirmOverlay').onclick = (e)=>{ if(e.target.id==='confirmOverlay') closeConfirm(); };
 }
 
-document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+function closeConfirm(){
+  document.getElementById('confirmOverlay').classList.remove('show');
+  document.getElementById('confirmTitle').textContent = 'Wirklich löschen?';
+  document.getElementById('confirmDeleteBtn').textContent = 'Löschen';
+  pendingDeleteAction = null;
+}
+
+async function runPendingDelete(){
+  const action = pendingDeleteAction;
+  pendingDeleteAction = null;
+  document.getElementById('confirmOverlay').classList.remove('show');
+  if(action){ await action(); }
+}
+
+function deleteItem(type, id){
+  const item = state[type].find(x=>x.id===id);
+  const label = item ? item.name : 'diesen Eintrag';
+  // Nur Pflanzen/Ableger können Ableger-Nachkommen haben; die Wunschliste ist ein
+  // eigener Id-Raum, daher hier NICHT getDescendantCount mit einer id aus der
+  // Wunschliste in state.cuttings suchen lassen (sonst falsche Zufallstreffer).
+  let warning = '';
+  if(type==='plants' || type==='cuttings'){
+    const parentType = type==='plants' ? 'plant' : 'cutting';
+    const childCount = getDescendantCount(parentType, id);
+    if(childCount>0){
+      warning = ` Achtung: ${childCount} damit verknüpfte Ableger/Stecklinge bleiben danach ohne Elternteil bestehen (sie werden nicht mit gelöscht).`;
+    }
+  }
+  showConfirm(`"${label}" wird endgültig gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.${warning}`, async ()=>{
+    state[type] = state[type].filter(x=>x.id!==id);
+    await saveState();
+    closeModal();
+    render();
+  });
+}
+
+const LOG_CONTAINER_SUFFIX = {
+  fertilizerLog: '_fertLogContainer',
+  wateringLog: '_waterLogContainer',
+  flushLog: '_flushLogContainer',
+};
+
+// Löscht einen einzelnen Eintrag aus einem Protokoll (Düngen/Gießen/Durchspülen),
+// ohne das gerade offene Bearbeitungs-Formular zu schließen oder andere,
+// noch nicht gespeicherte Feldänderungen darin zu verwerfen.
+function deleteLogEntry(type, itemId, fieldName, index, prefix){
+  showConfirm('Dieser Protokoll-Eintrag wird endgültig gelöscht.', async ()=>{
+    const item = state[type].find(x=>x.id===itemId);
+    if(!item || !Array.isArray(item[fieldName])) return;
+    item[fieldName].splice(index, 1);
+    await saveState();
+    const containerId = prefix + LOG_CONTAINER_SUFFIX[fieldName];
+    const container = document.getElementById(containerId);
+    if(container){
+      container.innerHTML = logHistoryHtml(item[fieldName], type, itemId, prefix, fieldName);
+    }
+    render();
+  }, { title: 'Eintrag löschen?', confirmLabel: 'Löschen' });
+}
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='Escape'){
+    closeConfirm();
+    closeModal();
+  }
+});
 
 // Module-Scope ist standardmäßig nicht global — die im HTML per onclick="..."
 // aufgerufenen Funktionen müssen explizit an window gehängt werden.
 window.setTab = setTab;
+window.setView = setView;
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.savePlant = savePlant;
 window.saveCutting = saveCutting;
 window.deleteItem = deleteItem;
+window.deleteLogEntry = deleteLogEntry;
+window.closeConfirm = closeConfirm;
+window.runPendingDelete = runPendingDelete;
 window.updateOwnPlantVisibility = updateOwnPlantVisibility;
 window.onPlantNameInput = onPlantNameInput;
+window.onSubstrateChange = onSubstrateChange;
+window.onSubstrateSelectChanged = onSubstrateSelectChanged;
+window.setReservoirEmpty = setReservoirEmpty;
 window.render = render;
+window.jumpTo = jumpTo;
+window.showChildCuttings = showChildCuttings;
+window.resetParentFilter = resetParentFilter;
+window.toggleSelectionMode = toggleSelectionMode;
+window.toggleSelectItem = toggleSelectItem;
+window.clearSelection = clearSelection;
+window.bulkMarkFertilized = bulkMarkFertilized;
+window.bulkMarkWatered = bulkMarkWatered;
+window.bulkMarkFlushed = bulkMarkFlushed;
+window.exportData = exportData;
+window.importDataFromFile = importDataFromFile;
+window.updateSubstrateSinceHint = updateSubstrateSinceHint;
+window.updateCareTips = updateCareTips;
+window.onWishlistNameInput = onWishlistNameInput;
+window.saveWishlistItem = saveWishlistItem;
+window.convertWishlistItemToPlant = convertWishlistItemToPlant;
+window.bulkMarkPurchased = bulkMarkPurchased;
 
 loadState().then(render);
 </script>
