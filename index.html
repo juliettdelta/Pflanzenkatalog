@@ -24,6 +24,15 @@
     --white:#FBF5E8;
     --danger:#A8452F;
   }
+  /* Tab-Theming: die primäre Akzentfarbe (--moss/--moss-light/--moss-pale) wechselt
+     je nach aktivem Tab, damit Pflanzen/Ableger/Wunschliste sich optisch unterscheiden.
+     Badges und UI-Elemente, die var(--moss) nutzen, folgen dadurch automatisch mit. */
+  body.tab-cuttings{
+    --moss:#BC5B3B; --moss-light:#D98B65; --moss-pale:#EFD7C3;
+  }
+  body.tab-wishlist{
+    --moss:#C6963A; --moss-light:#DBB668; --moss-pale:#F3E7C7;
+  }
   *{box-sizing:border-box;}
   body{
     margin:0;
@@ -123,6 +132,37 @@
     text-align:center;padding:4rem 1rem;color:var(--ink-soft);
   }
   .empty .empty-icon{font-size:38px;line-height:1;margin-bottom:12px;opacity:0.55;}
+
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:2rem;}
+  .stat-card{
+    background:var(--white);border:1.5px solid var(--ink);border-radius:10px;padding:14px 16px;
+    box-shadow:4px 4px 0 var(--line);
+  }
+  .stat-card .stat-value{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--ink);line-height:1.15;}
+  .stat-card .stat-label{font-size:12px;color:var(--ink-soft);margin-top:4px;}
+
+  .stats-section{margin-bottom:2rem;}
+  .stats-section-title{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--ink);margin:0 0 14px;}
+  .stats-two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+
+  .stat-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px;}
+  .stat-bar-label{width:140px;flex-shrink:0;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .stat-bar-track{flex:1;background:var(--paper-2);border-radius:4px;height:16px;overflow:hidden;border:1px solid var(--line);}
+  .stat-bar-fill{height:100%;background:var(--moss);}
+  .stat-bar-count{width:44px;text-align:right;flex-shrink:0;font-weight:600;color:var(--ink);font-size:12.5px;}
+
+  .stats-empty{color:var(--ink-soft);font-size:13px;padding:8px 0;}
+  .stats-record{
+    background:var(--white);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;
+    margin-bottom:8px;font-size:13px;display:flex;justify-content:space-between;gap:10px;
+  }
+  .stats-record .rlabel{color:var(--ink-soft);}
+  .stats-record .rvalue{font-weight:600;color:var(--ink);text-align:right;}
+
+  @media (max-width:640px){
+    .stats-two-col{grid-template-columns:1fr;gap:0;}
+    .stat-bar-label{width:100px;font-size:12px;}
+  }
   .empty .serif{font-size:20px;color:var(--moss);margin-bottom:6px;}
 
   /* Modal */
@@ -134,6 +174,9 @@
   .modal{
     background:var(--paper);border-radius:12px;max-width:520px;width:100%;border:2px solid var(--ink);
     padding:1.75rem 1.75rem 1.5rem;box-shadow:8px 8px 0 var(--clay);margin-top:2vh;
+  }
+  @media (min-width:768px){
+    .modal{max-width:680px;}
   }
   .modal h2{margin:0 0 4px;font-size:22px;font-weight:600;color:var(--ink);}
   .modal .modal-sub{font-size:13px;color:var(--ink-soft);margin:0 0 20px;}
@@ -158,6 +201,29 @@
   .err{color:var(--danger);font-size:12.5px;margin-top:4px;display:none;}
   .err.show{display:block;}
   .hint{font-size:12px;color:var(--ink-soft);margin-top:14px;padding:10px 12px;background:var(--moss-pale);border-radius:8px;}
+
+  .care-accordion{border-top:1px solid var(--line);margin-top:18px;padding-top:14px;}
+  .care-accordion summary{
+    cursor:pointer;font-family:'Fraunces',serif;font-size:12.5px;letter-spacing:0.12em;
+    text-transform:uppercase;color:var(--ink-soft);text-align:center;list-style:none;padding:4px 0;
+  }
+  .care-accordion summary::-webkit-details-marker{display:none;}
+  .care-accordion summary::after{content:' ▾'; font-size:11px;}
+  .care-accordion[open] summary::after{content:' ▴';}
+  .care-body{padding-top:14px;display:flex;flex-direction:column;gap:16px;}
+  .care-row{display:flex;gap:14px;align-items:flex-start;}
+  .care-icon{font-size:22px;line-height:1;flex-shrink:0;margin-top:2px;}
+  .care-row-title{font-weight:600;font-size:13.5px;color:var(--ink);margin-bottom:3px;}
+  .care-row-text{font-size:13px;color:var(--ink-soft);line-height:1.5;}
+  .care-kv{border-top:1px dashed var(--line);padding-top:12px;margin-top:2px;display:flex;flex-direction:column;gap:5px;}
+  .care-kv-row{display:flex;gap:6px;font-size:12.5px;}
+  .care-kv-key{color:var(--ink-soft);min-width:170px;flex-shrink:0;}
+  .care-kv-val{color:var(--ink);font-weight:500;}
+  .care-desc{font-size:13px;color:var(--ink-soft);line-height:1.55;border-top:1px dashed var(--line);padding-top:12px;}
+  @media (max-width:520px){
+    .care-kv-row{flex-direction:column;gap:1px;}
+    .care-kv-key{min-width:0;}
+  }
 
   .daily-banner{
     display:flex;align-items:flex-start;gap:12px;background:var(--clay-pale);border:1.5px solid #D9B48F;
@@ -246,9 +312,10 @@
     <button class="tab active" data-tab="plants" onclick="setTab('plants')">🌱 Pflanzen <span class="n" id="tabCountPlants"></span></button>
     <button class="tab" data-tab="cuttings" onclick="setTab('cuttings')">🌿 Ableger &amp; Stecklinge <span class="n" id="tabCountCuttings"></span></button>
     <button class="tab" data-tab="wishlist" onclick="setTab('wishlist')">⭐ Wunschliste <span class="n" id="tabCountWishlist"></span></button>
+    <button class="tab" data-tab="stats" onclick="setTab('stats')">📊 Statistik</button>
   </div>
 
-  <div class="toolbar">
+  <div class="toolbar" id="mainToolbar">
     <input class="search" id="searchInput" placeholder="Suchen…" oninput="render()">
     <button class="btn ghost" id="selectModeBtn" onclick="toggleSelectionMode()">Auswählen</button>
     <button class="btn ghost" id="exportBtn" onclick="exportData()">Exportieren</button>
@@ -268,7 +335,7 @@
     </div>
   </div>
 
-  <div class="toolbar toolbar-controls">
+  <div class="toolbar toolbar-controls" id="filterToolbar">
     <div class="control-group">
       <select class="control-select" id="filterStatus" onchange="render()">
         <option value="">Alle Zustände</option>
@@ -357,9 +424,16 @@ let currentView = 'grid';
 let editingId = null;
 let selectionMode = false;
 let selectedIds = new Set();
+let formIsDirty = false;
 let filterParentType = null; // 'plant' | 'cutting' — gesetzt, wenn von "X Ableger" geklickt wird
 let filterParentId = null;
 let convertingWishlistId = null; // gesetzt während der Übernahme eines Wunsches in den Pflanzenkatalog
+let convertingCuttingId = null; // gesetzt während der Übernahme eines Ablegers/Stecklings in den Pflanzenkatalog
+// Merkt sich die Vorbefüllungsdaten (z. B. aus einer Umwandlung), solange ein NEUES
+// Element im Formular offen ist — savePlant()/saveCutting() greifen darauf zurück,
+// um mitgegebene Protokolle (Dünge-/Gieß-/Durchspül-/Umtopf-Log) nicht zu verlieren,
+// da diese Daten sonst nirgends zwischengespeichert sind (nur im DOM sichtbar).
+let currentPrefillItem = null;
 
 const WISHLIST_PRIORITIES = ['Muss ich haben', 'Sehr interessant', 'Klingt interessant', 'Irgendwann mal', 'Gekauft'];
 
@@ -468,6 +542,17 @@ function findPlantInDB(name){
   return PLANT_DB.find(p => p.name.toLowerCase() === n) || null;
 }
 
+const ACQUISITION_TYPES = ['Gekauft', 'Geschenkt', 'Getauscht', 'Sonstiges'];
+
+// Extrahiert die erste Zahl aus einem frei eingegebenen Preis-Text wie "15€",
+// "15,50 €" oder "ca. 20 Euro" — der Preis wird bewusst als Freitext erfasst
+// (wie schon bei der Wunschliste), für Auswertungen brauchen wir daraus eine Zahl.
+function parsePrice(str){
+  if(!str) return 0;
+  const match = String(str).replace(',', '.').match(/[\d.]+/);
+  return match ? parseFloat(match[0]) : 0;
+}
+
 const SUBSTRATE_OPTIONS = [
   'Semi Hydro',
   'Semi Hydro & Kokoschips 50/50',
@@ -529,6 +614,254 @@ function getFertilizerTip(speciesName){
   return FERTILIZER_FALLBACK_TIP;
 }
 
+const CATEGORY_FAMILY = {
+  'Aroid': 'Araceae (Aronstabgewächse)', 'Aroid (selten)': 'Araceae (Aronstabgewächse)',
+  'Sukkulente': 'je nach Gattung unterschiedlich', 'Kaktus': 'Cactaceae (Kakteengewächse)',
+  'Ficus': 'Moraceae (Maulbeergewächse)', 'Grünpflanze': 'je nach Gattung unterschiedlich',
+  'Palme': 'Arecaceae (Palmengewächse)', 'Calathea': 'Marantaceae (Pfeilwurzgewächse)',
+  'Farn': 'diverse Farnfamilien', 'Farn (selten)': 'diverse Farnfamilien',
+  'Orchidee': 'Orchidaceae (Orchideengewächse)', 'Bromelie': 'Bromeliaceae (Ananasgewächse)',
+  'Rankpflanze': 'je nach Gattung unterschiedlich', 'Begonie': 'Begoniaceae (Schiefblattgewächse)',
+};
+
+const CATEGORY_ORIGIN = {
+  'Aroid': 'Tropische Regenwälder Mittel-/Südamerikas', 'Aroid (selten)': 'Tropische Regenwälder Süd-/Südostasiens oder Südamerikas',
+  'Sukkulente': 'Trockengebiete Afrikas, Amerikas oder Madagaskars', 'Kaktus': 'Trockengebiete Amerikas',
+  'Ficus': 'Tropisches/subtropisches Asien und Afrika', 'Grünpflanze': 'Tropen/Subtropen weltweit',
+  'Palme': 'Tropische und subtropische Regionen', 'Calathea': 'Tropische Regenwälder Südamerikas',
+  'Farn': 'Feuchte Wälder weltweit', 'Farn (selten)': 'Tropische Regenwälder (epiphytisch)',
+  'Orchidee': 'Tropische und subtropische Regionen weltweit', 'Bromelie': 'Tropisches Mittel-/Südamerika',
+  'Rankpflanze': 'Tropische/subtropische Regionen', 'Begonie': 'Tropische/subtropische Regionen weltweit',
+};
+
+const CATEGORY_LIGHT = {
+  'Aroid': 'Hell bis halbschattig, keine direkte Mittagssonne.', 'Aroid (selten)': 'Hell, aber nur gefiltertes Licht — direkte Sonne verbrennt die Blätter schnell.',
+  'Sukkulente': 'So viel Licht wie möglich, gerne auch einige Stunden direkte Sonne.', 'Kaktus': 'Vollsonnig, je heller desto besser.',
+  'Ficus': 'Hell bis halbschattig, verträgt auch etwas direkte Morgen-/Abendsonne.', 'Grünpflanze': 'Hell bis halbschattig, sehr tolerant gegenüber unterschiedlichem Licht.',
+  'Palme': 'Hell bis halbschattig, keine pralle Mittagssonne.', 'Calathea': 'Halbschattig, direkte Sonne bleicht die Musterung aus.',
+  'Farn': 'Halbschattig bis schattig, keine direkte Sonne.', 'Farn (selten)': 'Halbschattig, gefiltertes Licht wie am Waldboden/Baumstamm.',
+  'Orchidee': 'Hell, aber ohne direkte Mittagssonne — Ostfenster ist ideal.', 'Bromelie': 'Hell bis halbschattig, keine direkte pralle Sonne.',
+  'Rankpflanze': 'Hell bis halbschattig, viele Arten tolerieren auch schattigere Standorte.', 'Begonie': 'Hell, aber ohne direkte Sonne.',
+};
+
+const CATEGORY_WATERING_DETAIL = {
+  'Aroid': 'Gießen, sobald die oberen 2–3 cm des Substrats angetrocknet sind — meist alle 7–10 Tage.', 'Aroid (selten)': 'Gleichmäßig feucht halten, nie komplett austrocknen lassen, aber auch keine Staunässe.',
+  'Sukkulente': 'Komplett durchtrocknen lassen, dann gründlich wässern — meist alle 2–3 Wochen.', 'Kaktus': 'Sehr sparsam, im Sommer alle 2–3 Wochen, im Winter kaum bis gar nicht.',
+  'Ficus': 'Gießen, wenn die oberste Erdschicht angetrocknet ist, gleichmäßig feucht halten.', 'Grünpflanze': 'Mäßig gießen, antrocknen lassen zwischen den Gießgängen.',
+  'Palme': 'Gleichmäßig feucht halten, keine Staunässe im Topf.', 'Calathea': 'Konstant leicht feucht halten, am besten mit kalkarmem/destilliertem Wasser.',
+  'Farn': 'Durchgehend feucht halten, nie komplett austrocknen lassen.', 'Farn (selten)': 'Regelmäßig besprühen oder tauchen, Substrat nie komplett austrocknen lassen.',
+  'Orchidee': 'Ca. 1× pro Woche tauchen oder gießen, Wurzeln zwischendurch abtrocknen lassen.', 'Bromelie': 'Trichter/Rosette mit Wasser befüllen, Substrat nur leicht feucht halten.',
+  'Rankpflanze': 'Mäßig gießen, leicht antrocknen lassen zwischen den Gießgängen.', 'Begonie': 'Gleichmäßig feucht halten, Blätter dabei nicht benetzen.',
+};
+
+const CATEGORY_REPOTTING = {
+  DEFAULT: 'Umtopfen, sobald die Wurzeln den Topf komplett ausfüllen oder aus den Drainagelöchern wachsen — meist alle 1–2 Jahre im Frühjahr. Neuer Topf ca. 3–5 cm größer im Durchmesser als der alte.',
+  'Kaktus': 'Nur bei Bedarf umtopfen (alle 2–3 Jahre), Kakteen mögen es eher eng im Topf. Vorsicht mit Handschuhen/Zeitungspapier.',
+  'Orchidee': 'Alle 1–2 Jahre umtopfen, sobald das Substrat zerfällt — spezielles grobes Orchideensubstrat verwenden.',
+  'Bromelie': 'Wird selten umgetopft, meist nur einmal nach dem Kauf; blüht nur einmal und bildet danach Kindel.',
+};
+
+const CATEGORY_PROPAGATION = {
+  'Aroid': 'Stecklinge mit mindestens einem Blattknoten abschneiden und in Wasser oder feuchtem Substrat bewurzeln lassen. Alternativ Teilung bei mehrtriebigen Pflanzen.',
+  'Aroid (selten)': 'Stecklinge mit Blattknoten in Sphagnum-Moos oder Semi-Hydro bewurzeln — braucht hohe Luftfeuchtigkeit und Geduld.',
+  'Sukkulente': 'Blatt- oder Kopfstecklinge einige Tage antrocknen lassen, dann in trockenes Substrat setzen und erst nach der Wurzelbildung gießen.',
+  'Kaktus': 'Ableger/Triebe abtrennen, einige Tage antrocknen lassen (Kallusbildung), dann trocken einpflanzen.',
+  'Ficus': 'Kopfstecklinge in Wasser oder feuchtem Substrat bewurzeln, austretenden Milchsaft vorher antrocknen lassen.',
+  'Grünpflanze': 'Meist einfach über Kopf- oder Teilstecklinge in Wasser oder Erde zu vermehren.',
+  'Palme': 'Meist nur über Samen zu vermehren, gelegentlich über Teilung bei horstbildenden Arten.',
+  'Calathea': 'Durch Teilung des Wurzelballens beim Umtopfen, jeder Teil braucht eigene Wurzeln und Triebe.',
+  'Farn': 'Durch Teilung des Rhizoms/Wurzelballens beim Umtopfen.',
+  'Farn (selten)': 'Durch Teilung oder über Sporen (anspruchsvoll und langwierig).',
+  'Orchidee': 'Über Kindel (Ableger am Blütenstiel oder an der Basis), die man abtrennt, sobald sie eigene Wurzeln haben.',
+  'Bromelie': 'Über Kindel (Ableger), die sich nach der Blüte an der Basis bilden — abtrennen, wenn sie ca. 1/3 der Größe der Mutterpflanze erreicht haben.',
+  'Rankpflanze': 'Stecklinge in Wasser oder feuchtem Substrat bewurzeln, meist unkompliziert.',
+  'Begonie': 'Über Blatt- oder Stängelstecklinge in feuchtem Substrat, manche Arten auch über ganze Blätter.',
+};
+const PROPAGATION_FALLBACK = 'Am einfachsten über Kopf- oder Stängelstecklinge mit mindestens einem Blattknoten, bewurzelt in Wasser oder feuchtem Substrat.';
+
+const CATEGORY_SEMIHYDRO_TIPS = {
+  'Aroid': 'Eignet sich sehr gut für Semi-Hydro — die Wurzeln vertragen den ständigen Kontakt zum Wasserstand gut. Reservoir nie randvoll lassen, damit die untersten Wurzeln noch Luft bekommen.',
+  'Aroid (selten)': 'Verträgt Semi-Hydro gut, reagiert aber empfindlicher auf zu hohen Wasserstand — Reservoir eher niedrig halten und regelmäßig auf Wurzelfäule kontrollieren.',
+  'Sukkulente': 'Nur bedingt für Semi-Hydro geeignet — die Wurzeln sind an trockene Phasen angepasst. Reservoir häufig komplett leer stehen lassen (lange Trockenphase), sonst droht Fäulnis.',
+  'Kaktus': 'Für klassische Semi-Hydro eher ungeeignet, da die Wurzeln dauerhafte Feuchtigkeit schlecht vertragen — wenn überhaupt, nur mit sehr langen Trockenphasen zwischen den Befüllungen.',
+  'Ficus': 'Kann in Semi-Hydro kultiviert werden, braucht aber eine Eingewöhnungszeit — anfangs mit kürzeren Trockenphasen starten und Reaktion der Blätter beobachten.',
+  'Grünpflanze': 'In der Regel gut für Semi-Hydro geeignet, meist unkomplizierte Umstellung von Erde.',
+  'Palme': 'Eignet sich bedingt für Semi-Hydro, manche Palmenarten reagieren empfindlich auf Staunässe an den Wurzeln — Wasserstand eher niedrig halten.',
+  'Calathea': 'Profitiert oft von Semi-Hydro, da die konstante Feuchtigkeit ihrem natürlichen Bedürfnis entgegenkommt — auf kalkarmes Wasser im Reservoir achten.',
+  'Farn': 'Gut für Semi-Hydro geeignet, da Farne konstante Feuchtigkeit lieben und selten unter zu viel Wasser leiden.',
+  'Farn (selten)': 'Epiphytische Farne eignen sich eher bedingt für klassisches Semi-Hydro — oft besser mit sehr niedrigem Wasserstand oder nur angefeuchtetem Substrat statt echtem Reservoir.',
+  'Orchidee': 'Sehr gut für Semi-Hydro geeignet (LECA/Blähton ist hier sogar die klassische Kulturform) — Wurzeln vertragen den Wechsel von Nass und Trocken gut.',
+  'Bromelie': 'Eher ungeeignet für klassisches Wurzel-Semi-Hydro, da Bromelien Wasser hauptsächlich über den Trichter aufnehmen, nicht über die Wurzeln.',
+  'Rankpflanze': 'Meist gut für Semi-Hydro geeignet, unkomplizierte Umstellung aus Erde.',
+  'Begonie': 'Nur bedingt für Semi-Hydro geeignet — empfindliche Wurzeln reagieren teils mit Fäulnis auf dauerhaften Wasserkontakt, Reservoir eher niedrig halten.',
+};
+const SEMIHYDRO_FALLBACK_TIP = 'Bei der Umstellung auf Semi-Hydro langsam vorgehen: Wurzeln vor dem Einsetzen gründlich von Erde befreien und abspülen, anfangs kürzere Trockenphasen wählen und die Pflanze in den ersten Wochen genau beobachten — ein vorübergehender Wachstumsstopp nach der Umstellung ist normal.';
+
+function getSemiHydroTip(speciesName){
+  const match = findPlantInDB(speciesName);
+  if(match && CATEGORY_SEMIHYDRO_TIPS[match.category]) return CATEGORY_SEMIHYDRO_TIPS[match.category];
+  return SEMIHYDRO_FALLBACK_TIP;
+}
+
+const PLANT_CARE_OVERRIDES = {
+  'Monstera Deliciosa': { light:'Hell bis halbschattig, verträgt auch etwas mehr Schatten, aber die typischen Fensterblätter (Fenestration) bilden sich nur bei genug Licht.', watering:'Gießen, wenn die oberen 3–4 cm angetrocknet sind, meist alle 7–10 Tage. Braucht eine Kletterhilfe (Moosstab) für großes Blattwachstum.', description:'Sehr robuste, schnell wachsende Kletterpflanze — verzeiht auch mal eine vergessene Gießrunde.' },
+  'Monstera Adansonii': { light:'Hell bis halbschattig, kein direktes Sonnenlicht — verträgt etwas mehr Schatten als die Deliciosa.', watering:'Alle 5–7 Tage gießen, mag es etwas feuchter als die große Monstera, aber keine Staunässe.', description:'Kompaktere Kletterpflanze mit charakteristischen Löchern im Blatt, wächst gerne hängend oder rankend.' },
+  'Monstera Thai Constellation': { light:'Hell, aber ohne direkte Sonne — bei zu wenig Licht verblasst die cremeweiße Panaschierung, bei zu viel Sonne verbrennt sie.', watering:'Alle 7–10 Tage, antrocknen lassen zwischen den Gießgängen. Wächst deutlich langsamer als grüne Monsteras.', description:'Panaschierte, teure Sortenform — langsamer Wuchs, jedes Blatt ist einzigartig gemustert.' },
+  'Efeutute': { light:'Sehr tolerant, von hell bis schattig — bunte Sorten brauchen mehr Licht, um ihre Musterung zu behalten.', watering:'Alle 7–10 Tage, verzeiht auch mal Austrocknen zwischendurch.', description:'Eine der pflegeleichtesten Zimmerpflanzen überhaupt, ideal für Einsteiger.' },
+  'Philodendron Scandens': { light:'Halbschattig bis hell, toleriert auch schattigere Ecken gut.', watering:'Alle 7–10 Tage, mag gleichmäßige Feuchtigkeit ohne Staunässe.', description:'Robuste, herzblättrige Kletterpflanze, wächst gerne an einer Rankhilfe oder hängend.' },
+  'Philodendron Birkin': { light:'Hell, aber ohne direkte Sonne — für die feine weiße Streifung wichtig.', watering:'Alle 7–9 Tage, oberste Erdschicht antrocknen lassen.', description:'Kompakte, nicht kletternde Art mit auffällig weiß geäderten Blättern.' },
+  'Philodendron Pink Princess': { light:'Hell, direktes Morgenlicht fördert die pinke Panaschierung, aber keine pralle Mittagssonne.', watering:'Alle 7–9 Tage, mag es leicht feucht, aber keine Staunässe.', description:'Beliebte, teure Sorte — der Pink-Anteil an den Blättern ist variabel und lässt sich kaum steuern.' },
+  'Philodendron Micans': { light:'Halbschattig bis hell, verträgt auch schattigere Standorte.', watering:'Alle 6–8 Tage, mag gleichmäßige Feuchtigkeit.', description:'Samtige, changierende Blätter in Bronze-/Kupfertönen, wächst rankend oder hängend.' },
+  'Anthurium': { light:'Hell, aber ohne direkte Sonne, mag hohe Luftfeuchtigkeit.', watering:'Alle 7 Tage, Substrat leicht feucht, aber nie durchnässt halten.', description:'Bekannt für die langlebigen, glänzenden Hochblätter (Blüten) in Rot, Rosa oder Weiß.' },
+  'Anthurium Crystallinum': { light:'Hell, gefiltertes Licht, sehr hohe Luftfeuchtigkeit (>60%) nötig.', watering:'Alle 6–8 Tage, Substrat nie komplett austrocknen, aber sehr gut durchlässig halten.', description:'Sammlerstück mit samtigen, silbrig geäderten Blättern — anspruchsvoll bei der Luftfeuchtigkeit.' },
+  'Anthurium Warocqueanum': { light:'Hell, gefiltertes Licht, sehr hohe Luftfeuchtigkeit (idealerweise >70%).', watering:'Alle 6–8 Tage, konstant leicht feucht, sehr durchlässiges Substrat.', description:'"Königs-Anthurium" mit sehr langen, samtigen Blättern — eine der anspruchsvollsten Aroid-Arten.' },
+  'Alocasia Amazonica': { light:'Sehr hell, aber ohne direkte Sonne, braucht hohe Luftfeuchtigkeit (>50%).', watering:'Alle 5–7 Tage im Sommer, deutlich reduziert im Winter — Staunässe unbedingt vermeiden.', description:'Anspruchsvolle Art mit dunkelgrünen, weiß geäderten Pfeilblättern — verliert bei Kälte/Lichtmangel oft die Blätter, treibt aus der Knolle aber wieder aus.' },
+  'Alocasia Zebrina': { light:'Hell, gefiltertes Licht.', watering:'Alle 6–8 Tage, zwischen den Gießgängen leicht antrocknen lassen.', description:'Auffällig gestreifte, gemusterte Blattstiele erinnern an Zebra-Streifen.' },
+  'Alocasia Frydek': { light:'Hell, gefiltertes Licht, hohe Luftfeuchtigkeit gewünscht.', watering:'Alle 6–7 Tage, konstant leicht feucht halten.', description:'Samtige, dunkelgrüne Blätter mit hellen Adern — reagiert empfindlich auf trockene Luft.' },
+  'Caladium': { light:'Hell, aber ohne direkte Sonne.', watering:'Während der Wachstumsphase gleichmäßig feucht halten, im Winter (Ruhephase der Knolle) fast trocken.', description:'Wächst aus einer Knolle, zieht sich im Winter zurück und treibt im Frühjahr wieder aus.' },
+  'Zimmercalla': { light:'Hell bis vollsonnig.', watering:'Gleichmäßig feucht halten, verträgt auch kurzzeitig nasse Füße.', description:'Wächst aus einem Rhizom, elegante trichterförmige Blüten in Weiß oder Farben.' },
+  'Einblatt': { light:'Halbschattig, verträgt auch schattigere Standorte gut.', watering:'Alle 5–7 Tage — lässt bei Wassermangel deutlich die Blätter hängen, erholt sich aber schnell nach dem Gießen.', description:'Sehr beliebte, pflegeleichte Zimmerpflanze mit weißen Hochblättern; für Haustiere leicht giftig.' },
+  'Flamingoblume': { light:'Hell, gefiltertes Licht.', watering:'Alle 7 Tage, Substrat leicht feucht halten.', description:'Kompakte Anthurien-Art mit leuchtend roten, herzförmigen Hochblättern.' },
+  'Syngonium': { light:'Hell bis halbschattig, sehr tolerant.', watering:'Alle 7–8 Tage, antrocknen lassen zwischen den Gießgängen.', description:'Pfeilblatt mit sich verändernder Blattform im Alter, wächst rankend oder kletternd.' },
+  'Bogenhanf': { light:'Sehr tolerant, von voller Sonne bis Schatten.', watering:'Alle 3–4 Wochen, komplett durchtrocknen lassen — Staunässe ist die häufigste Todesursache.', description:'Extrem robust und pflegeleicht, ideal für Einsteiger oder wenig Zeit.' },
+  'Elefantenfuß': { light:'Hell bis vollsonnig.', watering:'Alle 2–3 Wochen, der verdickte Stammfuß speichert Wasser — lieber zu wenig als zu viel gießen.', description:'Ähnelt einer Palme, ist aber mit Yucca und Agaven verwandt; sehr genügsam.' },
+  'Geldbaum': { light:'Hell bis vollsonnig.', watering:'Alle 2–3 Wochen, komplett antrocknen lassen zwischen den Gießgängen.', description:'Dickblattgewächs mit fleischigen Blättern, gilt volkstümlich als Glücksbringer.' },
+  'Aloe Vera': { light:'Vollsonnig bis hell.', watering:'Alle 2–3 Wochen, komplett durchtrocknen lassen.', description:'Bekannt für den heilenden Gel-Inhalt der Blätter; sehr pflegeleicht.' },
+  'Echeveria': { light:'Vollsonnig, so viel Licht wie möglich für kompakten Wuchs.', watering:'Alle 2–3 Wochen, direkt ins Substrat gießen, Blattrosette dabei nicht benetzen.', description:'Rosettenförmige Sukkulente in vielen Farbvarianten, bildet gerne Ableger.' },
+  'Haworthia': { light:'Hell, aber ohne pralle Mittagssonne (verträgt weniger direkte Sonne als andere Sukkulenten).', watering:'Alle 2–3 Wochen, durchtrocknen lassen.', description:'Kompakte, gemusterte Sukkulente, ideal für Fensterbänke mit weniger intensiver Sonne.' },
+  'Schlangenpflanze': { light:'Sehr tolerant, von voller Sonne bis Schatten.', watering:'Alle 3–4 Wochen, komplett durchtrocknen lassen.', description:'Andere Bezeichnung für den Bogenhanf — extrem pflegeleicht und langlebig.' },
+  'Wüstenrose': { light:'Vollsonnig, so hell wie möglich.', watering:'Sehr sparsam, im Winter (Ruhephase, oft blattlos) fast gar nicht gießen.', description:'Bildet einen verdickten Wasserspeicher-Stamm (Caudex) und auffällige Trichterblüten.' },
+  'Weihnachtskaktus': { light:'Hell bis halbschattig, keine pralle Mittagssonne.', watering:'Gleichmäßig leicht feucht halten (anders als klassische Kakteen), im Herbst kurz trockener für die Blütenbildung.', description:'Blüht typischerweise um die Weihnachtszeit, mag es gleichmäßiger feucht als Wüstenkakteen.' },
+  'Opuntie': { light:'Vollsonnig.', watering:'Alle 3–4 Wochen im Sommer, im Winter kaum gießen.', description:'Flache, ovale Triebglieder mit feinen Dornen (Glochiden) — Vorsicht beim Umtopfen.' },
+  'Säulenkaktus': { light:'Vollsonnig.', watering:'Alle 3–4 Wochen im Sommer, im Winter fast trocken halten.', description:'Wächst langsam in die Höhe, sehr genügsam und pflegeleicht.' },
+  'Gummibaum': { light:'Hell bis halbschattig, verträgt auch etwas direkte Sonne.', watering:'Alle 7–10 Tage, antrocknen lassen zwischen den Gießgängen.', description:'Robuste Ficus-Art mit großen, glänzenden Blättern; reagiert mit Blattfall auf Zugluft/Standortwechsel.' },
+  'Birkenfeige': { light:'Hell, direkte Sonne am Vormittag ist ok.', watering:'Gleichmäßig feucht halten, keine Staunässe — reagiert empfindlich auf Standortwechsel mit Blattfall.', description:'Sehr beliebter Zimmerbaum, mag einen festen, unveränderten Standort.' },
+  'Geigenfeige': { light:'Hell, direkte Sonne vermeiden, mag aber sehr viel helles Licht.', watering:'Alle 7–10 Tage, oberste Erdschicht antrocknen lassen.', description:'Große, geigenförmige Blätter, reagiert empfindlich auf Übergießen und Standortwechsel.' },
+  'Zwergfeige': { light:'Hell bis halbschattig.', watering:'Gleichmäßig feucht halten, mag es nicht komplett austrocknen.', description:'Kleinblättrige, kletternde/kriechende Ficus-Art, oft an Moosstäben oder als Bodendecker kultiviert.' },
+  'Ficus Audrey': { light:'Hell, indirektes Licht, verträgt auch etwas Morgensonne.', watering:'Alle 7–8 Tage, oberste Erdschicht antrocknen lassen.', description:'Samtig behaarte Blätter, gilt als etwas pflegeleichter als die Geigenfeige.' },
+  'Drachenbaum': { light:'Hell bis halbschattig, sehr tolerant.', watering:'Alle 10–14 Tage, komplett durchtrocknen lassen — empfindlich gegenüber Fluorid im Leitungswasser (Blattspitzen können braun werden).', description:'Robuste, palmenähnliche Pflanze mit schwertförmigen, oft rot-grün gestreiften Blättern.' },
+  'Glücksfeder': { light:'Sehr tolerant, von hell bis schattig.', watering:'Alle 3–4 Wochen, komplett durchtrocknen lassen — die Knollen speichern Wasser.', description:'Extrem pflegeleicht und geduldig, verzeiht viele Pflegefehler.' },
+  'Yuccapalme': { light:'Vollsonnig bis hell.', watering:'Alle 2–3 Wochen, komplett durchtrocknen lassen.', description:'Robuste, palmenähnliche Pflanze mit dickem Stamm, sehr genügsam.' },
+  'Zimmerpalme': { light:'Halbschattig bis hell, keine direkte Sonne.', watering:'Alle 7–10 Tage, gleichmäßig leicht feucht halten.', description:'Elegante, langsam wachsende Palme, verträgt auch etwas dunklere Standorte.' },
+  'Areca-Palme': { light:'Hell, keine direkte Mittagssonne.', watering:'Alle 6–8 Tage, gleichmäßig feucht, aber keine Staunässe.', description:'Buschige, gefiederte Palme, reagiert empfindlich auf zu kalkhaltiges Wasser (braune Blattspitzen).' },
+  'Bananenpflanze': { light:'Sehr hell, gerne auch direkte Sonne.', watering:'Alle 4–5 Tage in der Wachstumsphase, viel Wasser- und Nährstoffbedarf.', description:'Schnellwüchsig mit großen Blättern, braucht viel Platz und Licht.' },
+  'Grünlilie': { light:'Sehr tolerant, von hell bis schattig.', watering:'Alle 7 Tage, verträgt auch mal Austrocknen.', description:'Extrem pflegeleicht, bildet an langen Ranken kleine Ablegerpflänzchen.' },
+  'Efeu': { light:'Hell bis halbschattig, verträgt auch schattigere Ecken.', watering:'Alle 7 Tage, gleichmäßig leicht feucht halten.', description:'Klassische Rank-/Hängepflanze, mag es eher kühl.' },
+  'Zebrapflanze': { light:'Halbschattig, direkte Sonne bleicht die Musterung aus.', watering:'Konstant leicht feucht halten, am besten mit kalkarmem Wasser, hohe Luftfeuchtigkeit wichtig.', description:'Auffällig gestreifte Blätter, gilt als eher anspruchsvolle Calathea-Art.' },
+  'Korbmarante': { light:'Halbschattig, keine direkte Sonne.', watering:'Konstant leicht feucht, kalkarmes Wasser bevorzugt.', description:'Elegant gemusterte Blätter, die sich abends einrollen ("Betende Hände").' },
+  'Calathea Orbifolia': { light:'Halbschattig, keine direkte Sonne.', watering:'Konstant leicht feucht, kalkarmes/destilliertes Wasser empfohlen.', description:'Große, rund-ovale Blätter mit silbrigen Streifen, hohe Luftfeuchtigkeit wichtig.' },
+  'Calathea Medaillon': { light:'Halbschattig, keine direkte Sonne.', watering:'Konstant leicht feucht, kalkarmes Wasser bevorzugt.', description:'Rundliche Blätter mit medaillonartiger Musterung, oberseits dunkelgrün, unterseits rötlich.' },
+  'Ctenanthe': { light:'Halbschattig, keine direkte Sonne.', watering:'Konstant leicht feucht halten, verträgt kein komplettes Austrocknen.', description:'Nah verwandt mit Calathea, ähnliche Pflegeansprüche, oft etwas robuster.' },
+  'Stromanthe': { light:'Halbschattig, helles indirektes Licht.', watering:'Konstant leicht feucht, kalkarmes Wasser bevorzugt.', description:'Auffällig pink-grün-weiß panaschierte Blattunterseiten, reagiert empfindlich auf trockene Luft.' },
+  'Pfeilwurz': { light:'Halbschattig bis schattig.', watering:'Konstant leicht feucht halten.', description:'Klassische Marantengewächs-Art, Blätter bewegen sich im Tagesverlauf.' },
+  'Pilea Peperomioides': { light:'Hell, aber ohne direkte Mittagssonne — regelmäßig drehen für geraden Wuchs.', watering:'Alle 7–9 Tage, komplett antrocknen lassen zwischen den Gießgängen.', description:'Runde, münzenförmige Blätter, bildet zuverlässig viele Kindel/Ableger an der Basis.' },
+  'Peperomia': { light:'Hell bis halbschattig, keine direkte Sonne.', watering:'Alle 8–10 Tage, eher sparsam gießen — sukkulente Blätter speichern Wasser.', description:'Kompakte, pflegeleichte Pflanze mit fleischigen Blättern in vielen Formen.' },
+  'Fittonia': { light:'Halbschattig bis schattig, keine direkte Sonne.', watering:'Konstant feucht halten — reagiert sehr schnell mit hängenden Blättern bei Trockenheit, erholt sich aber meist rasch.', description:'Auffällig geäderte Blätter, mag hohe Luftfeuchtigkeit, gut für Terrarien geeignet.' },
+  'Kaffeepflanze': { light:'Hell, keine direkte Mittagssonne.', watering:'Alle 6–8 Tage, gleichmäßig feucht halten.', description:'Glänzende, dunkelgrüne Blätter, kann bei guter Pflege sogar Blüten und Früchte bilden.' },
+  'Aglaonema': { light:'Sehr tolerant, von hell bis schattig — bunte Sorten brauchen mehr Licht.', watering:'Alle 7–10 Tage, antrocknen lassen zwischen den Gießgängen.', description:'Robust und pflegeleicht, gute Wahl für dunklere Räume/Büros.' },
+  'Dieffenbachia': { light:'Hell bis halbschattig, keine direkte Sonne.', watering:'Alle 7–9 Tage, antrocknen lassen zwischen den Gießgängen.', description:'Großblättrige Zimmerpflanze; Pflanzensaft ist reizend/giftig, Vorsicht bei Kindern und Haustieren.' },
+  'Schusterpalme': { light:'Sehr tolerant, verträgt auch schattige Standorte gut.', watering:'Alle 10–14 Tage, komplett durchtrocknen lassen.', description:'Extrem robuste, langsam wachsende Pflanze, ideal für wenig Licht und Pflegeaufwand.' },
+  'Zimmerlinde': { light:'Hell, verträgt auch etwas direkte Sonne.', watering:'Gleichmäßig feucht halten, keine Staunässe.', description:'Schnellwüchsig mit großen, weichen Blättern, mag hohe Luftfeuchtigkeit.' },
+  'Sternfarn': { light:'Halbschattig bis schattig, keine direkte Sonne.', watering:'Konstant feucht halten, verträgt kein Austrocknen — Herzstück (Trichter) nicht mit Wasser füllen.', description:'Horstbildender Farn mit wellig-glänzenden Blättern (Wedeln).' },
+  'Nestfarn': { light:'Halbschattig bis schattig.', watering:'Konstant feucht halten, hohe Luftfeuchtigkeit wichtig.', description:'Andere Bezeichnung/nahe Art zum Sternfarn — bildet ein "Nest" aus welligen Blättern.' },
+  'Boston-Farn': { light:'Halbschattig, keine direkte Sonne.', watering:'Konstant feucht halten, verträgt kein Austrocknen, mag regelmäßiges Besprühen.', description:'Klassischer Ampelfarn mit feingliedrigen, hängenden Wedeln.' },
+  'Frauenhaarfarn': { light:'Halbschattig bis schattig.', watering:'Konstant feucht halten — reagiert sehr empfindlich auf Austrocknen und trockene Luft.', description:'Sehr filigrane, zarte Wedel; gilt als eine der anspruchsvolleren Farnarten.' },
+  'Geweihfarn': { light:'Halbschattig, gefiltertes Licht wie am natürlichen Baumstamm-Standort.', watering:'Tauchen oder gründlich besprühen statt klassisch gießen, zwischendurch antrocknen lassen.', description:'Epiphytisch wachsender Farn mit geweihähnlichen Wedeln, oft an Holzplatten montiert.' },
+  'Orchidee (Phalaenopsis)': { light:'Hell, Ostfenster ideal, keine direkte Mittagssonne.', watering:'Alle 7–10 Tage tauchen oder gießen, Wurzeln müssen zwischendurch abtrocknen — Substrat ist grobe Rinde, kein Blumenerde.', description:'Beliebteste Orchideenart, blüht bei guter Pflege oft mehrmals im Jahr über Wochen.' },
+  'Vanda-Orchidee': { light:'Sehr hell, verträgt auch etwas direkte Sonne.', watering:'Täglich bis alle 2 Tage die frei hängenden Wurzeln tauchen/besprühen — meist ohne Substrat kultiviert.', description:'Wächst oft in Körben ohne Substrat, Wurzeln hängen frei in der Luft.' },
+  'Bromelie': { light:'Hell bis halbschattig, keine pralle Sonne.', watering:'Trichter/Rosette in der Mitte mit Wasser befüllen, Substrat nur leicht feucht halten.', description:'Blüht nur einmal im Leben, bildet danach Kindel (Ableger) an der Basis.' },
+  'Tillandsie': { light:'Hell, kein direktes Substrat/Erde nötig.', watering:'2–3× pro Woche besprühen oder wöchentlich kurz baden, danach gut abtrocknen lassen.', description:'Epiphytische "Luftpflanze" ohne Substrat, nimmt Wasser und Nährstoffe über die Blätter auf.' },
+  'Ananas-Pflanze': { light:'Vollsonnig bis hell.', watering:'Trichter mit Wasser befüllen, Substrat mäßig feucht halten.', description:'Aus dem Blattschopf einer Ananas leicht selbst zu ziehen, blüht/fruchtet aber erst nach Jahren.' },
+  'Hoya Carnosa': { light:'Hell, aber ohne direkte Sonne — sehr genügsame, dankbare Pflanze.', watering:'Alle 7–10 Tage, Fingerprobe der oberen 2–3 cm nutzen, um Übergießen zu vermeiden.', description:'Wachsblume mit dicken, ledrigen Blättern und duftenden Blütendolden; für Anfänger gut geeignet.' },
+  'Hoya Kerrii': { light:'Hell, aber ohne direkte Mittagssonne.', watering:'Alle 10–14 Tage, sehr sukkulent und trockenheitstolerant.', description:'Herzförmige, sehr dicke Blätter — als Einzelblatt-Steckling ohne Trieb wächst sie oft nicht weiter.' },
+  'String of Pearls': { light:'Hell, gerne auch etwas direkte Sonne am Morgen.', watering:'Alle 10–14 Tage, komplett durchtrocknen lassen — die Perlen speichern Wasser.', description:'Hängende Sukkulente mit erbsenförmigen Blättern, empfindlich gegen Staunässe.' },
+  'String of Hearts': { light:'Hell, verträgt auch etwas direkte Sonne.', watering:'Alle 10–14 Tage, komplett durchtrocknen lassen.', description:'Zarte, herzförmig gemusterte Blätter an langen Trieben, bildet oft kleine Luftknollen.' },
+  'Kolibripflanze': { light:'Hell, aber ohne direkte Mittagssonne, hohe Luftfeuchtigkeit gewünscht.', watering:'Konstant leicht feucht halten, keine Staunässe.', description:'Hängende Pflanze mit auffälligen, farbenfrohen Blüten.' },
+  'Passionsblume': { light:'Vollsonnig bis hell.', watering:'Gleichmäßig feucht halten in der Wachstumsphase, im Winter reduzieren.', description:'Kräftig rankende Kletterpflanze mit außergewöhnlichen, komplex aufgebauten Blüten.' },
+  'Kap-Efeu': { light:'Hell bis halbschattig.', watering:'Alle 7–8 Tage, antrocknen lassen zwischen den Gießgängen.', description:'Rankende Pflanze mit kleinen, efeuähnlichen Blättern, eignet sich gut als Ampel.' },
+  'Mini Monstera': { light:'Hell bis halbschattig, keine direkte Sonne.', watering:'Alle 7–9 Tage, antrocknen lassen zwischen den Gießgängen.', description:'Trotz des Namens nicht mit Monstera verwandt, aber optisch sehr ähnlich mit gelappten Blättern.' },
+  'Fensterblatt Rhaphidophora': { light:'Hell bis halbschattig, keine direkte Sonne.', watering:'Alle 7–9 Tage, antrocknen lassen zwischen den Gießgängen.', description:'Volkstümliche Bezeichnung für die Mini Monstera (Rhaphidophora tetrasperma).' },
+  'Scindapsus Pictus': { light:'Hell bis halbschattig, keine direkte Sonne.', watering:'Alle 8–10 Tage, gut antrocknen lassen zwischen den Gießgängen.', description:'Samtige, silbrig gesprenkelte Blätter, wächst rankend oder hängend.' },
+  'Anthurium Clarinervium': { light:'Hell, gefiltertes Licht, hohe Luftfeuchtigkeit gewünscht.', watering:'Alle 7–9 Tage, Substrat gut durchlässig halten.', description:'Samtige, herzförmige Blätter mit auffällig kontrastierenden weißen Blattadern.' },
+  'Philodendron Melanochrysum': { light:'Hell, gefiltertes Licht, sehr hohe Luftfeuchtigkeit gewünscht.', watering:'Alle 7–9 Tage, konstant leicht feucht halten.', description:'Samtige, fast schwarzgrüne, sehr große Blätter — eine der begehrtesten Sammlerpflanzen.' },
+  'Philodendron Verrucosum': { light:'Hell, gefiltertes Licht, sehr hohe Luftfeuchtigkeit (idealerweise >70%) nötig.', watering:'Alle 6–8 Tage, konstant leicht feucht, sehr durchlässiges Substrat wichtig.', description:'Auffällig behaarte Blattstiele und samtige, geäderte Blätter — gilt als anspruchsvoll.' },
+  'Variegata Ficus': { light:'Hell, direkte Sonne am Vormittag ist ok — panaschierte Blätter brauchen mehr Licht als grüne.', watering:'Alle 7–10 Tage, antrocknen lassen zwischen den Gießgängen.', description:'Panaschierte Ficus-Sorte, wächst langsamer als die grüne Variante.' },
+  'Alocasia Reginula (Black Velvet)': { light:'Hell, gefiltertes Licht, hohe Luftfeuchtigkeit (>60%) wichtig.', watering:'Alle 6–8 Tage, konstant leicht feucht, aber sehr durchlässiges Substrat.', description:'Kompakte Alocasia mit samtig-schwarzen Blättern mit silbrigen Adern — empfindlicher als andere Alocasien.' },
+  'Begonia Maculata': { light:'Hell, aber ohne direkte Sonne.', watering:'Alle 6–8 Tage, antrocknen lassen zwischen den Gießgängen, Blätter beim Gießen nicht benetzen.', description:'Auffällig gepunktete Blätter mit roter Unterseite, reagiert empfindlich auf Staunässe und trockene Luft.' },
+  'Begonia Rex': { light:'Halbschattig, keine direkte Sonne.', watering:'Konstant leicht feucht halten, aber keine Staunässe, Blätter trocken halten.', description:'Sehr dekorative, bunt gemusterte Blätter in vielen Farbvarianten.' },
+  'Kroton': { light:'Sehr hell, gerne auch direkte Sonne — für die kräftige Blattfärbung wichtig.', watering:'Alle 6–7 Tage, gleichmäßig feucht halten.', description:'Auffällig bunte, lederartige Blätter in Gelb-, Rot- und Orangetönen.' },
+  'Fensterblatt Cissus': { light:'Halbschattig bis hell.', watering:'Alle 7–8 Tage, antrocknen lassen zwischen den Gießgängen.', description:'Robuste, rankende Zimmerpflanze mit glänzenden, gelappten Blättern.' },
+  'Kentia-Palme': { light:'Halbschattig bis hell, keine direkte Sonne.', watering:'Alle 7–10 Tage, gleichmäßig leicht feucht halten.', description:'Elegante, langsam wachsende Palme, gilt als sehr pflegeleicht und schattenverträglich.' },
+  'Fensterblatt': { light:'Hell bis halbschattig, keine direkte Sonne.', watering:'Alle 7–10 Tage, antrocknen lassen zwischen den Gießgängen.', description:'Volkstümliche Bezeichnung für die Monstera deliciosa.' },
+  'Fensterblatt Adansonii': { light:'Hell bis halbschattig, kein direktes Sonnenlicht.', watering:'Alle 5–7 Tage, mag es etwas feuchter als große Monsteras.', description:'Volkstümliche Bezeichnung für die Monstera adansonii.' },
+  'Fensterblatt Kaktus': { light:'Hell bis halbschattig, keine pralle Mittagssonne (anders als klassische Wüstenkakteen).', watering:'Alle 7–10 Tage, mag es gleichmäßiger feucht als andere Kakteen.', description:'Epiphytischer "Blattkaktus", verwandt mit dem Weihnachtskaktus, wächst hängend oder rankend.' },
+  'Baumfreund': { light:'Halbschattig bis hell.', watering:'Alle 7–10 Tage, mag gleichmäßige Feuchtigkeit.', description:'Volkstümliche Bezeichnung für Philodendron scandens.' },
+  'Herzblatt-Philodendron': { light:'Halbschattig bis hell, sehr tolerant.', watering:'Alle 7–10 Tage, mag gleichmäßige Feuchtigkeit.', description:'Robuste, herzblättrige Kletterpflanze — gute Einsteiger-Pflanze.' },
+  'Baumfreundschaft': { light:'Sehr tolerant, von hell bis schattig.', watering:'Alle 7–10 Tage, antrocknen lassen zwischen den Gießgängen.', description:'Volkstümliche Bezeichnung für Aglaonema — robust und pflegeleicht.' },
+};
+
+function getExtendedCareInfo(speciesName){
+  const match = findPlantInDB(speciesName);
+  const category = match ? match.category : null;
+  const override = match ? PLANT_CARE_OVERRIDES[match.name] : null;
+  return {
+    scientificName: match ? match.latin : '',
+    commonName: match ? match.name : (speciesName || ''),
+    family: category && CATEGORY_FAMILY[category] ? CATEGORY_FAMILY[category] : '',
+    origin: category && CATEGORY_ORIGIN[category] ? CATEGORY_ORIGIN[category] : '',
+    location: 'innen',
+    light: (override && override.light) || (category && CATEGORY_LIGHT[category]) || 'Hell bis halbschattig, keine pralle Mittagssonne.',
+    watering: (override && override.watering) || (category && CATEGORY_WATERING_DETAIL[category]) || 'Mäßig gießen, antrocknen lassen zwischen den Gießgängen.',
+    repotting: (override && override.repotting) || (category && CATEGORY_REPOTTING[category]) || CATEGORY_REPOTTING.DEFAULT,
+    description: (override && override.description) || (category && CATEGORY_TIPS[category]) || '',
+    propagation: (override && override.propagation) || (category && CATEGORY_PROPAGATION[category]) || PROPAGATION_FALLBACK,
+  };
+}
+
+function careInfoSectionHtml(speciesName, substrate){
+  if(!speciesName) return '';
+  const info = getExtendedCareInfo(speciesName);
+  const kv = [
+    ['Wissenschaftliche Bezeichnung', info.scientificName],
+    ['Gebräuchlicher Name', info.commonName],
+    ['Familie', info.family],
+    ['Herkunft', info.origin],
+    ['Kultur', info.location],
+  ].filter(([,v])=>v);
+  const semiHydroTip = isSemiHydro(substrate) ? getSemiHydroTip(speciesName) : null;
+
+  return `
+    <details class="care-accordion">
+      <summary>Pflegetipps</summary>
+      <div class="care-body">
+        <div class="care-row">
+          <span class="care-icon">☀️</span>
+          <div><div class="care-row-title">Standort</div><div class="care-row-text">${escapeHtml(info.light)}</div></div>
+        </div>
+        <div class="care-row">
+          <span class="care-icon">💧</span>
+          <div><div class="care-row-title">Bewässerung</div><div class="care-row-text">${escapeHtml(info.watering)}</div></div>
+        </div>
+        <div class="care-row">
+          <span class="care-icon">🪴</span>
+          <div><div class="care-row-title">Umtopfung</div><div class="care-row-text">${escapeHtml(info.repotting)}</div></div>
+        </div>
+        <div class="care-row">
+          <span class="care-icon">🌿</span>
+          <div><div class="care-row-title">Vermehrung</div><div class="care-row-text">${escapeHtml(info.propagation)}</div></div>
+        </div>
+        ${semiHydroTip ? `
+        <div class="care-row">
+          <span class="care-icon">🧪</span>
+          <div><div class="care-row-title">Haltung in Semi-Hydro</div><div class="care-row-text">${escapeHtml(semiHydroTip)}</div></div>
+        </div>` : ''}
+        ${kv.length ? `<div class="care-kv">${kv.map(([k,v])=>`<div class="care-kv-row"><span class="care-kv-key">${escapeHtml(k)}</span><span class="care-kv-val">${escapeHtml(v)}</span></div>`).join('')}</div>` : ''}
+        ${info.description ? `<div class="care-desc">${escapeHtml(info.description)}</div>` : ''}
+      </div>
+    </details>
+  `;
+}
+
 function getFertilizerInfo(item){
   const log = item.fertilizerLog || [];
   const interval = Number(item.fertilizerIntervalDays) || 0;
@@ -581,6 +914,12 @@ const FLUSH_SUBSTRATE_NOTES = {
   'Erdmix (Kokoserde/Pinienrinde/Perlit)': 'Erde puffert Nährsalze etwas länger, trotzdem regelmäßig auswaschen, um Verkrustungen zu vermeiden.',
 };
 
+// Nur Substrate mit einer hinterlegten Durchspül-Notiz sammeln nennenswert Düngesalze
+// an ("Sonstiges"/unbekannt oder kein Substrat gesetzt -> kein Durchspülen empfohlen).
+function needsFlushing(substrate){
+  return !!FLUSH_SUBSTRATE_NOTES[substrate];
+}
+
 function getFlushRecommendation(speciesName, substrate){
   const match = findPlantInDB(speciesName);
   const days = (match && FLUSH_DAYS_BY_CATEGORY[match.category]) || FLUSH_DAYS_FALLBACK;
@@ -594,6 +933,7 @@ function getFlushRecommendation(speciesName, substrate){
 }
 
 function getFlushInfo(item){
+  if(!needsFlushing(item.substrate)) return null;
   const log = item.flushLog || [];
   const interval = Number(item.flushIntervalDays) || 0;
   if(log.length===0 || !interval) return null;
@@ -623,13 +963,22 @@ const LOG_EMPTY_MESSAGE = {
   fertilizerLog: 'Noch keine Düngung erfasst.',
   wateringLog: 'Noch keine Gießung erfasst.',
   flushLog: 'Noch kein Durchspülen erfasst.',
+  repottingLog: 'Noch keine Umtopfung erfasst.',
 };
-const LOG_HAS_SECONDARY_LABEL = { fertilizerLog: true, wateringLog: true, flushLog: false };
+const LOG_HAS_SECONDARY_LABEL = { fertilizerLog: true, wateringLog: true, flushLog: false, repottingLog: false };
 
 function logSecondaryLabel(fieldName, entry){
   if(fieldName==='fertilizerLog') return entry.product||'';
   if(fieldName==='wateringLog') return entry.type||'';
   return '';
+}
+
+function formatDateDMY(dateStr){
+  if(!dateStr) return '';
+  const parts = dateStr.split('-');
+  if(parts.length !== 3) return dateStr;
+  const [y, m, d] = parts;
+  return `${d}-${m}-${y}`;
 }
 
 function logHistoryHtml(log, type, itemId, prefix, fieldName){
@@ -640,7 +989,7 @@ function logHistoryHtml(log, type, itemId, prefix, fieldName){
   const sorted = withIndex.sort((a,b)=> a.date < b.date ? 1 : -1);
   return `<div class="fert-log">${sorted.map(e=>`
     <div class="fert-log-entry">
-      <span class="fert-log-date">${escapeHtml(e.date)}</span>
+      <span class="fert-log-date">${escapeHtml(formatDateDMY(e.date))}</span>
       ${LOG_HAS_SECONDARY_LABEL[fieldName] ? `<span class="fert-log-product">${escapeHtml(logSecondaryLabel(fieldName, e))}</span>` : ''}
       ${e.note ? `<span class="fert-log-note">${escapeHtml(e.note)}</span>` : ''}
       <button type="button" class="log-delete-btn" title="Eintrag löschen" onclick="deleteLogEntry('${type}', ${itemId}, '${fieldName}', ${e.__idx}, '${prefix}')">✕</button>
@@ -688,8 +1037,8 @@ const STATUS_COLORS = {
 function defaultState(){
   return {
     plants: [
-      {id:1, name:'Monstera Deliciosa', latin:'Monstera deliciosa', category:'Aroid', acquired:'2023-04-12', location:'Wohnzimmer', substrate:'Aroid-Mix', watering:'wöchentlich', repotted:'2024-03', status:'gut', notes:'Wächst schnell, braucht bald Rankhilfe'},
-      {id:2, name:'Efeutute', latin:'Epipremnum aureum', category:'Aroid', acquired:'2022-09-01', location:'Büro', substrate:'Standarderde', watering:'alle 10 Tage', repotted:'2023-11', status:'sehr gut', notes:''}
+      {id:1, name:'Monstera Deliciosa', latin:'Monstera deliciosa', category:'Aroid', acquired:'2023-04-12', location:'Wohnzimmer', substrate:'Aroid-Mix', watering:'wöchentlich', repottingLog:[{date:'2024-03-01', note:''}], status:'gut', notes:'Wächst schnell, braucht bald Rankhilfe'},
+      {id:2, name:'Efeutute', latin:'Epipremnum aureum', category:'Aroid', acquired:'2022-09-01', location:'Büro', substrate:'Standarderde', watering:'alle 10 Tage', repottingLog:[{date:'2023-11-01', note:''}], status:'sehr gut', notes:''}
     ],
     cuttings: [
       {id:1, name:'Monstera Ableger #1', type:'Ableger', origin:'eigene', ownPlantId:1, foreignSource:'', dateTaken:'2024-06-01', location:'Küche', substrate:'Wasser -> Erde', watering:'alle 4 Tage', status:'wurzelt', notes:'In Wasser bewurzelt seit 06/2024'},
@@ -941,7 +1290,12 @@ function setTab(tab){
   filterParentType = null;
   filterParentId = null;
   clearSelection();
+  document.body.classList.remove('tab-plants', 'tab-cuttings', 'tab-wishlist', 'tab-stats');
+  document.body.classList.add('tab-' + tab);
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  const isStats = tab==='stats';
+  document.getElementById('mainToolbar').style.display = isStats ? 'none' : 'flex';
+  document.getElementById('filterToolbar').style.display = isStats ? 'none' : 'flex';
   const placeholders = { plants: 'Pflanzen suchen…', cuttings: 'Ableger & Stecklinge suchen…', wishlist: 'Wunschliste suchen…' };
   document.getElementById('searchInput').placeholder = placeholders[tab] || '';
   document.getElementById('searchInput').value='';
@@ -1183,7 +1537,7 @@ function render(){
     content.innerHTML += currentView==='grid'
       ? `<div class="grid">${items.map(cuttingCard).join('')}</div>`
       : items.map(cuttingListRow).join('');
-  } else {
+  } else if(currentTab==='wishlist'){
     let items = state.wishlist.filter(w => !q || (w.name+(w.latin||'')+(w.category||'')+(w.source||'')+(w.notes||'')).toLowerCase().includes(q));
     if(priorityFilter) items = items.filter(w => w.status === priorityFilter);
     items = sortItems(items, sortBy);
@@ -1194,12 +1548,210 @@ function render(){
     content.innerHTML = currentView==='grid'
       ? `<div class="grid">${items.map(wishlistCard).join('')}</div>`
       : items.map(wishlistListRow).join('');
+  } else {
+    content.innerHTML = renderStatsTab();
   }
+}
+
+// ---------- Statistik-Tab ----------
+
+const MONTH_NAMES_DE = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+function formatMonthLabel(yyyymm){
+  const [y,m] = yyyymm.split('-');
+  const idx = parseInt(m,10)-1;
+  return `${MONTH_NAMES_DE[idx]||m} ${y}`;
+}
+
+function formatMoney(amount){
+  const rounded = Math.round(amount*100)/100;
+  return rounded.toLocaleString('de-DE', {minimumFractionDigits: rounded % 1 === 0 ? 0 : 2, maximumFractionDigits: 2}) + ' €';
+}
+
+// Zählt Vorkommen eines Merkmals (z. B. Kategorie, Substrat) über eine Liste von
+// Pflanzen/Ablegern/Wunschlisten-Einträgen, absteigend sortiert nach Häufigkeit.
+function countBy(items, keyFn){
+  const counts = {};
+  items.forEach(item=>{
+    const key = keyFn(item) || '—';
+    counts[key] = (counts[key]||0) + 1;
+  });
+  return Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+}
+
+function statBarsHtml(pairs, maxItems, unit, formatFn){
+  if(!pairs || pairs.length===0) return `<div class="stats-empty">Noch keine Daten.</div>`;
+  const shown = maxItems ? pairs.slice(0, maxItems) : pairs;
+  const max = Math.max(...shown.map(([,c])=>c), 0);
+  return shown.map(([label,count])=>`
+    <div class="stat-bar-row">
+      <span class="stat-bar-label" title="${escapeHtml(String(label))}">${escapeHtml(String(label))}</span>
+      <div class="stat-bar-track"><div class="stat-bar-fill" style="width:${max>0?Math.round(count/max*100):0}%;"></div></div>
+      <span class="stat-bar-count">${formatFn ? formatFn(count) : count}${unit||''}</span>
+    </div>`).join('');
+}
+
+function statCardHtml(value, label){
+  return `<div class="stat-card"><div class="stat-value">${value}</div><div class="stat-label">${escapeHtml(label)}</div></div>`;
+}
+
+function statsSubheadHtml(text){
+  return `<div class="hint" style="margin:0 0 10px;background:transparent;padding:0;">${escapeHtml(text)}</div>`;
+}
+
+function renderStatsTab(){
+  if(state.plants.length===0 && state.cuttings.length===0 && state.wishlist.length===0){
+    return emptyState('Noch keine Statistik', 'Sobald du Pflanzen, Ableger oder Wünsche erfasst hast, siehst du hier Auswertungen.', '📊');
+  }
+
+  const allItems = [...state.plants, ...state.cuttings];
+
+  // Ausgaben
+  const plantsWithPrice = state.plants.filter(p=>p.price);
+  const cuttingsWithPrice = state.cuttings.filter(c=>c.price);
+  const totalSpent = plantsWithPrice.reduce((s,p)=>s+parsePrice(p.price),0) + cuttingsWithPrice.reduce((s,c)=>s+parsePrice(c.price),0);
+
+  // Fällige Pflegeaufgaben
+  const overdueWater = allItems.filter(x=>{ const i=getRefillInfo(x); return i&&i.overdue; }).length;
+  const overdueFert = allItems.filter(x=>{ const i=getFertilizerInfo(x); return i&&i.overdue; }).length;
+  const overdueFlush = allItems.filter(x=>{ const i=getFlushInfo(x); return i&&i.overdue; }).length;
+  const emptyReservoirs = allItems.filter(x=>x.reservoirEmpty).length;
+  const totalOverdue = overdueWater + overdueFert + overdueFlush;
+
+  // Vermehrung — Ableger, die zu einer eigenen Pflanze hochgestuft wurden, existieren
+  // nicht mehr in state.cuttings, daher: aktuelle Ableger + hochgestufte Pflanzen.
+  const promotedPlants = state.plants.filter(p=>p.promotedFromCuttingName);
+  const totalCuttingsEverMade = state.cuttings.length + promotedPlants.length;
+  const successRate = totalCuttingsEverMade>0 ? Math.round(promotedPlants.length/totalCuttingsEverMade*100) : 0;
+  let mostProlific = null, mostProlificCount = 0;
+  state.plants.forEach(p=>{
+    const c = getDescendantCount('plant', p.id);
+    if(c>mostProlificCount){ mostProlificCount = c; mostProlific = p; }
+  });
+
+  // Wunschliste
+  const wishlistTotalPrice = state.wishlist.reduce((s,w)=>s+parsePrice(w.price),0);
+  const wishlistPurchasedPending = state.wishlist.filter(w=>w.status==='Gekauft').length;
+
+  // Bezugsart (Gekauft/Geschenkt/Getauscht/Sonstiges) über Pflanzen & Ableger
+  const acquisitionCounts = countBy(allItems.filter(x=>x.acquisitionType), x=>x.acquisitionType);
+  const giftedCount = allItems.filter(x=>x.acquisitionType==='Geschenkt').length;
+  const tradedCount = allItems.filter(x=>x.acquisitionType==='Getauscht').length;
+
+  // Ausgaben über Zeit (nach Monat, chronologisch, letzte 12 Monate mit Ausgaben)
+  const spendingByMonth = {};
+  [...plantsWithPrice.map(p=>({date:p.acquired, price:p.price})), ...cuttingsWithPrice.map(c=>({date:c.dateTaken, price:c.price}))].forEach(({date,price})=>{
+    if(!date) return;
+    const month = date.slice(0,7);
+    spendingByMonth[month] = (spendingByMonth[month]||0) + parsePrice(price);
+  });
+  const monthEntries = Object.entries(spendingByMonth).sort((a,b)=>a[0].localeCompare(b[0])).slice(-12)
+    .map(([m,amt])=>[formatMonthLabel(m), Math.round(amt*100)/100]);
+
+  // Rekorde
+  const plantsWithDate = state.plants.filter(p=>p.acquired).sort((a,b)=>a.acquired.localeCompare(b.acquired));
+  const oldest = plantsWithDate[0];
+  const newest = plantsWithDate[plantsWithDate.length-1];
+  let priciest = null, priciestAmount = 0;
+  allItems.forEach(x=>{
+    const amount = parsePrice(x.price);
+    if(amount>priciestAmount){ priciestAmount = amount; priciest = x; }
+  });
+
+  return `
+    <div class="stats-grid">
+      ${statCardHtml(state.plants.length, 'Pflanzen')}
+      ${statCardHtml(state.cuttings.length, 'Ableger &amp; Stecklinge')}
+      ${statCardHtml(state.wishlist.length, 'Auf der Wunschliste')}
+      ${statCardHtml(formatMoney(totalSpent), 'Ausgegeben insgesamt')}
+      ${statCardHtml(totalOverdue, 'Fällige Pflegeaufgaben')}
+      ${statCardHtml(successRate + '%', 'Ableger-Erfolgsquote')}
+    </div>
+
+    <div class="stats-section">
+      <h3 class="stats-section-title">Bestand</h3>
+      <div class="stats-two-col">
+        <div>
+          ${statsSubheadHtml('Kategorie')}
+          ${statBarsHtml(countBy(state.plants, p=>p.category), 8)}
+        </div>
+        <div>
+          ${statsSubheadHtml('Substrat')}
+          ${statBarsHtml(countBy(allItems, x=>x.substrate), 8)}
+        </div>
+      </div>
+      <div class="stats-two-col" style="margin-top:18px;">
+        <div>
+          ${statsSubheadHtml('Zustand')}
+          ${statBarsHtml(countBy(allItems, x=>x.status))}
+        </div>
+        <div>
+          ${statsSubheadHtml('Standort')}
+          ${statBarsHtml(countBy(allItems, x=>x.location), 8)}
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <h3 class="stats-section-title">Pflege &amp; Fälligkeiten</h3>
+      <div class="stats-grid">
+        ${statCardHtml(overdueWater, 'Gießen fällig')}
+        ${statCardHtml(overdueFert, 'Düngen fällig')}
+        ${statCardHtml(overdueFlush, 'Durchspülen fällig')}
+        ${statCardHtml(emptyReservoirs, 'Reservoirs leer')}
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <h3 class="stats-section-title">Vermehrung</h3>
+      <div class="stats-grid">
+        ${statCardHtml(totalCuttingsEverMade, 'Ableger insgesamt gemacht')}
+        ${statCardHtml(promotedPlants.length, 'Zu eigener Pflanze hochgestuft')}
+      </div>
+      ${mostProlific ? `<div class="stats-record"><span class="rlabel">Fruchtbarste Pflanze</span><span class="rvalue">${escapeHtml(mostProlific.name)} (${mostProlificCount} Ableger)</span></div>` : ''}
+      ${statsSubheadHtml('Ableger nach Zustand')}
+      ${statBarsHtml(countBy(state.cuttings, c=>c.status))}
+    </div>
+
+    <div class="stats-section">
+      <h3 class="stats-section-title">Wunschliste</h3>
+      <div class="stats-grid">
+        ${statCardHtml(formatMoney(wishlistTotalPrice), 'Wert der Wunschliste')}
+        ${statCardHtml(wishlistPurchasedPending, 'Gekauft, noch nicht übernommen')}
+      </div>
+      ${statsSubheadHtml('Nach Priorität')}
+      ${statBarsHtml(countBy(state.wishlist, w=>w.status))}
+    </div>
+
+    <div class="stats-section">
+      <h3 class="stats-section-title">Ausgaben</h3>
+      ${statsSubheadHtml('Nach Bezugsart (Pflanzen & Ableger)')}
+      ${statBarsHtml(acquisitionCounts)}
+      ${(giftedCount>0 || tradedCount>0) ? `<div class="stats-record" style="margin-top:10px;"><span class="rlabel">Geschenkt / Getauscht</span><span class="rvalue">${giftedCount} geschenkt, ${tradedCount} getauscht</span></div>` : ''}
+      ${monthEntries.length ? `<div style="margin-top:16px;">${statsSubheadHtml('Ausgaben pro Monat')}${statBarsHtml(monthEntries, null, ' €', n => n.toLocaleString('de-DE'))}</div>` : ''}
+    </div>
+
+    <div class="stats-section">
+      <h3 class="stats-section-title">Rekorde</h3>
+      ${oldest ? `<div class="stats-record"><span class="rlabel">Älteste Pflanze</span><span class="rvalue">${escapeHtml(oldest.name)} (${escapeHtml(formatDateDMY(oldest.acquired))})</span></div>` : ''}
+      ${newest && newest!==oldest ? `<div class="stats-record"><span class="rlabel">Neueste Pflanze</span><span class="rvalue">${escapeHtml(newest.name)} (${escapeHtml(formatDateDMY(newest.acquired))})</span></div>` : ''}
+      ${priciest ? `<div class="stats-record"><span class="rlabel">Teuerste Anschaffung</span><span class="rvalue">${escapeHtml(priciest.name)} (${escapeHtml(priciest.price)})</span></div>` : ''}
+      ${(!oldest && !priciest) ? `<div class="stats-empty">Noch keine Daten für Rekorde.</div>` : ''}
+    </div>
+  `;
 }
 
 function checkboxHtml(id){
   const checked = selectedIds.has(id);
   return `<button type="button" class="select-check ${checked?'checked':''}" aria-pressed="${checked}" aria-label="Auswählen" onclick="toggleSelectItem(${id}, event)"></button>`;
+}
+
+// Badge, der zeigt, dass diese Pflanze aus einem hochgestuften Ableger/Steckling
+// hervorgegangen ist — der ursprüngliche Ableger-Eintrag existiert nach der
+// Übernahme nicht mehr, daher wird diese Herkunft direkt auf der Pflanze gespeichert.
+function promotedFromBadgeHtml(p){
+  if(!p.promotedFromCuttingName) return '';
+  const title = `Hervorgegangen aus ${escapeHtml(p.promotedFromCuttingType||'Ableger')} "${escapeHtml(p.promotedFromCuttingName)}"${p.promotedDate?`, übernommen am ${escapeHtml(formatDateDMY(p.promotedDate))}`:''}`;
+  return `<span class="badge gold" title="${title}">🌱 Aus Ableger hervorgegangen</span>`;
 }
 
 function plantListRow(p){
@@ -1211,6 +1763,7 @@ function plantListRow(p){
     <div class="list-meta">
       <span class="badge">${escapeHtml(p.category||'—')}</span>
       ${cuttingCount>0?`<span class="badge link-badge" onclick="event.stopPropagation();showChildCuttings('plant', ${p.id})">${cuttingCount} Ableger</span>`:''}
+      ${promotedFromBadgeHtml(p)}
       ${refillBadge(p)}
       ${fertilizerBadge(p)}
       ${flushBadge(p)}
@@ -1308,6 +1861,7 @@ function plantCard(p){
     <div class="latin">${escapeHtml(p.latin||'')}</div>
     <span class="badge">${escapeHtml(p.category||'—')}</span>
     ${cuttingCount>0?`<span class="badge link-badge" onclick="event.stopPropagation();showChildCuttings('plant', ${p.id})">${cuttingCount} Ableger von dieser Pflanze</span>`:''}
+    ${promotedFromBadgeHtml(p)}
     ${refillBadge(p)}
     ${fertilizerBadge(p)}
     ${flushBadge(p)}
@@ -1410,6 +1964,7 @@ function escapeHtml(s){
 function openModal(type, id, prefill){
   const tab = type || currentTab;
   editingId = id || null;
+  currentPrefillItem = (!editingId && prefill) ? prefill : null;
   const overlay = document.getElementById('overlay');
   const box = document.getElementById('modalBox');
   overlay.classList.add('show');
@@ -1428,12 +1983,29 @@ function openModal(type, id, prefill){
     box.innerHTML = wishlistForm(w||{});
   }
   document.getElementById('overlay').onclick = (e)=>{ if(e.target.id==='overlay') closeModal(); };
+  box.oninput = ()=>{ formIsDirty = true; };
+  box.onchange = ()=>{ formIsDirty = true; };
+  formIsDirty = false;
 }
 
 function closeModal(){
+  if(formIsDirty){
+    showConfirm(
+      'Du hast Änderungen vorgenommen, die noch nicht gespeichert wurden. Trotzdem schließen?',
+      ()=>{ formIsDirty = false; forceCloseModal(); },
+      { title: 'Ungespeicherte Änderungen', confirmLabel: 'Verwerfen' }
+    );
+    return;
+  }
+  forceCloseModal();
+}
+
+function forceCloseModal(){
   document.getElementById('overlay').classList.remove('show');
   editingId = null;
   convertingWishlistId = null;
+  convertingCuttingId = null;
+  currentPrefillItem = null;
 }
 
 // ---------- Gemeinsame Formular-Bausteine für Pflanze & Ableger ----------
@@ -1461,12 +2033,18 @@ function substrateSelectHtml(item, prefix){
 }
 
 function substrateHistoryFieldsHtml(item, prefix){
+  const hasValue = !!(item.substrateBefore || item.substrateChangedDate);
   return `
-    <div class="row2">
-      <div class="field"><label>Substrat vorher</label><input id="${prefix}_substrateBefore" value="${escapeHtml(item.substrateBefore||'')}" placeholder="z. B. Standarderde"></div>
-      <div class="field"><label>Umstellungsdatum</label><input type="date" id="${prefix}_substrateChangedDate" value="${item.substrateChangedDate||''}" oninput="updateSubstrateSinceHint('${prefix}')"></div>
+    <div id="${prefix}_substrateHistory_field" style="${hasValue?'':'display:none;'}">
+      <div class="row2">
+        <div class="field"><label>Substrat vorher</label><input id="${prefix}_substrateBefore" value="${escapeHtml(item.substrateBefore||'')}" placeholder="z. B. Standarderde"></div>
+        <div class="field"><label>Umstellungsdatum</label><input type="date" id="${prefix}_substrateChangedDate" value="${item.substrateChangedDate||''}" oninput="updateSubstrateSinceHint('${prefix}')"></div>
+      </div>
+      <div class="hint" id="${prefix}_substrateSinceHint" style="display:none;"></div>
     </div>
-    <div class="hint" id="${prefix}_substrateSinceHint" style="display:none;"></div>`;
+    <div class="field" id="${prefix}_substrateHistory_toggle" style="${hasValue?'display:none;':''}">
+      <button type="button" class="btn ghost" onclick="revealHiddenField('${prefix}', 'substrateHistory', '${prefix}_substrateBefore')">+ Substratwechsel erfassen</button>
+    </div>`;
 }
 
 function reservoirBlockHtml(item, prefix){
@@ -1489,6 +2067,25 @@ function reservoirBlockHtml(item, prefix){
     </div>`;
 }
 
+function repottingSectionHtml(item, type, itemId, prefix, speciesNameForTip){
+  const info = getExtendedCareInfo(speciesNameForTip);
+  return `
+    <div class="fert-section">
+      <label class="fert-heading">Umtopfprotokoll</label>
+      <div class="hint">${escapeHtml(info.repotting)}</div>
+      <div id="${prefix}_repottedLogContainer" style="margin-top:10px;">${logHistoryHtml(item.repottingLog, type, itemId, prefix, 'repottingLog')}</div>
+      <div class="field" id="${prefix}_repottedNew_toggle">
+        <button type="button" class="btn ghost" style="width:100%;justify-content:center;" onclick="revealHiddenField('${prefix}', 'repottedNew', '${prefix}_repottedDate')">+ Umtopfen erfassen</button>
+      </div>
+      <div id="${prefix}_repottedNew_field" style="display:none;">
+        <div class="fert-add-row">
+          <div class="field"><label>Datum</label><input type="date" id="${prefix}_repottedDate"></div>
+          <div class="field"><label>Notiz (optional)</label><input id="${prefix}_repottedNote" placeholder="z. B. neuer Topf, 3 cm größer"></div>
+        </div>
+      </div>
+    </div>`;
+}
+
 function fertilizerSectionHtml(item, type, itemId, prefix, speciesNameForTip){
   return `
     <div class="fert-section">
@@ -1507,10 +2104,11 @@ function fertilizerSectionHtml(item, type, itemId, prefix, speciesNameForTip){
     </div>`;
 }
 
-function wateringSectionHtml(item, type, itemId, prefix){
+function wateringSectionHtml(item, type, itemId, prefix, wateringPlaceholder){
   return `
     <div class="fert-section">
       <label class="fert-heading">Gießprotokoll</label>
+      <div class="field"><label>Gießrhythmus</label><input id="${prefix}_watering" value="${escapeHtml(item.watering)}" placeholder="${wateringPlaceholder||'z. B. wöchentlich'}"></div>
       <div id="${prefix}_waterLogContainer">${logHistoryHtml(item.wateringLog, type, itemId, prefix, 'wateringLog')}</div>
       <div class="fert-add-row">
         <div class="field"><label>Neuer Eintrag — Datum</label><input type="date" id="${prefix}_waterDate"></div>
@@ -1528,17 +2126,19 @@ function wateringSectionHtml(item, type, itemId, prefix){
 function flushSectionHtml(item, type, itemId, prefix, speciesNameForTip){
   const rec = getFlushRecommendation(speciesNameForTip, item.substrate);
   return `
-    <div class="fert-section">
-      <label class="fert-heading">Durchspül-Protokoll</label>
-      <div class="hint" id="${prefix}_flushTip">${escapeHtml(rec.tip)}</div>
-      <div class="row2" style="margin-top:10px;">
-        <div class="field"><label>Durchspülintervall (Tage)</label><input type="number" min="0" id="${prefix}_flushInterval" value="${item.flushIntervalDays!=null?item.flushIntervalDays:rec.days}"></div>
-        <div class="field"></div>
-      </div>
-      <div id="${prefix}_flushLogContainer">${logHistoryHtml(item.flushLog, type, itemId, prefix, 'flushLog')}</div>
-      <div class="fert-add-row">
-        <div class="field"><label>Neues Durchspülen — Datum</label><input type="date" id="${prefix}_flushDate"></div>
-        <div class="field"><label>Notiz (optional)</label><input id="${prefix}_flushNote" placeholder="z. B. mit destilliertem Wasser"></div>
+    <div id="${prefix}_flush_block" style="display:none;">
+      <div class="fert-section">
+        <label class="fert-heading">Durchspül-Protokoll</label>
+        <div class="hint" id="${prefix}_flushTip">${escapeHtml(rec.tip)}</div>
+        <div class="row2" style="margin-top:10px;">
+          <div class="field"><label>Durchspülintervall (Tage)</label><input type="number" min="0" id="${prefix}_flushInterval" value="${item.flushIntervalDays!=null?item.flushIntervalDays:rec.days}"></div>
+          <div class="field"></div>
+        </div>
+        <div id="${prefix}_flushLogContainer">${logHistoryHtml(item.flushLog, type, itemId, prefix, 'flushLog')}</div>
+        <div class="fert-add-row">
+          <div class="field"><label>Neues Durchspülen — Datum</label><input type="date" id="${prefix}_flushDate"></div>
+          <div class="field"><label>Notiz (optional)</label><input id="${prefix}_flushNote" placeholder="z. B. mit destilliertem Wasser"></div>
+        </div>
       </div>
     </div>`;
 }
@@ -1547,6 +2147,7 @@ function plantForm(p){
   return `
     <h2>${editingId ? 'Pflanze bearbeiten' : 'Neue Pflanze'}</h2>
     <p class="modal-sub">Deine Hauptpflanze im Bestand.</p>
+    ${p.promotedFromCuttingName ? `<div class="hint" style="background:var(--moss-pale);">🌱 Diese Pflanze ist aus dem ${escapeHtml(p.promotedFromCuttingType||'Ableger')} "${escapeHtml(p.promotedFromCuttingName)}" hervorgegangen${p.promotedDate?`, übernommen am ${escapeHtml(formatDateDMY(p.promotedDate))}`:''}.</div>` : ''}
     <div class="field">
       <label>Pflanzenname</label>
       <input id="f_name" list="plantSpeciesList" value="${escapeHtml(p.name)}" placeholder="Tippen für Vorschläge oder frei eingeben" oninput="onPlantNameInput()" autocomplete="off">
@@ -1563,27 +2164,37 @@ function plantForm(p){
       <div class="field"><label>Standort</label><input id="f_location" value="${escapeHtml(p.location)}" placeholder="z. B. Wohnzimmer"></div>
     </div>
     <div class="row2">
-      ${substrateSelectHtml(p, 'f')}
-      <div class="field"><label>Gießrhythmus</label><input id="f_watering" value="${escapeHtml(p.watering)}" placeholder="z. B. wöchentlich"></div>
+      <div class="field"><label>Bezugsart</label>
+        <select id="f_acquisitionType">
+          <option value="">(nicht angegeben)</option>
+          ${ACQUISITION_TYPES.map(t=>`<option value="${t}" ${p.acquisitionType===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Preis</label><input id="f_price" value="${escapeHtml(p.price)}" placeholder="z. B. 15€"></div>
     </div>
+    ${substrateSelectHtml(p, 'f')}
     ${substrateHistoryFieldsHtml(p, 'f')}
     ${reservoirBlockHtml(p, 'f')}
     <div class="hint" id="f_careTips" style="display:none;"></div>
     <div class="row2">
-      <div class="field"><label>Letzte Umtopfung</label><input id="f_repotted" value="${escapeHtml(p.repotted)}" placeholder="z. B. 2024-03"></div>
       <div class="field"><label>Zustand</label>
         <select id="f_status">
           ${['sehr gut','gut','mittel','schlecht','krank'].map(s=>`<option value="${s}" ${p.status===s?'selected':''}>${s}</option>`).join('')}
         </select>
       </div>
+      <div class="field"></div>
     </div>
     <div class="field"><label>Notizen</label><textarea id="f_notes" placeholder="Besonderheiten, Pflegehinweise…">${escapeHtml(p.notes)}</textarea></div>
 
+    ${wateringSectionHtml(p, 'plants', editingId, 'f', 'z. B. wöchentlich')}
+
     ${fertilizerSectionHtml(p, 'plants', editingId, 'f', p.name)}
 
-    ${wateringSectionHtml(p, 'plants', editingId, 'f')}
-
     ${flushSectionHtml(p, 'plants', editingId, 'f', p.name)}
+
+    ${repottingSectionHtml(p, 'plants', editingId, 'f', p.name)}
+
+    <div id="f_careInfoContainer">${careInfoSectionHtml(p.name, p.substrate)}</div>
 
     <div class="modal-actions">
       <div>${editingId ? `<button class="btn danger" onclick="deleteItem('plants', ${editingId})">Löschen</button>` : ''}</div>
@@ -1643,6 +2254,15 @@ function cuttingForm(c){
       <label>Quelle (Person, Shop, Tausch…)</label>
       <input id="c_foreign" value="${escapeHtml(c.foreignSource)}" placeholder="z. B. Von Lisa geschenkt" oninput="updateCareTips('c')">
     </div>
+    <div class="row2" id="field_foreign_details" style="display:none;">
+      <div class="field"><label>Bezugsart</label>
+        <select id="c_acquisitionType">
+          <option value="">(nicht angegeben)</option>
+          ${ACQUISITION_TYPES.map(t=>`<option value="${t}" ${c.acquisitionType===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Preis</label><input id="c_price" value="${escapeHtml(c.price)}" placeholder="z. B. 5€"></div>
+    </div>
     <div class="field">
       <label id="c_name_label">Bezeichnung (optional)</label>
       <input id="c_name" value="${escapeHtml(labelValue)}" placeholder="z. B. Ableger #1, Fensterbank-Ableger" autocomplete="off">
@@ -1654,7 +2274,7 @@ function cuttingForm(c){
           ${['Ableger','Steckling','Samen'].map(t=>`<option value="${t}" ${c.type===t?'selected':''}>${t}</option>`).join('')}
         </select>
       </div>
-      <div class="field"><label>Datum genommen</label><input type="date" id="c_date" value="${c.dateTaken||''}"></div>
+      <div class="field"><label>Datum</label><input type="date" id="c_date" value="${c.dateTaken||''}"></div>
     </div>
     <div class="row2">
       <div class="field"><label>Standort</label><input id="c_location" value="${escapeHtml(c.location)}" placeholder="z. B. Fensterbank"></div>
@@ -1663,21 +2283,26 @@ function cuttingForm(c){
     ${substrateHistoryFieldsHtml(c, 'c')}
     ${reservoirBlockHtml(c, 'c')}
     <div class="hint" id="c_careTips" style="display:none;"></div>
-    <div class="row2">
-      <div class="field"><label>Gießrhythmus</label><input id="c_watering" value="${escapeHtml(c.watering)}" placeholder="z. B. alle 4 Tage"></div>
-      <div class="field"><label>Zustand</label>
-        <select id="c_status">
-          ${['wurzelt','sehr gut','gut','mittel','schlecht','krank'].map(s=>`<option value="${s}" ${c.status===s?'selected':''}>${s}</option>`).join('')}
-        </select>
-      </div>
+    <div class="field"><label>Zustand</label>
+      <select id="c_status">
+        ${['wurzelt','sehr gut','gut','mittel','schlecht','krank'].map(s=>`<option value="${s}" ${c.status===s?'selected':''}>${s}</option>`).join('')}
+      </select>
     </div>
     <div class="field"><label>Notizen</label><textarea id="c_notes" placeholder="z. B. Bewurzelungsfortschritt…">${escapeHtml(c.notes)}</textarea></div>
+    ${editingId ? `<div class="hint" style="background:var(--moss-pale);display:flex;justify-content:space-between;align-items:center;">
+        <span>Gut bewurzelt und eigenständig?</span>
+        <button type="button" class="btn ghost" style="padding:5px 10px;font-size:12.5px;" onclick="convertCuttingToPlant(${editingId})">→ Zur eigenen Pflanze machen</button>
+      </div>` : ''}
+
+    ${wateringSectionHtml(c, 'cuttings', editingId, 'c', 'z. B. alle 4 Tage')}
 
     ${fertilizerSectionHtml(c, 'cuttings', editingId, 'c', speciesNameForTip)}
 
-    ${wateringSectionHtml(c, 'cuttings', editingId, 'c')}
-
     ${flushSectionHtml(c, 'cuttings', editingId, 'c', speciesNameForTip)}
+
+    ${repottingSectionHtml(c, 'cuttings', editingId, 'c', speciesNameForTip)}
+
+    <div id="c_careInfoContainer">${careInfoSectionHtml(speciesNameForTip, c.substrate)}</div>
 
     <div class="modal-actions">
       <div>${editingId ? `<button class="btn danger" onclick="deleteItem('cuttings', ${editingId})">Löschen</button>` : ''}</div>
@@ -1723,6 +2348,8 @@ function wishlistForm(w){
         <span>Als gekauft markiert.</span>
         <button type="button" class="btn ghost" style="padding:5px 10px;font-size:12.5px;" onclick="convertWishlistItemToPlant(${editingId})">→ In den Pflanzenkatalog übernehmen</button>
       </div>` : ''}
+
+    ${careInfoSectionHtml(w.name)}
 
     <div class="modal-actions">
       <div>${editingId ? `<button class="btn danger" onclick="deleteItem('wishlist', ${editingId})">Löschen</button>` : ''}</div>
@@ -1779,7 +2406,7 @@ async function saveWishlistItem(){
     savedId = data.id;
   }
   await saveState();
-  closeModal();
+  forceCloseModal();
   render();
 
   if(data.status === 'Gekauft'){
@@ -1799,7 +2426,6 @@ function convertWishlistItemToPlant(id){
   if(!item) return;
   const noteParts = [];
   if(item.source) noteParts.push(`Quelle: ${item.source}`);
-  if(item.price) noteParts.push(`Preis: ${item.price}`);
   if(item.link) noteParts.push(`Link: ${item.link}`);
   if(item.notes) noteParts.push(item.notes);
   convertingWishlistId = id;
@@ -1808,6 +2434,54 @@ function convertWishlistItemToPlant(id){
     latin: item.latin,
     category: item.category,
     notes: noteParts.join(' — '),
+    // Der Wunschlisten-Status "Gekauft" löst diese Übernahme erst aus — die
+    // Bezugsart ist damit eindeutig, der Preis wandert strukturiert mit, statt
+    // nur als Freitext in den Notizen zu stehen.
+    acquisitionType: 'Gekauft',
+    price: item.price || '',
+  });
+}
+
+function convertCuttingToPlant(id){
+  const cutting = getCuttingById(id);
+  if(!cutting) return;
+  // Artname ermitteln: bei "eigene Herkunft" der Name der Elternpflanze/des Eltern-Ablegers,
+  // sonst der eigene Name des Ablegers selbst — analog zur Pflegetipps-Logik im Formular.
+  const speciesName = cutting.origin==='eigene' ? getParentLabel(cutting) : cutting.name;
+  const match = findPlantInDB(speciesName);
+  const noteParts = [];
+  if(cutting.notes) noteParts.push(cutting.notes);
+
+  convertingCuttingId = id;
+  openModal('plants', null, {
+    name: speciesName,
+    latin: match ? match.latin : '',
+    category: match ? match.category : '',
+    acquired: cutting.dateTaken || '',
+    location: cutting.location,
+    acquisitionType: cutting.acquisitionType || '',
+    price: cutting.price || '',
+    substrate: cutting.substrate,
+    substrateBefore: cutting.substrateBefore,
+    substrateChangedDate: cutting.substrateChangedDate,
+    watering: cutting.watering,
+    status: cutting.status,
+    notes: noteParts.join(' — '),
+    reservoirEmpty: cutting.reservoirEmpty,
+    reservoirEmptySince: cutting.reservoirEmptySince,
+    dryDays: cutting.dryDays,
+    fertilizerIntervalDays: cutting.fertilizerIntervalDays,
+    fertilizerLog: cutting.fertilizerLog,
+    wateringLog: cutting.wateringLog,
+    flushIntervalDays: cutting.flushIntervalDays,
+    flushLog: cutting.flushLog,
+    repottingLog: cutting.repottingLog,
+    // Strukturierte Herkunft statt Freitext-Notiz — bleibt so erhalten, unabhängig
+    // davon, ob später jemand die Notizen bearbeitet/löscht, und ist auf der Karte
+    // sowie im Formular auswertbar/anzeigbar (siehe plantCard/plantForm).
+    promotedFromCuttingName: cutting.name,
+    promotedFromCuttingType: cutting.type || 'Ableger',
+    promotedDate: new Date().toISOString().slice(0,10),
   });
 }
 
@@ -1834,9 +2508,13 @@ function updateOwnPlantVisibility(origin){
   }
   const fieldOwn = document.getElementById('field_own');
   const fieldForeign = document.getElementById('field_foreign');
+  const fieldForeignDetails = document.getElementById('field_foreign_details');
   if(fieldOwn && fieldForeign){
     fieldOwn.style.display = origin==='eigene' ? 'block' : 'none';
     fieldForeign.style.display = origin==='fremd' ? 'block' : 'none';
+  }
+  if(fieldForeignDetails){
+    fieldForeignDetails.style.display = origin==='fremd' ? 'grid' : 'none';
   }
   const nameLabel = document.getElementById('c_name_label');
   const nameInput = document.getElementById('c_name');
@@ -1865,9 +2543,13 @@ function onSubstrateChange(prefix){
   const select = document.getElementById(prefix+'_substrate_select');
   const custom = document.getElementById(prefix+'_substrate_custom');
   const reservoirBlock = document.getElementById(prefix+'_reservoir_block');
+  const flushBlock = document.getElementById(prefix+'_flush_block');
   custom.style.display = select.value === 'Sonstiges' ? 'block' : 'none';
   if(reservoirBlock){
     reservoirBlock.style.display = isSemiHydro(select.value) ? 'block' : 'none';
+  }
+  if(flushBlock){
+    flushBlock.style.display = needsFlushing(select.value) ? 'block' : 'none';
   }
   updateCareTips(prefix);
 }
@@ -1885,9 +2567,26 @@ function onSubstrateSelectChanged(prefix){
   if(prevValue && select.value !== prevValue){
     if(beforeInput) beforeInput.value = prevValue;
     if(dateInput) dateInput.value = new Date().toISOString().slice(0,10);
+    // Ein echter Substratwechsel wurde gerade erkannt -> Felder direkt aufdecken,
+    // statt den Nutzer zusätzlich noch auf den Erfassen-Button klicken zu lassen.
+    revealHiddenField(prefix, 'substrateHistory');
   }
   select.dataset.prev = select.value;
   updateSubstrateSinceHint(prefix);
+}
+
+// Blendet ein standardmäßig verstecktes Feld (z. B. "Umtopfen erfassen") ein und
+// versteckt den zugehörigen Auslöse-Button dafür — genutzt für Felder, die nur
+// selten gebraucht werden und nicht permanent im Formular stehen sollen.
+function revealHiddenField(prefix, fieldKey, focusId){
+  const fieldDiv = document.getElementById(prefix+'_'+fieldKey+'_field');
+  const toggleDiv = document.getElementById(prefix+'_'+fieldKey+'_toggle');
+  if(fieldDiv) fieldDiv.style.display = 'block';
+  if(toggleDiv) toggleDiv.style.display = 'none';
+  if(focusId){
+    const input = document.getElementById(focusId);
+    if(input) input.focus();
+  }
 }
 
 function setReservoirEmpty(prefix, isEmpty){
@@ -1932,13 +2631,18 @@ function updateCareTips(prefix){
   const substrate = getSubstrateValue(prefix);
   const tips = getCareTips(speciesName, substrate);
   const box = document.getElementById(prefix+'_careTips');
-  if(!box) return;
-  if(tips.length===0){
-    box.style.display = 'none';
-    box.innerHTML = '';
-  } else {
-    box.style.display = 'block';
-    box.innerHTML = tips.map(t=>`<div style="margin-bottom:6px;">${escapeHtml(t)}</div>`).join('');
+  if(box){
+    if(tips.length===0){
+      box.style.display = 'none';
+      box.innerHTML = '';
+    } else {
+      box.style.display = 'block';
+      box.innerHTML = tips.map(t=>`<div style="margin-bottom:6px;">${escapeHtml(t)}</div>`).join('');
+    }
+  }
+  const careInfoContainer = document.getElementById(prefix+'_careInfoContainer');
+  if(careInfoContainer){
+    careInfoContainer.innerHTML = careInfoSectionHtml(speciesName, substrate);
   }
 }
 
@@ -1986,7 +2690,7 @@ async function savePlant(){
   const substrate = getSubstrateValue('f');
   const reservoirEmpty = !!window['_f_reservoirEmpty'];
   const fertilizerIntervalDays = parseInt(document.getElementById('f_fertInterval').value) || 0;
-  const existingPlant = editingId ? (state.plants.find(x=>x.id===editingId)||{}) : {};
+  const existingPlant = editingId ? (state.plants.find(x=>x.id===editingId)||{}) : (currentPrefillItem || {});
   const existingLog = existingPlant.fertilizerLog || [];
   const fertDate = document.getElementById('f_fertDate').value;
   const fertilizerLog = fertDate
@@ -2003,6 +2707,11 @@ async function savePlant(){
   const flushLog = flushDate
     ? [...existingFlushLog, { date: flushDate, note: document.getElementById('f_flushNote').value.trim() }]
     : existingFlushLog;
+  const existingRepottingLog = existingPlant.repottingLog || [];
+  const repottedDate = document.getElementById('f_repottedDate') ? document.getElementById('f_repottedDate').value : '';
+  const repottingLog = repottedDate
+    ? [...existingRepottingLog, { date: repottedDate, note: document.getElementById('f_repottedNote').value.trim() }]
+    : existingRepottingLog;
 
   const data = {
     name,
@@ -2010,11 +2719,13 @@ async function savePlant(){
     category: document.getElementById('f_category').value.trim(),
     acquired: document.getElementById('f_acquired').value,
     location: document.getElementById('f_location').value.trim(),
+    acquisitionType: document.getElementById('f_acquisitionType').value,
+    price: document.getElementById('f_price').value.trim(),
     substrate,
     substrateBefore: document.getElementById('f_substrateBefore').value.trim(),
     substrateChangedDate: document.getElementById('f_substrateChangedDate').value,
     watering: document.getElementById('f_watering').value.trim(),
-    repotted: document.getElementById('f_repotted').value.trim(),
+    repottingLog,
     status: document.getElementById('f_status').value,
     notes: document.getElementById('f_notes').value.trim(),
     reservoirEmpty: isSemiHydro(substrate) ? reservoirEmpty : false,
@@ -2025,6 +2736,12 @@ async function savePlant(){
     wateringLog,
     flushIntervalDays,
     flushLog,
+    // Herkunft aus einer Ableger-Hochstufung — bei Bearbeitung einer bestehenden
+    // Pflanze bleibt der Wert einfach erhalten (existingPlant = state-Eintrag),
+    // bei der Erstanlage kommt er aus dem Prefill (existingPlant = currentPrefillItem).
+    promotedFromCuttingName: existingPlant.promotedFromCuttingName || null,
+    promotedFromCuttingType: existingPlant.promotedFromCuttingType || null,
+    promotedDate: existingPlant.promotedDate || null,
   };
 
   if(editingId){
@@ -2040,9 +2757,23 @@ async function savePlant(){
       state.wishlist = state.wishlist.filter(x=>x.id!==convertingWishlistId);
       convertingWishlistId = null;
     }
+    // Falls diese Pflanze aus einem Ableger/Steckling heraus "hochgestuft" wurde:
+    // eigene Ableger-Kinder dieses Ablegers auf die neue Pflanze umhängen, statt sie
+    // verwaist zurückzulassen, dann den ursprünglichen Ableger-Eintrag entfernen.
+    if(convertingCuttingId != null){
+      state.cuttings.forEach(cut=>{
+        if(cut.origin==='eigene' && (cut.parentType||'plant')==='cutting' && cut.parentCuttingId===convertingCuttingId){
+          cut.parentType = 'plant';
+          cut.ownPlantId = data.id;
+          cut.parentCuttingId = null;
+        }
+      });
+      state.cuttings = state.cuttings.filter(x=>x.id!==convertingCuttingId);
+      convertingCuttingId = null;
+    }
   }
   await saveState();
-  closeModal();
+  forceCloseModal();
   render();
 }
 
@@ -2080,7 +2811,7 @@ async function saveCutting(){
   const substrate = getSubstrateValue('c');
   const reservoirEmpty = !!window['_c_reservoirEmpty'];
   const fertilizerIntervalDays = parseInt(document.getElementById('c_fertInterval').value) || 0;
-  const existingCutting = editingId ? (state.cuttings.find(x=>x.id===editingId)||{}) : {};
+  const existingCutting = editingId ? (state.cuttings.find(x=>x.id===editingId)||{}) : (currentPrefillItem || {});
   const existingLog = existingCutting.fertilizerLog || [];
   const fertDate = document.getElementById('c_fertDate').value;
   const fertilizerLog = fertDate
@@ -2097,6 +2828,11 @@ async function saveCutting(){
   const flushLog = flushDate
     ? [...existingFlushLog, { date: flushDate, note: document.getElementById('c_flushNote').value.trim() }]
     : existingFlushLog;
+  const existingRepottingLog = existingCutting.repottingLog || [];
+  const repottedDate = document.getElementById('c_repottedDate') ? document.getElementById('c_repottedDate').value : '';
+  const repottingLog = repottedDate
+    ? [...existingRepottingLog, { date: repottedDate, note: document.getElementById('c_repottedNote').value.trim() }]
+    : existingRepottingLog;
 
   const data = {
     name,
@@ -2107,6 +2843,8 @@ async function saveCutting(){
     ownPlantId: origin==='eigene' ? ownPlantId : null,
     parentCuttingId: origin==='eigene' ? parentCuttingId : null,
     foreignSource: origin==='fremd' ? document.getElementById('c_foreign').value.trim() : '',
+    acquisitionType: origin==='fremd' ? document.getElementById('c_acquisitionType').value : '',
+    price: origin==='fremd' ? document.getElementById('c_price').value.trim() : '',
     location: document.getElementById('c_location').value.trim(),
     substrate,
     substrateBefore: document.getElementById('c_substrateBefore').value.trim(),
@@ -2122,6 +2860,7 @@ async function saveCutting(){
     wateringLog,
     flushIntervalDays,
     flushLog,
+    repottingLog,
   };
 
   if(editingId){
@@ -2132,7 +2871,7 @@ async function saveCutting(){
     state.cuttings.push(data);
   }
   await saveState();
-  closeModal();
+  forceCloseModal();
   render();
 }
 
@@ -2179,7 +2918,7 @@ function deleteItem(type, id){
   showConfirm(`"${label}" wird endgültig gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.${warning}`, async ()=>{
     state[type] = state[type].filter(x=>x.id!==id);
     await saveState();
-    closeModal();
+    forceCloseModal();
     render();
   });
 }
@@ -2188,6 +2927,7 @@ const LOG_CONTAINER_SUFFIX = {
   fertilizerLog: '_fertLogContainer',
   wateringLog: '_waterLogContainer',
   flushLog: '_flushLogContainer',
+  repottingLog: '_repottedLogContainer',
 };
 
 // Löscht einen einzelnen Eintrag aus einem Protokoll (Düngen/Gießen/Durchspülen),
@@ -2232,6 +2972,7 @@ window.onPlantNameInput = onPlantNameInput;
 window.onSubstrateChange = onSubstrateChange;
 window.onSubstrateSelectChanged = onSubstrateSelectChanged;
 window.setReservoirEmpty = setReservoirEmpty;
+window.revealHiddenField = revealHiddenField;
 window.render = render;
 window.jumpTo = jumpTo;
 window.showChildCuttings = showChildCuttings;
@@ -2249,6 +2990,7 @@ window.updateCareTips = updateCareTips;
 window.onWishlistNameInput = onWishlistNameInput;
 window.saveWishlistItem = saveWishlistItem;
 window.convertWishlistItemToPlant = convertWishlistItemToPlant;
+window.convertCuttingToPlant = convertCuttingToPlant;
 window.bulkMarkPurchased = bulkMarkPurchased;
 
 loadState().then(render);
