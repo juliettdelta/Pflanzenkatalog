@@ -542,7 +542,7 @@ function findPlantInDB(name){
   return PLANT_DB.find(p => p.name.toLowerCase() === n) || null;
 }
 
-const ACQUISITION_TYPES = ['Gekauft', 'Geschenkt', 'Getauscht', 'Sonstiges'];
+const ACQUISITION_TYPES = ['Gekauft', 'Geschenkt', 'Getauscht', 'Gezogen', 'Sonstiges'];
 
 // Extrahiert die erste Zahl aus einem frei eingegebenen Preis-Text wie "15€",
 // "15,50 €" oder "ca. 20 Euro" — der Preis wird bewusst als Freitext erfasst
@@ -964,12 +964,14 @@ const LOG_EMPTY_MESSAGE = {
   wateringLog: 'Noch keine Gießung erfasst.',
   flushLog: 'Noch kein Durchspülen erfasst.',
   repottingLog: 'Noch keine Umtopfung erfasst.',
+  substrateLog: 'Noch kein Substratwechsel erfasst.',
 };
-const LOG_HAS_SECONDARY_LABEL = { fertilizerLog: true, wateringLog: true, flushLog: false, repottingLog: false };
+const LOG_HAS_SECONDARY_LABEL = { fertilizerLog: true, wateringLog: true, flushLog: false, repottingLog: false, substrateLog: true };
 
 function logSecondaryLabel(fieldName, entry){
   if(fieldName==='fertilizerLog') return entry.product||'';
   if(fieldName==='wateringLog') return entry.type||'';
+  if(fieldName==='substrateLog') return entry.substrateBefore ? `von: ${entry.substrateBefore}` : '';
   return '';
 }
 
@@ -1052,6 +1054,16 @@ function defaultState(){
 // Firestore-Dokumente auch ohne das Feld "wishlist" funktionieren.
 function normalizeState(s){
   if(!s.wishlist) s.wishlist = [];
+  // Substratwechsel war früher ein einzelnes Wertepaar (substrateBefore/
+  // substrateChangedDate) statt eines Protokolls — bestehende Daten hier einmalig
+  // in den neuen substrateLog überführen, damit nichts verloren geht.
+  [...(s.plants||[]), ...(s.cuttings||[])].forEach(item=>{
+    if(!item.substrateLog){
+      item.substrateLog = (item.substrateBefore || item.substrateChangedDate)
+        ? [{ date: item.substrateChangedDate || new Date().toISOString().slice(0,10), substrateBefore: item.substrateBefore || '', note: '' }]
+        : [];
+    }
+  });
   return s;
 }
 
@@ -1617,11 +1629,22 @@ function renderStatsTab(){
   const emptyReservoirs = allItems.filter(x=>x.reservoirEmpty).length;
   const totalOverdue = overdueWater + overdueFert + overdueFlush;
 
-  // Vermehrung — Ableger, die zu einer eigenen Pflanze hochgestuft wurden, existieren
-  // nicht mehr in state.cuttings, daher: aktuelle Ableger + hochgestufte Pflanzen.
+  // Vermehrung — jetzt in Stückzahlen statt Datensätzen gezählt (wegen des
+  // "Charge"-Konzepts: ein Ableger-Eintrag kann mehrere Stecklinge repräsentieren).
+  // Solange eine Charge noch existiert, behält sie ihre ursprüngliche Gesamtzahl
+  // (count) und ihre "bereits eingetopft"-Zahl (convertedCount) selbst — das zählt
+  // hier über state.cuttings. Nur eine komplett aufgebrauchte EINZEL-Charge
+  // (count<=1) wird gelöscht; deren Zahlen leben dann nur noch auf der daraus
+  // entstandenen Pflanze weiter (promotedFromCount, markiert mit
+  // promotedFromCuttingDeleted), und werden deshalb hier zusätzlich gezählt —
+  // aber nur dann, sonst würde eine noch bestehende Charge doppelt gezählt.
   const promotedPlants = state.plants.filter(p=>p.promotedFromCuttingName);
-  const totalCuttingsEverMade = state.cuttings.length + promotedPlants.length;
-  const successRate = totalCuttingsEverMade>0 ? Math.round(promotedPlants.length/totalCuttingsEverMade*100) : 0;
+  const deletedSourcePromotions = promotedPlants.filter(p=>p.promotedFromCuttingDeleted);
+  const totalCuttingsEverMade = state.cuttings.reduce((s,c)=>s+(c.count!=null?c.count:1), 0)
+    + deletedSourcePromotions.reduce((s,p)=>s+(p.promotedFromCount||1), 0);
+  const successCount = state.cuttings.reduce((s,c)=>s+(c.convertedCount||0), 0)
+    + deletedSourcePromotions.reduce((s,p)=>s+(p.promotedFromCount||1), 0);
+  const successRate = totalCuttingsEverMade>0 ? Math.round(successCount/totalCuttingsEverMade*100) : 0;
   let mostProlific = null, mostProlificCount = 0;
   state.plants.forEach(p=>{
     const c = getDescendantCount('plant', p.id);
@@ -1704,8 +1727,9 @@ function renderStatsTab(){
     <div class="stats-section">
       <h3 class="stats-section-title">Vermehrung</h3>
       <div class="stats-grid">
-        ${statCardHtml(totalCuttingsEverMade, 'Ableger insgesamt gemacht')}
-        ${statCardHtml(promotedPlants.length, 'Zu eigener Pflanze hochgestuft')}
+        ${statCardHtml(totalCuttingsEverMade, 'Stück insgesamt angesetzt')}
+        ${statCardHtml(successCount, 'Davon erfolgreich bewurzelt/eingetopft')}
+        ${statCardHtml(promotedPlants.length, 'Daraus entstandene Pflanzen')}
       </div>
       ${mostProlific ? `<div class="stats-record"><span class="rlabel">Fruchtbarste Pflanze</span><span class="rvalue">${escapeHtml(mostProlific.name)} (${mostProlificCount} Ableger)</span></div>` : ''}
       ${statsSubheadHtml('Ableger nach Zustand')}
@@ -1745,12 +1769,28 @@ function checkboxHtml(id){
   return `<button type="button" class="select-check ${checked?'checked':''}" aria-pressed="${checked}" aria-label="Auswählen" onclick="toggleSelectItem(${id}, event)"></button>`;
 }
 
+// Kombiniert Spitzname und Übertopf in einer Zeile für Kachel/Liste (ersetzt dort
+// den botanischen Namen) — beides sind eher "am Alltag orientierte" Angaben.
+function nicknamePotLine(p){
+  const parts = [];
+  if(p.spitzname) parts.push(p.spitzname);
+  if(p.uebertopf) parts.push(p.uebertopf);
+  return parts.join(' · ');
+}
+
 // Badge, der zeigt, dass diese Pflanze aus einem hochgestuften Ableger/Steckling
 // hervorgegangen ist — der ursprüngliche Ableger-Eintrag existiert nach der
 // Übernahme nicht mehr, daher wird diese Herkunft direkt auf der Pflanze gespeichert.
+// Dativ-Plural der Ableger-Typen für die Herkunfts-Formulierung ("aus 5 Stecklingen").
+const CUTTING_TYPE_DATIVE_PLURAL = { 'Ableger': 'Ablegern', 'Steckling': 'Stecklingen', 'Samen': 'Samen' };
+
 function promotedFromBadgeHtml(p){
   if(!p.promotedFromCuttingName) return '';
-  const title = `Hervorgegangen aus ${escapeHtml(p.promotedFromCuttingType||'Ableger')} "${escapeHtml(p.promotedFromCuttingName)}"${p.promotedDate?`, übernommen am ${escapeHtml(formatDateDMY(p.promotedDate))}`:''}`;
+  const type = p.promotedFromCuttingType || 'Ableger';
+  const originText = p.promotedFromCount>1
+    ? `${p.promotedFromCount} ${escapeHtml(CUTTING_TYPE_DATIVE_PLURAL[type] || type+'n')}`
+    : `dem ${escapeHtml(type)}`;
+  const title = `Hervorgegangen aus ${originText} "${escapeHtml(p.promotedFromCuttingName)}"${p.promotedDate?`, übernommen am ${escapeHtml(formatDateDMY(p.promotedDate))}`:''}`;
   return `<span class="badge gold" title="${title}">🌱 Aus Ableger hervorgegangen</span>`;
 }
 
@@ -1759,7 +1799,7 @@ function plantListRow(p){
   return `<div class="list-row ${selectionMode?'selectable':''}" onclick="${selectionMode?`toggleSelectItem(${p.id}, event)`:`openModal('plants', ${p.id})`}">
     ${selectionMode?checkboxHtml(p.id):''}
     <span class="name">${escapeHtml(p.name)}</span>
-    <span class="latin">${escapeHtml(p.latin||'')}</span>
+    <span class="latin">${escapeHtml(nicknamePotLine(p))}</span>
     <div class="list-meta">
       <span class="badge">${escapeHtml(p.category||'—')}</span>
       ${cuttingCount>0?`<span class="badge link-badge" onclick="event.stopPropagation();showChildCuttings('plant', ${p.id})">${cuttingCount} Ableger</span>`:''}
@@ -1773,6 +1813,16 @@ function plantListRow(p){
   </div>`;
 }
 
+// Zeigt bei einer Ableger-"Charge" (mehr als 1 Stück) die Gesamt- und
+// Restanzahl an — bei einem einzelnen Ableger (der Normalfall) bleibt das leer,
+// um die Karten/Listen dafür nicht unnötig zu überladen.
+function cuttingBatchBadgeHtml(c){
+  const count = c.count!=null ? c.count : 1;
+  if(count<=1) return '';
+  const remaining = getCuttingRemaining(c);
+  return `<span class="badge muted">${count} Stück · ${remaining} verfügbar</span>`;
+}
+
 function cuttingListRow(c){
   const originLabel = `von: ${escapeHtml(getParentLabel(c))}`;
   const childCount = getDescendantCount('cutting', c.id);
@@ -1782,6 +1832,7 @@ function cuttingListRow(c){
     <span class="latin">${escapeHtml(c.type||'')}</span>
     <div class="list-meta">
       <span class="badge ${c.origin==='fremd'?'clay':''}">${c.origin==='eigene'?'Eigene Pflanze':'Fremde Pflanze'}</span>
+      ${cuttingBatchBadgeHtml(c)}
       ${childCount>0?`<span class="badge link-badge" onclick="event.stopPropagation();showChildCuttings('cutting', ${c.id})">${childCount} Ableger</span>`:''}
       ${refillBadge(c)}
       ${fertilizerBadge(c)}
@@ -1858,7 +1909,7 @@ function plantCard(p){
   return `<div class="card ${selectionMode?'selectable':''}" onclick="${selectionMode?`toggleSelectItem(${p.id}, event)`:`openModal('plants', ${p.id})`}">
     ${selectionMode?checkboxHtml(p.id):''}
     <div class="name">${escapeHtml(p.name)}</div>
-    <div class="latin">${escapeHtml(p.latin||'')}</div>
+    <div class="latin">${escapeHtml(nicknamePotLine(p))}</div>
     <span class="badge">${escapeHtml(p.category||'—')}</span>
     ${cuttingCount>0?`<span class="badge link-badge" onclick="event.stopPropagation();showChildCuttings('plant', ${p.id})">${cuttingCount} Ableger von dieser Pflanze</span>`:''}
     ${promotedFromBadgeHtml(p)}
@@ -1880,6 +1931,7 @@ function cuttingCard(c){
     <div class="name">${escapeHtml(c.name)}</div>
     <div class="latin">${escapeHtml(c.type||'')}</div>
     <span class="badge ${c.origin==='fremd'?'clay':''}">${c.origin==='eigene'?'Eigene Pflanze':'Fremde Pflanze'}</span>
+    ${cuttingBatchBadgeHtml(c)}
     ${childCount>0?`<span class="badge link-badge" onclick="event.stopPropagation();showChildCuttings('cutting', ${c.id})">${childCount} Ableger von diesem Ableger</span>`:''}
     ${refillBadge(c)}
     ${fertilizerBadge(c)}
@@ -1898,6 +1950,19 @@ function getPlantName(id){
 
 function getCuttingById(id){
   return state.cuttings.find(x=>x.id===id) || null;
+}
+
+// "Charge"-Konzept: ein Ableger-Eintrag kann mehrere Stück auf einmal repräsentieren
+// (z. B. 25 Stecklinge von einer Efeutute). count = ursprüngliche Gesamtzahl,
+// lostCount = wie viele davon eingegangen sind, convertedCount = wie viele davon
+// bereits zu eigenen Pflanzen wurden (wird automatisch von convertCuttingToPlant
+// hochgezählt, nicht manuell editierbar). remaining ergibt sich immer daraus, wird
+// nie selbst gespeichert, damit es nie inkonsistent werden kann.
+function getCuttingRemaining(cutting){
+  const count = cutting.count!=null ? cutting.count : 1;
+  const lost = cutting.lostCount || 0;
+  const converted = cutting.convertedCount || 0;
+  return Math.max(0, count - lost - converted);
 }
 
 // Direkte Kinder eines Elternteils. parentType: 'plant' | 'cutting'
@@ -2032,18 +2097,22 @@ function substrateSelectHtml(item, prefix){
       </div>`;
 }
 
-function substrateHistoryFieldsHtml(item, prefix){
-  const hasValue = !!(item.substrateBefore || item.substrateChangedDate);
+function substrateSectionHtml(item, type, itemId, prefix){
   return `
-    <div id="${prefix}_substrateHistory_field" style="${hasValue?'':'display:none;'}">
-      <div class="row2">
-        <div class="field"><label>Substrat vorher</label><input id="${prefix}_substrateBefore" value="${escapeHtml(item.substrateBefore||'')}" placeholder="z. B. Standarderde"></div>
-        <div class="field"><label>Umstellungsdatum</label><input type="date" id="${prefix}_substrateChangedDate" value="${item.substrateChangedDate||''}" oninput="updateSubstrateSinceHint('${prefix}')"></div>
+    <div class="fert-section">
+      <label class="fert-heading">Substratwechsel-Protokoll</label>
+      <div id="${prefix}_substrateLogContainer" style="margin-top:10px;">${logHistoryHtml(item.substrateLog, type, itemId, prefix, 'substrateLog')}</div>
+      <div class="hint" id="${prefix}_substrateSinceHint" style="display:none;margin-top:10px;"></div>
+      <div class="field" id="${prefix}_substrateNew_toggle" style="margin-top:10px;">
+        <button type="button" class="btn ghost" style="width:100%;justify-content:center;" onclick="revealHiddenField('${prefix}', 'substrateNew', '${prefix}_substrateChangeDate')">+ Substratwechsel erfassen</button>
       </div>
-      <div class="hint" id="${prefix}_substrateSinceHint" style="display:none;"></div>
-    </div>
-    <div class="field" id="${prefix}_substrateHistory_toggle" style="${hasValue?'display:none;':''}">
-      <button type="button" class="btn ghost" onclick="revealHiddenField('${prefix}', 'substrateHistory', '${prefix}_substrateBefore')">+ Substratwechsel erfassen</button>
+      <div id="${prefix}_substrateNew_field" style="display:none;">
+        <div class="row2">
+          <div class="field"><label>Datum</label><input type="date" id="${prefix}_substrateChangeDate" oninput="updateSubstrateSinceHint('${prefix}')"></div>
+          <div class="field"><label>Substrat vorher</label><input id="${prefix}_substrateChangeBefore" placeholder="z. B. Standarderde"></div>
+        </div>
+        <div class="field"><label>Notiz (optional)</label><input id="${prefix}_substrateChangeNote" placeholder="z. B. Wurzeln waren stark verfilzt"></div>
+      </div>
     </div>`;
 }
 
@@ -2147,13 +2216,23 @@ function plantForm(p){
   return `
     <h2>${editingId ? 'Pflanze bearbeiten' : 'Neue Pflanze'}</h2>
     <p class="modal-sub">Deine Hauptpflanze im Bestand.</p>
-    ${p.promotedFromCuttingName ? `<div class="hint" style="background:var(--moss-pale);">🌱 Diese Pflanze ist aus dem ${escapeHtml(p.promotedFromCuttingType||'Ableger')} "${escapeHtml(p.promotedFromCuttingName)}" hervorgegangen${p.promotedDate?`, übernommen am ${escapeHtml(formatDateDMY(p.promotedDate))}`:''}.</div>` : ''}
+    ${p.promotedFromCuttingName ? `<div class="hint" style="background:var(--moss-pale);">🌱 Diese Pflanze ist aus ${p.promotedFromCount>1?`${p.promotedFromCount} ${escapeHtml(CUTTING_TYPE_DATIVE_PLURAL[p.promotedFromCuttingType||'Ableger'] || (p.promotedFromCuttingType||'Ableger')+'n')}`:`dem ${escapeHtml(p.promotedFromCuttingType||'Ableger')}`} "${escapeHtml(p.promotedFromCuttingName)}" hervorgegangen${p.promotedDate?`, übernommen am ${escapeHtml(formatDateDMY(p.promotedDate))}`:''}.</div>` : ''}
     <div class="field">
       <label>Pflanzenname</label>
       <input id="f_name" list="plantSpeciesList" value="${escapeHtml(p.name)}" placeholder="Tippen für Vorschläge oder frei eingeben" oninput="onPlantNameInput()" autocomplete="off">
       ${plantAutocompleteDatalistHtml()}
       <div class="err" id="err_name">Bitte einen Namen eingeben.</div>
       <div class="hint" id="dbHint" style="display:none;">Aus der Datenbank übernommen — botanischer Name und Kategorie kannst du unten jederzeit anpassen.</div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Spitzname</label>
+        <input id="f_spitzname" value="${escapeHtml(p.spitzname)}" placeholder="z. B. Fred">
+      </div>
+      <div class="field">
+        <label>Übertopf</label>
+        <input id="f_uebertopf" value="${escapeHtml(p.uebertopf)}" placeholder="z. B. weißer Keramiktopf 15 cm">
+      </div>
     </div>
     <div class="row2">
       <div class="field"><label>Botanischer Name</label><input id="f_latin" value="${escapeHtml(p.latin)}" placeholder="z. B. Monstera deliciosa"></div>
@@ -2173,7 +2252,6 @@ function plantForm(p){
       <div class="field"><label>Preis</label><input id="f_price" value="${escapeHtml(p.price)}" placeholder="z. B. 15€"></div>
     </div>
     ${substrateSelectHtml(p, 'f')}
-    ${substrateHistoryFieldsHtml(p, 'f')}
     ${reservoirBlockHtml(p, 'f')}
     <div class="hint" id="f_careTips" style="display:none;"></div>
     <div class="row2">
@@ -2193,6 +2271,8 @@ function plantForm(p){
     ${flushSectionHtml(p, 'plants', editingId, 'f', p.name)}
 
     ${repottingSectionHtml(p, 'plants', editingId, 'f', p.name)}
+
+    ${substrateSectionHtml(p, 'plants', editingId, 'f')}
 
     <div id="f_careInfoContainer">${careInfoSectionHtml(p.name, p.substrate)}</div>
 
@@ -2236,6 +2316,7 @@ function cuttingForm(c){
   // Bewusst c.origin (nicht die mit 'eigene' vorbelegte origin-Variable), um exakt
   // die bisherige Verzweigung nachzubilden.
   const speciesNameForTip = c.origin==='eigene' ? getParentLabel(c) : c.name;
+  const cuttingRemaining = getCuttingRemaining(c);
   return `
     <h2>${editingId ? 'Ableger bearbeiten' : 'Neuer Ableger / Steckling'}</h2>
     <p class="modal-sub">Verknüpfe ihn mit einer eigenen Pflanze (oder einem eigenen Ableger) oder gib eine externe Quelle an.</p>
@@ -2277,10 +2358,20 @@ function cuttingForm(c){
       <div class="field"><label>Datum</label><input type="date" id="c_date" value="${c.dateTaken||''}"></div>
     </div>
     <div class="row2">
+      <div class="field">
+        <label>Anzahl</label>
+        <input type="number" min="1" id="c_count" data-converted="${c.convertedCount||0}" value="${c.count!=null?c.count:1}" oninput="onCuttingCountChanged()">
+      </div>
+      <div class="field" id="c_lostCount_field" style="${(c.count||1)>1?'':'display:none;'}">
+        <label>Davon eingegangen</label>
+        <input type="number" min="0" id="c_lostCount" value="${c.lostCount||0}" oninput="onCuttingCountChanged()">
+      </div>
+    </div>
+    <div class="hint" id="c_batchSummary" style="display:none;"></div>
+    <div class="row2">
       <div class="field"><label>Standort</label><input id="c_location" value="${escapeHtml(c.location)}" placeholder="z. B. Fensterbank"></div>
       ${substrateSelectHtml(c, 'c')}
     </div>
-    ${substrateHistoryFieldsHtml(c, 'c')}
     ${reservoirBlockHtml(c, 'c')}
     <div class="hint" id="c_careTips" style="display:none;"></div>
     <div class="field"><label>Zustand</label>
@@ -2289,9 +2380,15 @@ function cuttingForm(c){
       </select>
     </div>
     <div class="field"><label>Notizen</label><textarea id="c_notes" placeholder="z. B. Bewurzelungsfortschritt…">${escapeHtml(c.notes)}</textarea></div>
-    ${editingId ? `<div class="hint" style="background:var(--moss-pale);display:flex;justify-content:space-between;align-items:center;">
-        <span>Gut bewurzelt und eigenständig?</span>
-        <button type="button" class="btn ghost" style="padding:5px 10px;font-size:12.5px;" onclick="convertCuttingToPlant(${editingId})">→ Zur eigenen Pflanze machen</button>
+    ${(editingId && cuttingRemaining > 0) ? `<div class="hint" style="background:var(--moss-pale);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span>Gut bewurzelt und eigenständig?</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${cuttingRemaining>1?`<input type="number" min="1" max="${cuttingRemaining}" id="c_convertCount" value="${cuttingRemaining}" style="width:60px;padding:6px 8px;border:1.5px solid var(--line);border-radius:6px;font-family:'Poppins',sans-serif;font-size:13px;">`:''}
+            <button type="button" class="btn ghost" style="padding:5px 10px;font-size:12.5px;white-space:nowrap;" onclick="convertCuttingToPlant(${editingId})">→ Zur eigenen Pflanze machen</button>
+          </div>
+        </div>
+        ${cuttingRemaining>1?`<div style="margin-top:6px;font-size:12px;">Von ${cuttingRemaining} verfügbaren Stück wird die angegebene Anzahl zu dieser einen Pflanze — der Rest bleibt als Ableger bestehen.</div>`:''}
       </div>` : ''}
 
     ${wateringSectionHtml(c, 'cuttings', editingId, 'c', 'z. B. alle 4 Tage')}
@@ -2301,6 +2398,8 @@ function cuttingForm(c){
     ${flushSectionHtml(c, 'cuttings', editingId, 'c', speciesNameForTip)}
 
     ${repottingSectionHtml(c, 'cuttings', editingId, 'c', speciesNameForTip)}
+
+    ${substrateSectionHtml(c, 'cuttings', editingId, 'c')}
 
     <div id="c_careInfoContainer">${careInfoSectionHtml(speciesNameForTip, c.substrate)}</div>
 
@@ -2445,6 +2544,12 @@ function convertWishlistItemToPlant(id){
 function convertCuttingToPlant(id){
   const cutting = getCuttingById(id);
   if(!cutting) return;
+  const remaining = getCuttingRemaining(cutting);
+  if(remaining <= 0) return;
+  const countInput = document.getElementById('c_convertCount');
+  const takeCount = (remaining > 1 && countInput)
+    ? Math.max(1, Math.min(remaining, parseInt(countInput.value) || 1))
+    : Math.min(1, remaining);
   // Artname ermitteln: bei "eigene Herkunft" der Name der Elternpflanze/des Eltern-Ablegers,
   // sonst der eigene Name des Ablegers selbst — analog zur Pflegetipps-Logik im Formular.
   const speciesName = cutting.origin==='eigene' ? getParentLabel(cutting) : cutting.name;
@@ -2453,17 +2558,20 @@ function convertCuttingToPlant(id){
   if(cutting.notes) noteParts.push(cutting.notes);
 
   convertingCuttingId = id;
+  window['_convertingCuttingTakeCount'] = takeCount;
   openModal('plants', null, {
     name: speciesName,
     latin: match ? match.latin : '',
     category: match ? match.category : '',
     acquired: cutting.dateTaken || '',
     location: cutting.location,
-    acquisitionType: cutting.acquisitionType || '',
+    // Bezugsart der neuen Pflanze ist unabhängig davon, wie das ursprüngliche
+    // Ableger-Material selbst mal zu dir kam (gekauft/geschenkt/getauscht) —
+    // das Eintopfen/Hochstufen selbst ist eine eigene Vermehrung, also "Gezogen".
+    acquisitionType: 'Gezogen',
     price: cutting.price || '',
     substrate: cutting.substrate,
-    substrateBefore: cutting.substrateBefore,
-    substrateChangedDate: cutting.substrateChangedDate,
+    substrateLog: cutting.substrateLog,
     watering: cutting.watering,
     status: cutting.status,
     notes: noteParts.join(' — '),
@@ -2481,6 +2589,7 @@ function convertCuttingToPlant(id){
     // sowie im Formular auswertbar/anzeigbar (siehe plantCard/plantForm).
     promotedFromCuttingName: cutting.name,
     promotedFromCuttingType: cutting.type || 'Ableger',
+    promotedFromCount: takeCount,
     promotedDate: new Date().toISOString().slice(0,10),
   });
 }
@@ -2556,20 +2665,19 @@ function onSubstrateChange(prefix){
 
 // Wird nur ausgelöst, wenn der Nutzer das Substrat-Dropdown tatsächlich ändert
 // (nicht beim programmatischen Aufruf von onSubstrateChange() beim Öffnen des Formulars)
-// -> übernimmt das alte Substrat automatisch als "Substrat vorher" und setzt das
-// Umstellungsdatum bequem auf heute. Beides bleibt manuell überschreibbar.
+// -> deckt den "Substratwechsel erfassen"-Bereich auf und schlägt Datum (heute) und
+// "Substrat vorher" (alter Wert) automatisch vor. Erst beim Speichern der Pflanze
+// wird daraus tatsächlich ein neuer Protokoll-Eintrag.
 function onSubstrateSelectChanged(prefix){
   const select = document.getElementById(prefix+'_substrate_select');
   const prevValue = select.dataset.prev || '';
   onSubstrateChange(prefix);
-  const beforeInput = document.getElementById(prefix+'_substrateBefore');
-  const dateInput = document.getElementById(prefix+'_substrateChangedDate');
   if(prevValue && select.value !== prevValue){
-    if(beforeInput) beforeInput.value = prevValue;
+    const dateInput = document.getElementById(prefix+'_substrateChangeDate');
+    const beforeInput = document.getElementById(prefix+'_substrateChangeBefore');
     if(dateInput) dateInput.value = new Date().toISOString().slice(0,10);
-    // Ein echter Substratwechsel wurde gerade erkannt -> Felder direkt aufdecken,
-    // statt den Nutzer zusätzlich noch auf den Erfassen-Button klicken zu lassen.
-    revealHiddenField(prefix, 'substrateHistory');
+    if(beforeInput) beforeInput.value = prevValue;
+    revealHiddenField(prefix, 'substrateNew', prefix+'_substrateChangeDate');
   }
   select.dataset.prev = select.value;
   updateSubstrateSinceHint(prefix);
@@ -2646,12 +2754,22 @@ function updateCareTips(prefix){
   }
 }
 
+// Zeigt, seit wann die Pflanze im aktuellen Substrat steht — bevorzugt das gerade
+// eingetippte (noch nicht gespeicherte) neue Wechseldatum als Vorschau, sonst den
+// zuletzt tatsächlich gespeicherten Protokoll-Eintrag.
 function updateSubstrateSinceHint(prefix){
-  const dateInput = document.getElementById(prefix+'_substrateChangedDate');
   const hint = document.getElementById(prefix+'_substrateSinceHint');
-  if(!dateInput || !hint) return;
-  if(!dateInput.value){ hint.style.display='none'; hint.innerHTML=''; return; }
-  const changed = new Date(dateInput.value + 'T00:00:00');
+  if(!hint) return;
+  const newDateInput = document.getElementById(prefix+'_substrateChangeDate');
+  let referenceDate = newDateInput && newDateInput.value ? newDateInput.value : '';
+  if(!referenceDate){
+    const log = window['_'+prefix+'_substrateLogSnapshot'] || [];
+    if(log.length){
+      referenceDate = [...log].sort((a,b)=> a.date < b.date ? 1 : -1)[0].date;
+    }
+  }
+  if(!referenceDate){ hint.style.display='none'; hint.innerHTML=''; return; }
+  const changed = new Date(referenceDate + 'T00:00:00');
   const today = new Date(new Date().toDateString());
   const days = Math.max(0, Math.round((today.getTime()-changed.getTime())/(24*60*60*1000)));
   hint.style.display = 'block';
@@ -2664,7 +2782,32 @@ function initFormDynamicState(prefix, item){
   if(reservoirBlock){
     window['_'+prefix+'_reservoirEmpty'] = !!item.reservoirEmpty;
   }
+  window['_'+prefix+'_substrateLogSnapshot'] = item.substrateLog || [];
   updateSubstrateSinceHint(prefix);
+  if(document.getElementById(prefix+'_count')){
+    onCuttingCountChanged();
+  }
+}
+
+// Aktualisiert Sichtbarkeit von "Davon eingegangen" und die Zusammenfassung
+// ("Von X Stück: Y eingegangen, Z eingetopft, W verfügbar"), live während der
+// Nutzer die Anzahl-/Verlust-Felder bearbeitet, ohne dass gespeichert werden muss.
+function onCuttingCountChanged(){
+  const countInput = document.getElementById('c_count');
+  const lostField = document.getElementById('c_lostCount_field');
+  const summary = document.getElementById('c_batchSummary');
+  if(!countInput) return;
+  const count = parseInt(countInput.value) || 1;
+  const isBatch = count > 1;
+  if(lostField) lostField.style.display = isBatch ? 'block' : 'none';
+  if(!summary) return;
+  if(!isBatch){ summary.style.display='none'; summary.innerHTML=''; return; }
+  const lostInput = document.getElementById('c_lostCount');
+  const lost = lostInput ? (parseInt(lostInput.value) || 0) : 0;
+  const converted = parseInt(countInput.dataset.converted) || 0;
+  const remaining = Math.max(0, count - lost - converted);
+  summary.style.display = 'block';
+  summary.innerHTML = `Von <strong>${count}</strong> Stück: ${lost} eingegangen, ${converted} bereits eingetopft — <strong>${remaining} noch verfügbar</strong>.`;
 }
 function onPlantNameInput(){
   const nameField = document.getElementById('f_name');
@@ -2712,18 +2855,24 @@ async function savePlant(){
   const repottingLog = repottedDate
     ? [...existingRepottingLog, { date: repottedDate, note: document.getElementById('f_repottedNote').value.trim() }]
     : existingRepottingLog;
+  const existingSubstrateLog = existingPlant.substrateLog || [];
+  const substrateChangeDate = document.getElementById('f_substrateChangeDate') ? document.getElementById('f_substrateChangeDate').value : '';
+  const substrateLog = substrateChangeDate
+    ? [...existingSubstrateLog, { date: substrateChangeDate, substrateBefore: document.getElementById('f_substrateChangeBefore').value.trim(), note: document.getElementById('f_substrateChangeNote').value.trim() }]
+    : existingSubstrateLog;
 
   const data = {
     name,
     latin: document.getElementById('f_latin').value.trim(),
+    uebertopf: document.getElementById('f_uebertopf').value.trim(),
+    spitzname: document.getElementById('f_spitzname').value.trim(),
     category: document.getElementById('f_category').value.trim(),
     acquired: document.getElementById('f_acquired').value,
     location: document.getElementById('f_location').value.trim(),
     acquisitionType: document.getElementById('f_acquisitionType').value,
     price: document.getElementById('f_price').value.trim(),
     substrate,
-    substrateBefore: document.getElementById('f_substrateBefore').value.trim(),
-    substrateChangedDate: document.getElementById('f_substrateChangedDate').value,
+    substrateLog,
     watering: document.getElementById('f_watering').value.trim(),
     repottingLog,
     status: document.getElementById('f_status').value,
@@ -2741,6 +2890,8 @@ async function savePlant(){
     // bei der Erstanlage kommt er aus dem Prefill (existingPlant = currentPrefillItem).
     promotedFromCuttingName: existingPlant.promotedFromCuttingName || null,
     promotedFromCuttingType: existingPlant.promotedFromCuttingType || null,
+    promotedFromCount: existingPlant.promotedFromCount || null,
+    promotedFromCuttingDeleted: existingPlant.promotedFromCuttingDeleted || false,
     promotedDate: existingPlant.promotedDate || null,
   };
 
@@ -2759,17 +2910,34 @@ async function savePlant(){
     }
     // Falls diese Pflanze aus einem Ableger/Steckling heraus "hochgestuft" wurde:
     // eigene Ableger-Kinder dieses Ablegers auf die neue Pflanze umhängen, statt sie
-    // verwaist zurückzulassen, dann den ursprünglichen Ableger-Eintrag entfernen.
+    // verwaist zurückzulassen. Bei einer einfachen 1er-Charge (kein "count" > 1
+    // gesetzt) wird der Ableger-Eintrag danach wie bisher komplett entfernt. Bei
+    // einer Mehrfach-Charge (z. B. 25 Stecklinge) bleibt der Eintrag als
+    // Sammel-Datensatz mit Verlaufszahlen bestehen — auch wenn nichts mehr übrig
+    // ist —, damit "insgesamt gemacht/eingegangen/eingetopft" nachvollziehbar bleibt.
     if(convertingCuttingId != null){
-      state.cuttings.forEach(cut=>{
-        if(cut.origin==='eigene' && (cut.parentType||'plant')==='cutting' && cut.parentCuttingId===convertingCuttingId){
-          cut.parentType = 'plant';
-          cut.ownPlantId = data.id;
-          cut.parentCuttingId = null;
+      const takeCount = window['_convertingCuttingTakeCount'] || 1;
+      const cut = state.cuttings.find(x=>x.id===convertingCuttingId);
+      if(cut){
+        cut.convertedCount = (cut.convertedCount||0) + takeCount;
+        const isSimpleSingle = (cut.count||1) <= 1;
+        const remainingAfter = getCuttingRemaining(cut);
+        if(isSimpleSingle && remainingAfter <= 0){
+          state.cuttings.forEach(other=>{
+            if(other.origin==='eigene' && (other.parentType||'plant')==='cutting' && other.parentCuttingId===convertingCuttingId){
+              other.parentType = 'plant';
+              other.ownPlantId = data.id;
+              other.parentCuttingId = null;
+            }
+          });
+          state.cuttings = state.cuttings.filter(x=>x.id!==convertingCuttingId);
+          data.promotedFromCuttingDeleted = true;
+        } else {
+          data.promotedFromCuttingDeleted = false;
         }
-      });
-      state.cuttings = state.cuttings.filter(x=>x.id!==convertingCuttingId);
+      }
       convertingCuttingId = null;
+      window['_convertingCuttingTakeCount'] = null;
     }
   }
   await saveState();
@@ -2833,6 +3001,11 @@ async function saveCutting(){
   const repottingLog = repottedDate
     ? [...existingRepottingLog, { date: repottedDate, note: document.getElementById('c_repottedNote').value.trim() }]
     : existingRepottingLog;
+  const existingSubstrateLog = existingCutting.substrateLog || [];
+  const substrateChangeDate = document.getElementById('c_substrateChangeDate') ? document.getElementById('c_substrateChangeDate').value : '';
+  const substrateLog = substrateChangeDate
+    ? [...existingSubstrateLog, { date: substrateChangeDate, substrateBefore: document.getElementById('c_substrateChangeBefore').value.trim(), note: document.getElementById('c_substrateChangeNote').value.trim() }]
+    : existingSubstrateLog;
 
   const data = {
     name,
@@ -2846,9 +3019,10 @@ async function saveCutting(){
     acquisitionType: origin==='fremd' ? document.getElementById('c_acquisitionType').value : '',
     price: origin==='fremd' ? document.getElementById('c_price').value.trim() : '',
     location: document.getElementById('c_location').value.trim(),
+    count: parseInt(document.getElementById('c_count').value) || 1,
+    lostCount: parseInt(document.getElementById('c_lostCount').value) || 0,
     substrate,
-    substrateBefore: document.getElementById('c_substrateBefore').value.trim(),
-    substrateChangedDate: document.getElementById('c_substrateChangedDate').value,
+    substrateLog,
     watering: document.getElementById('c_watering').value.trim(),
     status: document.getElementById('c_status').value,
     notes: document.getElementById('c_notes').value.trim(),
@@ -2928,6 +3102,7 @@ const LOG_CONTAINER_SUFFIX = {
   wateringLog: '_waterLogContainer',
   flushLog: '_flushLogContainer',
   repottingLog: '_repottedLogContainer',
+  substrateLog: '_substrateLogContainer',
 };
 
 // Löscht einen einzelnen Eintrag aus einem Protokoll (Düngen/Gießen/Durchspülen),
@@ -2943,6 +3118,10 @@ function deleteLogEntry(type, itemId, fieldName, index, prefix){
     const container = document.getElementById(containerId);
     if(container){
       container.innerHTML = logHistoryHtml(item[fieldName], type, itemId, prefix, fieldName);
+    }
+    if(fieldName === 'substrateLog'){
+      window['_'+prefix+'_substrateLogSnapshot'] = item.substrateLog;
+      updateSubstrateSinceHint(prefix);
     }
     render();
   }, { title: 'Eintrag löschen?', confirmLabel: 'Löschen' });
@@ -2986,6 +3165,7 @@ window.bulkMarkFlushed = bulkMarkFlushed;
 window.exportData = exportData;
 window.importDataFromFile = importDataFromFile;
 window.updateSubstrateSinceHint = updateSubstrateSinceHint;
+window.onCuttingCountChanged = onCuttingCountChanged;
 window.updateCareTips = updateCareTips;
 window.onWishlistNameInput = onWishlistNameInput;
 window.saveWishlistItem = saveWishlistItem;
